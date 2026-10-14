@@ -33,7 +33,7 @@ async function main() {
       `Database contract is out of date.\n` +
         `  installed: ${CONTRACT_VERSION}\n` +
         `  latest:    ${latest.version}\n` +
-        `Update with: npm install github:stephenwike/ldco-database#v${latest.version}`,
+        `Update with: npm install github:stephenwike/ldco-database-contract (installs main, the latest contract)`,
     );
   }
   console.log(`[ldco-db-check] Contract ${CONTRACT_VERSION} is current.`);
