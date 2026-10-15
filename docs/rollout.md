@@ -6,15 +6,36 @@ Already live: `copperknob-alert` (pushed 2026-10-14, `18f4237`).
 
 ## 0. Prerequisites (one-time)
 
-- [ ] **Two new Atlas users** for this repo: a read-only one for `LIVE_MONGODB_URI` (sync, backups, dry runs) and one that can write, for `LIVE_WRITE_MONGODB_URI` (only used by `db:migrate -- --live apply`). Put both in this repo's `.env.local`. Adding users doesn't affect the existing one the apps use, so nothing breaks.
+- [x] **Two new Atlas users** for this repo: a read-only one for `LIVE_MONGODB_URI` (sync, backups, dry runs) and one that can write, for `LIVE_WRITE_MONGODB_URI` (only used by `db:migrate -- --live apply`). Put both in this repo's `.env.local`. Adding users doesn't affect the existing one the apps use, so nothing breaks.
 - [ ] **Package access from Vercel:** apps install `@ldco/database` from `github:stephenwike/ldco-database-contract`. If that repo is private, Vercel needs a GitHub token (set as a git credential in each Vercel project), or publish the package to a registry instead.
 - [ ] Pick a quiet time for step 4 (see the venues note).
 
 ## 1. Back up and dry-run against live
 
-- [ ] `npm run db:backup-live` writes `backups/<timestamp>/<db>.archive.gz` and a manifest. Applying any migration to live refuses without a backup from the last 24 hours.
-- [ ] `npm run db:migrate -- --live status` shows all 12 migrations as pending.
-- [ ] `npm run db:migrate -- --live plan <id>` for each migration: read-only. Compare with the local results (`/migrations/<id>` in the UI shows what was recorded locally). Live has changed since the 2026-10-14 copy, so expect slightly larger counts. Investigate anything very different. `0012` stops if live has venues it doesn't know about.
+- [x] `npm run db:backup-live` writes `backups/<timestamp>/<db>.archive.gz` and a manifest. Applying any migration to live refuses without a backup from the last 24 hours.
+- [x] `npm run db:migrate -- --live status` shows all 12 migrations as pending.
+- [x] `npm run db:migrate -- --live plan <id>` for each migration: read-only. Compare with the local results (`/migrations/<id>` in the UI shows what was recorded locally). Live has changed since the 2026-10-14 copy, so expect slightly larger counts. Investigate anything very different. `0012` stops if live has venues it doesn't know about.
+
+### Results (2026-10-15)
+
+Backup `backups/2026-10-15T15-00-24-502Z` taken; the `ldco` archive was test-restored into a scratch database (10,409 documents, 0 failures). Live dry runs, compared with the local copy:
+
+| Migration | Live dry run | Notes |
+|---|---|---|
+| `0001` | 884 dances to convert | One more than locally (a dance created after the local copy). |
+| `0002` | 1,034 timestamps | Same as locally. |
+| `0003` | 254 documents | Same. |
+| `0004` | 1 duration | Same. |
+| `0005` | 785 stubs, 809 dances, 13 need `songArtists` | Same. |
+| `0006` | 19 of 40 profiles add a login event | Same. |
+| `0007` | merge 27 / 1,765 / 9; archive 0 / 0 / 0; drop 1 token | Live has no `bld` beats or wallet collections: those existed only in the old local data. Nothing to archive. |
+| `0008` | 97 fields | Lower than locally (1,924) because `0007` hasn't merged the `bld` history yet. Run `plan` again after `0007`: it should be about 1,924. |
+| `0009` | 33 rows, all in `ldco-events` | Same. |
+| `0010` | empty | Same. |
+| `0011` | 0 of 2 test events | The test events existed only in the old local data. No-op on live. |
+| `0012` | 17 venues: 5 matched, 11 added, 1 merged, 0 unknown; 19 event types | Same. |
+
+Collections in the contract but not yet on live (`ldco.events`, `ldco.venue_users`, `ldco-reviews.venue_users`, `djfeed.dancer_favorite_songs`, `djfeed.dj_requester_nicknames`) belong to features live hasn't used yet; their schemas come from a few local test documents.
 
 ## 2. Publish the contract
 
