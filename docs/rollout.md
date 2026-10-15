@@ -39,16 +39,16 @@ Collections in the contract but not yet on live (`ldco.events`, `ldco.venue_user
 
 ## 2. Publish the contract
 
-- [ ] Push `ldco-database` to `main`. Vercel deploys it.
-- [ ] In its Vercel project, set `ADMIN_PASSWORD` (a strong one), `CONTRACT_API_TOKEN` and `MONGODB_URI`. The UI is read-only, so pointing `MONGODB_URI` at live (read-only user) lets you browse production.
-- [ ] Check `GET https://<deployment>/api/contract` with `Authorization: Bearer <CONTRACT_API_TOKEN>` returns version 0.12.0.
+- [x] Push `ldco-database` to `main`. Vercel deploys it to **https://ldco-database-contract.vercel.app** (pushed 2026-10-15, `42a9159`).
+- [x] In its Vercel project, set `ADMIN_PASSWORD` (a strong one), `CONTRACT_API_TOKEN` and `MONGODB_URI`. The UI is read-only, so pointing `MONGODB_URI` at live (read-only user) lets you browse production.
+- [x] Check `GET https://ldco-database-contract.vercel.app/api/contract` with `Authorization: Bearer <CONTRACT_API_TOKEN>` returns version 0.12.0.
 
 ## 3. Deploy the apps
 
 In each app:
 1. `npm install github:stephenwike/ldco-database-contract` (or `pnpm add …` for `line-dance-dj-feed` and `dance-folly-website`). This replaces the local link and adds the dependency.
 2. Keep the `prebuild: ldco-db-check` script that local testing added to `package.json`. Commit it together with the dependency, never on its own.
-3. In the app's Vercel project, set `LDCO_DATABASE_URL` (the `ldco-database` deployment URL) and `LDCO_DATABASE_TOKEN` (same value as `CONTRACT_API_TOKEN`).
+3. In the app's Vercel project, set `LDCO_DATABASE_URL=https://ldco-database-contract.vercel.app` and `LDCO_DATABASE_TOKEN` (same value as `CONTRACT_API_TOKEN`).
 4. Push. A build that fails the contract check doesn't replace the running deployment.
 
 Order:
