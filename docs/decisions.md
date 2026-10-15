@@ -74,6 +74,7 @@ Decided for now: the `music_catalog` lookup API stays where it is. Moving it to 
 ## Open questions
 - Stub tracks from the bulk import: how to recognise one (empty `uri`), whether `primaryTrack` may be empty (41 dances are), and what to do with the 1 dangling `primaryTrack`.
 - Which `line-dance-manager-admin` features move here (deferred).
+- `bld` and `djfeed` both contain the same six DJ collections (`beat_balances`, `beat_transactions`, `dj_messages`, `dj_requests`, `dj_sessions`, `dj_wallet_transactions`) with no ids in common (for example `dj_requests`: 1,765 in `bld`, 5,658 in `djfeed`). `dance-folly-website` writes to `bld` and `line-dance-dj-feed` to `djfeed`, so the same feature is writing to two databases. Which one is canonical, and should the other be merged or retired?
 
 ## Todo
 
@@ -93,6 +94,11 @@ Decided for now: the `music_catalog` lookup API stays where it is. Moving it to 
 - Allow migrations against live once a backup/rollback approach exists.
 
 ### Rollout
+Plan: nothing goes live until all six apps are tested locally, then everything is pushed to `main` together. Live data is only ever read (by `db:sync-local`) until then.
+
+Local test per app: in this repo `npx tsup` and `npm link`; in the app `npm link @ldco/database`, `npx ldco-db-init`, set `LDCO_DATABASE_URL=http://localhost:3100` and `LDCO_DATABASE_TOKEN`, run this repo with `npx next start -p 3100`, then `npm run build`. `npm link` leaves the app's dependencies untouched, but `ldco-db-init` edits its `package.json` (the `prebuild` script).
+
+Release order matters even for a same-day push: (1) push this repo and confirm `/api/contract` is live on Vercel with its environment variables; (2) in each app replace the link with `npm install github:stephenwike/ldco-database-contract` and push; (3) run migrations `0001` to `0003` against live only after taking a backup, and before apps that rely on string ids go live. A failed app build does not replace its running production deployment.
 - Commit and merge to `main` to publish contract 0.3.0; set `ADMIN_PASSWORD`, `MONGODB_URI` and `CONTRACT_API_TOKEN` in Vercel (keep `MONGODB_URI` off live unless intended).
 - Add `@ldco/database` and the `ldco-db-check` prebuild step to every app, with `LDCO_DATABASE_URL` and `LDCO_DATABASE_TOKEN` set in each Vercel project. Apps: `line-dance-manager`, `line-dance-manager-admin`, `line-dance-dj-feed`, `copperknob-alert`, `ldco-auth`, and `dance-folly-website` (the "line-dance-follow" app). `dance-folly-website` is a Next 14 / mongodb 6.20 app that uses `bld` (`dj_sessions`, `dj_requests`, `spotify_tokens`), `ldco-events` and `ldco`, and it already reads `ldco-reviews.dances` for stepsheet lookups, so quarantining dances there (decision 10) does not hide them from it.
 - Decide how Vercel installs the package from a private GitHub repo (access token or a registry).

@@ -40,7 +40,18 @@ export default async function RelationshipsPage() {
               </td>
               <td>{r.distinct}</td>
               <td style={{ color: r.dangling ? "crimson" : "green" }}>{r.dangling}</td>
-              <td>{r.danglingSamples.join(", ")}</td>
+              <td>
+                {r.danglingSamples.map((id, i) => (
+                  <span key={id}>
+                    {i > 0 ? ", " : null}
+                    <Link
+                      href={`/collections/${r.from.collection}/documents?field=${encodeURIComponent(r.from.path)}&value=${encodeURIComponent(id)}`}
+                    >
+                      {id}
+                    </Link>
+                  </span>
+                ))}
+              </td>
             </tr>
           ))}
         </tbody>
