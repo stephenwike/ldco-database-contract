@@ -1,5 +1,5 @@
 node_modules
-dist
+# dist/ is committed: apps install this package from GitHub without building it (scripts/verify-dist.ts)
 .next
 .vercel
 .env*.local

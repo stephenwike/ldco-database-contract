@@ -1,0 +1,2 @@
+# Keep the committed package build byte-identical across platforms
+dist/** text eol=lf
