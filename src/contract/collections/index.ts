@@ -33,7 +33,6 @@ import { DjfeedRequesterHistorySchema } from "./djfeed/requester_history";
 import { DjfeedSessionReportsSchema } from "./djfeed/session_reports";
 import { DjfeedSessionTransactionsSchema } from "./djfeed/session_transactions";
 import { DjfeedStripeEventsSchema } from "./djfeed/stripe_events";
-import { DjfeedUserProfilesSchema } from "./djfeed/user_profiles";
 import { LdcoChoreographersSchema } from "./ldco/choreographers";
 import { LdcoDanceCollectionsSchema } from "./ldco/dance_collections";
 import { LdcoDanceTracksSchema } from "./ldco/dance_tracks";
@@ -111,7 +110,6 @@ export * from "./djfeed/requester_history";
 export * from "./djfeed/session_reports";
 export * from "./djfeed/session_transactions";
 export * from "./djfeed/stripe_events";
-export * from "./djfeed/user_profiles";
 export * from "./ldco/choreographers";
 export * from "./ldco/dance_collections";
 export * from "./ldco/dance_tracks";
@@ -191,7 +189,6 @@ export const collections = {
   "djfeed.session_reports": { database: "djfeed", name: "session_reports", schema: DjfeedSessionReportsSchema },
   "djfeed.session_transactions": { database: "djfeed", name: "session_transactions", schema: DjfeedSessionTransactionsSchema },
   "djfeed.stripe_events": { database: "djfeed", name: "stripe_events", schema: DjfeedStripeEventsSchema },
-  "djfeed.user_profiles": { database: "djfeed", name: "user_profiles", schema: DjfeedUserProfilesSchema },
   "ldco.choreographers": { database: "ldco", name: "choreographers", schema: LdcoChoreographersSchema },
   "ldco.dance_collections": { database: "ldco", name: "dance_collections", schema: LdcoDanceCollectionsSchema },
   "ldco.dance_tracks": { database: "ldco", name: "dance_tracks", schema: LdcoDanceTracksSchema },
