@@ -1,4 +1,4 @@
-// Inferred from 2186 documents by scripts/infer-contract.ts; review before relying on it.
+// Inferred from 1401 documents by scripts/infer-contract.ts; review before relying on it.
 import { z } from "zod";
 
 export const LdcoTracksSchema = z.strictObject({
@@ -7,8 +7,8 @@ export const LdcoTracksSchema = z.strictObject({
   name: z.string(),
   artists: z.array(z.string()),
   uri: z.string(),
-  duration_ms: z.number().optional(),
-  explicit: z.boolean().optional(),
+  duration_ms: z.number(),
+  explicit: z.boolean(),
   preview_url: z.string().nullable().optional(),
   is_playable: z.boolean().optional(),
   url: z.string().optional(),

@@ -7,7 +7,7 @@ export const BldEventsSchema = z.strictObject({
   date: z.string(),
   eventTypeId: objectId,
   startTime: z.string(),
-  durationMinutes: z.union([z.number(), z.string()]),
+  durationMinutes: z.number(),
   lessons: z.array(z.strictObject({
     time: z.string(),
     dance: z.string().nullable(),

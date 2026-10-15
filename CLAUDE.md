@@ -1,0 +1,19 @@
+# ldco-database
+
+Contract package (`@ldco/database`) and admin UI for the shared LDCO MongoDB. Decisions, open questions and the todo list live in [docs/decisions.md](docs/decisions.md); per-collection field notes in [docs/data-model.md](docs/data-model.md). Read decisions.md before changing the contract or data.
+
+## Commands
+- `npm run dev` / `npx next start -p 3100` — UI (`/collections`, `/relationships`) and `GET /api/contract`. Needs `ADMIN_PASSWORD`.
+- `npm run contract:infer` — regenerates `src/contract/collections/<db>/<name>.ts` from the local DB. Generated files are overwritten, so don't hand-edit them; put reasoning in `docs/data-model.md`.
+- `npm run contract:lock` after any schema change plus a `package.json` version bump; `prebuild` verifies the lock.
+- `npm run db:migrate -- status | plan <id> | apply <id>` — migrations in `src/migrations/files/`, registered in `src/migrations/index.ts`. Refuses unless `MONGODB_URI` is localhost.
+- `npm run db:migrate -- quarantine-plan [<db>.<collection>] | quarantine <db>.<collection>` — moves contract violations to `ldco-reviews` (decision 10). Local-only too.
+- `npm run db:sync-local` — copies live into the local Docker `ldco-mongo` container (read-only on live). In PowerShell, `-- --yes` isn't passed through; use `'sync' | npm run db:sync-local`.
+- `npx tsup` rebuilds `dist/` (the CLIs `ldco-db-check` and `ldco-db-init` that apps use).
+- `npm run typecheck`
+
+## Ground rules
+- Local Docker Mongo is `ldco-mongo` (compose file in `../line-dance-manager`, pinned to `mongo:8.0` to match live).
+- `LIVE_MONGODB_URI` is for reading live in the sync only. Never write to live, push, or tag without asking: pushing to `main` deploys to Vercel and publishes the contract to every app's build check.
+- `_id`s and references are strings; timestamps are BSON Dates (legacy offset-less strings are Mountain Time).
+- The UI masks private fields by name (`src/server/mask.ts`). Add new sensitive field names there.

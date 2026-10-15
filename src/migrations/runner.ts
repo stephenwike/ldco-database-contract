@@ -5,7 +5,7 @@ import type { Migration, MigrationReport } from "./types";
 const LEDGER = "_migrations";
 
 // Until backups and review exist, migrations only run against a local database.
-function assertLocal() {
+export function assertLocal() {
   const host = new URL(process.env.MONGODB_URI ?? "mongodb://invalid").hostname;
   if (host !== "localhost" && host !== "127.0.0.1") {
     throw new Error(`Refusing to run migrations: MONGODB_URI host "${host}" is not local.`);
