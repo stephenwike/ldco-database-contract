@@ -4,7 +4,7 @@ Contract package (`@ldco/database`) and admin UI for the shared LDCO MongoDB. De
 
 ## Commands
 - `npm run dev` / `npx next start -p 3100` — UI (`/collections`, `/relationships`) and `GET /api/contract`. Needs `ADMIN_PASSWORD`.
-- `npm run contract:infer` — regenerates `src/contract/collections/<db>/<name>.ts` from the local DB. Generated files are overwritten, so don't hand-edit them; put reasoning in `docs/data-model.md`.
+- `npm run contract:infer` — regenerates `src/contract/collections/<db>/<name>.ts` from the local DB. Generated files are overwritten, so don't hand-edit them; put reasoning in `docs/data-model.md`. An empty collection keeps its last real schema rather than becoming a placeholder.
 - `npm run contract:lock` after any schema change plus a `package.json` version bump; `prebuild` verifies the lock.
 - `npm run db:migrate -- status | plan <id> | apply <id>` — migrations in `src/migrations/files/`, registered in `src/migrations/index.ts`. Refuses unless `MONGODB_URI` is localhost.
 - `npm run db:migrate -- quarantine-plan [<db>.<collection>] | quarantine <db>.<collection>` — moves contract violations to `ldco-reviews` (decision 10). Local-only too.

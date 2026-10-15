@@ -8,7 +8,8 @@ import { migration as m0007 } from "./files/0007-merge-bld-dj-history-into-djfee
 import { migration as m0008 } from "./files/0008-djfeed-assign-early-dev-owner";
 import { migration as m0009 } from "./files/0009-drop-ldco-event-registrations";
 import { migration as m0010 } from "./files/0010-drop-ldco-user-favorite-venues";
+import { migration as m0011 } from "./files/0011-delete-test-venue-events";
 import type { Migration } from "./types";
 
 // Append new migrations in order; never reorder or edit applied ones.
-export const migrations: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007, m0008, m0009, m0010];
+export const migrations: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007, m0008, m0009, m0010, m0011];

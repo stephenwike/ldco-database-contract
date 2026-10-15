@@ -1,4 +1,4 @@
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { getDb } from "../src/server/mongo";
 
 // Infers Zod schemas from live documents and writes src/contract/collections/<db>/<name>.ts.
@@ -89,6 +89,20 @@ const databases = (await admin.listDatabases()).databases
   .filter((n) => !["admin", "config", "local"].includes(n))
   .sort();
 
+// Remember existing schemas before regenerating: an empty collection keeps its last real schema
+// instead of falling back to a placeholder (e.g. ldco.events after its test documents were deleted).
+const PLACEHOLDER = "// No documents were available to infer from";
+const previous = new Map<string, string>();
+function rememberPrevious(database: string, name: string) {
+  const url = new URL(`${database}/${name}.ts`, root);
+  if (!existsSync(url)) return;
+  const text = readFileSync(url, "utf8");
+  if (!text.startsWith(PLACEHOLDER)) previous.set(`${database}.${name}`, text);
+}
+for (const database of databases) {
+  for (const c of await (await getDb(database)).listCollections().toArray()) rememberPrevious(database, c.name);
+}
+
 rmSync(root, { recursive: true, force: true });
 mkdirSync(root, { recursive: true });
 
@@ -116,6 +130,14 @@ for (const database of databases) {
     }
 
     const id = `${pascal(database)}${pascal(name)}`;
+    const kept = !shape.count ? previous.get(`${database}.${name}`) : undefined;
+    if (kept) {
+      const note = "// Kept from an earlier inference: the collection is currently empty.";
+      writeFileSync(new URL(`${database}/${name}.ts`, root), kept.startsWith(note) ? kept : `${note}
+${kept}`);
+      entries.push({ database, name, id, file: `./${database}/${name}` });
+      continue;
+    }
     const mixed: string[] = [];
     const body = shape.count
       ? gen(shape, `${database}.${name}`, mixed, "")

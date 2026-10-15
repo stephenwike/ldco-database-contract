@@ -1,4 +1,5 @@
-// Inferred from 2 documents by scripts/infer-contract.ts; review before relying on it.
+// Kept from an earlier inference: the collection is currently empty.
+// Inferred from 2 test documents (since deleted by migration 0011); the venue-events feature in line-dance-manager still writes this shape. Re-run contract:infer once real events exist.
 import { z } from "zod";
 import { bsonDate } from "../../bson";
 
