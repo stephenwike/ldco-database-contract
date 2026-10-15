@@ -10,7 +10,7 @@ Contract package (`@ldco/database`) and admin UI for the shared LDCO MongoDB. De
 - `npm run db:migrate -- status | plan <id> | apply <id>` — migrations in `src/migrations/files/`, registered in `src/migrations/index.ts`. Refuses unless `MONGODB_URI` is localhost.
 - `npm run db:migrate -- quarantine-plan [<db>.<collection>] | quarantine <db>.<collection>` — moves contract violations to `ldco-reviews` (decision 10). Local-only too.
 - `npm run db:backup-live` — gzip archives of every live database in `backups/` (gitignored). Read-only on live.
-- `npm run db:migrate -- --live status | plan <id> | apply <id>` — against live. `apply` needs `LIVE_WRITE_MONGODB_URI`, a backup under 24 hours old and typed confirmation. Follow [docs/rollout.md](docs/rollout.md).
+- `npm run db:migrate:live status | plan <id> | apply <id>` — against live. `apply` needs `LIVE_WRITE_MONGODB_URI`, a backup under 24 hours old and typed confirmation. Follow [docs/rollout.md](docs/rollout.md).
 - `npm run db:sync-local` — copies live into the local Docker `ldco-mongo` container (read-only on live). In PowerShell, `-- --yes` isn't passed through; use `'sync' | npm run db:sync-local`.
 - `npm run package:build` rebuilds `dist/` (the package apps install: contract plus the `ldco-db-check` / `ldco-db-init` CLIs). `dist/` is committed so apps install without running a build (pnpm 10 / newer npm block install scripts from git dependencies); `prebuild` fails if it's stale, so rebuild and commit it with any contract or CLI change.
 - `npm run typecheck`

@@ -13,8 +13,8 @@ Already live: `copperknob-alert` (pushed 2026-10-14, `18f4237`).
 ## 1. Back up and dry-run against live
 
 - [x] `npm run db:backup-live` writes `backups/<timestamp>/<db>.archive.gz` and a manifest. Applying any migration to live refuses without a backup from the last 24 hours.
-- [x] `npm run db:migrate -- --live status` shows all 12 migrations as pending.
-- [x] `npm run db:migrate -- --live plan <id>` for each migration: read-only. Compare with the local results (`/migrations/<id>` in the UI shows what was recorded locally). Live has changed since the 2026-10-14 copy, so expect slightly larger counts. Investigate anything very different. `0012` stops if live has venues it doesn't know about.
+- [x] `npm run db:migrate:live status` shows all 12 migrations as pending.
+- [x] `npm run db:migrate:live plan <id>` for each migration: read-only. Compare with the local results (`/migrations/<id>` in the UI shows what was recorded locally). Live has changed since the 2026-10-14 copy, so expect slightly larger counts. Investigate anything very different. `0012` stops if live has venues it doesn't know about.
 
 ### Results (2026-10-15)
 
@@ -60,7 +60,9 @@ Order:
 
 ## 4. Migrate live
 
-`npm run db:migrate -- --live apply <id>`. Each run prints a dry run first, asks you to type the host and the migration id, and records itself in that database's `_migrations` ledger. Run them in order, checking the app or the UI after each:
+Use `npm run db:migrate:live …`, not `npm run db:migrate -- --live …`: in PowerShell npm drops the `--`, so `--live` never reaches the script and it silently runs against the local database.
+
+`npm run db:migrate:live apply <id>`. Each run prints a dry run first, asks you to type the host and the migration id, and records itself in that database's `_migrations` ledger. Run them in order, checking the app or the UI after each:
 
 - [ ] `0001` dance ids to strings
 - [ ] `0002` `ldco` timestamps to Dates (Mountain Time for offset-less strings)
