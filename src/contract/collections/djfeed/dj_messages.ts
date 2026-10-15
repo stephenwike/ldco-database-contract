@@ -1,4 +1,4 @@
-// Inferred from 87 documents by scripts/infer-contract.ts; review before relying on it.
+// Inferred from 96 documents by scripts/infer-contract.ts; review before relying on it.
 import { z } from "zod";
 import { bsonDate, objectId } from "../../bson";
 
@@ -13,6 +13,7 @@ export const DjfeedDjMessagesSchema = z.strictObject({
   expiresAt: bsonDate.nullable(),
   updatedAt: bsonDate.optional(),
   sendToAll: z.boolean().optional(),
+  migratedFrom: z.string().optional(),
 });
 
 export type DjfeedDjMessages = z.infer<typeof DjfeedDjMessagesSchema>;
