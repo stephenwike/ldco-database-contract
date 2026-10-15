@@ -10,7 +10,7 @@ export const BldEventTypesSchema = z.strictObject({
   defaultStartTime: z.string(),
   defaultDurationMinutes: z.number(),
   isActive: z.boolean(),
-  venueId: objectId,
+  venueId: z.string(),
   updatedAt: bsonDate.optional(),
   endDayOffset: z.number().optional(),
   createdAt: bsonDate.optional(),

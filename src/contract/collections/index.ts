@@ -4,7 +4,6 @@ import { BldEventTypesSchema } from "./bld/event_types";
 import { BldEventsSchema } from "./bld/events";
 import { BldFrequenciesSchema } from "./bld/frequencies";
 import { BldLessonsSchema } from "./bld/lessons";
-import { BldVenuesSchema } from "./bld/venues";
 import { CopperknobAlertProcessedItemsSchema } from "./copperknob_alert/processed_items";
 import { CopperknobAlertSyncMetadataSchema } from "./copperknob_alert/sync_metadata";
 import { CopperknobAlertWatchRulesSchema } from "./copperknob_alert/watch_rules";
@@ -72,7 +71,6 @@ export * from "./bld/event_types";
 export * from "./bld/events";
 export * from "./bld/frequencies";
 export * from "./bld/lessons";
-export * from "./bld/venues";
 export * from "./copperknob_alert/processed_items";
 export * from "./copperknob_alert/sync_metadata";
 export * from "./copperknob_alert/watch_rules";
@@ -142,7 +140,6 @@ export const collections = {
   "bld.events": { database: "bld", name: "events", schema: BldEventsSchema },
   "bld.frequencies": { database: "bld", name: "frequencies", schema: BldFrequenciesSchema },
   "bld.lessons": { database: "bld", name: "lessons", schema: BldLessonsSchema },
-  "bld.venues": { database: "bld", name: "venues", schema: BldVenuesSchema },
   "copperknob_alert.processed_items": { database: "copperknob_alert", name: "processed_items", schema: CopperknobAlertProcessedItemsSchema },
   "copperknob_alert.sync_metadata": { database: "copperknob_alert", name: "sync_metadata", schema: CopperknobAlertSyncMetadataSchema },
   "copperknob_alert.watch_rules": { database: "copperknob_alert", name: "watch_rules", schema: CopperknobAlertWatchRulesSchema },

@@ -59,7 +59,6 @@ export const purposes: Purpose[] = [
       "ldco.venue_users",
       "ldco.lessons",
       "ldco.events",
-      "bld.venues",
       "bld.events",
       "bld.event_types",
       "bld.event_templates",
@@ -69,7 +68,7 @@ export const purposes: Purpose[] = [
       "ldco-events.event_registrations",
     ],
     notes: [
-      "ldco.venues and bld.venues are the same concept for two apps; merge planned once the contract works for both.",
+      "ldco.venues is the one venue list; bld (Stephen's schedule) points at it from event_types.venueId. An instructor's own venues are instructor_venues.",
       "Three different collections are called events (venue events, class occurrences, ticketed events).",
     ],
   },
