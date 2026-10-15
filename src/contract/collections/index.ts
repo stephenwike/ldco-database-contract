@@ -30,7 +30,6 @@ import { LdcoChoreographersSchema } from "./ldco/choreographers";
 import { LdcoDanceCollectionsSchema } from "./ldco/dance_collections";
 import { LdcoDanceTracksSchema } from "./ldco/dance_tracks";
 import { LdcoDancesSchema } from "./ldco/dances";
-import { LdcoEventRegistrationsSchema } from "./ldco/event_registrations";
 import { LdcoEventsSchema } from "./ldco/events";
 import { LdcoFriendRequestsSchema } from "./ldco/friend_requests";
 import { LdcoHostDancersSchema } from "./ldco/host_dancers";
@@ -43,7 +42,6 @@ import { LdcoPendingDancesSchema } from "./ldco/pending_dances";
 import { LdcoSessionAttendanceSchema } from "./ldco/session_attendance";
 import { LdcoTracksSchema } from "./ldco/tracks";
 import { LdcoUserFavoriteDancesSchema } from "./ldco/user_favorite_dances";
-import { LdcoUserFavoriteVenuesSchema } from "./ldco/user_favorite_venues";
 import { LdcoUserFlaggedDancesSchema } from "./ldco/user_flagged_dances";
 import { LdcoUserFollowCollectionsSchema } from "./ldco/user_follow_collections";
 import { LdcoUserFollowsSchema } from "./ldco/user_follows";
@@ -100,7 +98,6 @@ export * from "./ldco/choreographers";
 export * from "./ldco/dance_collections";
 export * from "./ldco/dance_tracks";
 export * from "./ldco/dances";
-export * from "./ldco/event_registrations";
 export * from "./ldco/events";
 export * from "./ldco/friend_requests";
 export * from "./ldco/host_dancers";
@@ -113,7 +110,6 @@ export * from "./ldco/pending_dances";
 export * from "./ldco/session_attendance";
 export * from "./ldco/tracks";
 export * from "./ldco/user_favorite_dances";
-export * from "./ldco/user_favorite_venues";
 export * from "./ldco/user_flagged_dances";
 export * from "./ldco/user_follow_collections";
 export * from "./ldco/user_follows";
@@ -172,7 +168,6 @@ export const collections = {
   "ldco.dance_collections": { database: "ldco", name: "dance_collections", schema: LdcoDanceCollectionsSchema },
   "ldco.dance_tracks": { database: "ldco", name: "dance_tracks", schema: LdcoDanceTracksSchema },
   "ldco.dances": { database: "ldco", name: "dances", schema: LdcoDancesSchema },
-  "ldco.event_registrations": { database: "ldco", name: "event_registrations", schema: LdcoEventRegistrationsSchema },
   "ldco.events": { database: "ldco", name: "events", schema: LdcoEventsSchema },
   "ldco.friend_requests": { database: "ldco", name: "friend_requests", schema: LdcoFriendRequestsSchema },
   "ldco.host_dancers": { database: "ldco", name: "host_dancers", schema: LdcoHostDancersSchema },
@@ -185,7 +180,6 @@ export const collections = {
   "ldco.session_attendance": { database: "ldco", name: "session_attendance", schema: LdcoSessionAttendanceSchema },
   "ldco.tracks": { database: "ldco", name: "tracks", schema: LdcoTracksSchema },
   "ldco.user_favorite_dances": { database: "ldco", name: "user_favorite_dances", schema: LdcoUserFavoriteDancesSchema },
-  "ldco.user_favorite_venues": { database: "ldco", name: "user_favorite_venues", schema: LdcoUserFavoriteVenuesSchema },
   "ldco.user_flagged_dances": { database: "ldco", name: "user_flagged_dances", schema: LdcoUserFlaggedDancesSchema },
   "ldco.user_follow_collections": { database: "ldco", name: "user_follow_collections", schema: LdcoUserFollowCollectionsSchema },
   "ldco.user_follows": { database: "ldco", name: "user_follows", schema: LdcoUserFollowsSchema },

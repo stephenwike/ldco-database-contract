@@ -4,7 +4,7 @@ import { bsonDate, objectId } from "../../bson";
 
 export const DjfeedDjSessionsSchema = z.strictObject({
   _id: objectId,
-  ownerId: z.string().optional(),
+  ownerId: z.string(),
   name: z.string(),
   slug: z.string().optional(),
   status: z.string(),

@@ -5,7 +5,10 @@ import { migration as m0004 } from "./files/0004-bld-event-duration-to-number";
 import { migration as m0005 } from "./files/0005-ldco-remove-stub-tracks";
 import { migration as m0006 } from "./files/0006-retire-djfeed-user-profiles";
 import { migration as m0007 } from "./files/0007-merge-bld-dj-history-into-djfeed";
+import { migration as m0008 } from "./files/0008-djfeed-assign-early-dev-owner";
+import { migration as m0009 } from "./files/0009-drop-ldco-event-registrations";
+import { migration as m0010 } from "./files/0010-drop-ldco-user-favorite-venues";
 import type { Migration } from "./types";
 
 // Append new migrations in order; never reorder or edit applied ones.
-export const migrations: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007];
+export const migrations: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007, m0008, m0009, m0010];
