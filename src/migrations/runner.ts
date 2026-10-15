@@ -4,9 +4,11 @@ import type { Migration, MigrationReport } from "./types";
 
 const LEDGER = "_migrations";
 
-// Until backups and review exist, migrations only run against a local database.
+// Writes only go to a local database, unless scripts/migrate.ts --live has checked for a recent backup
+// and an explicit confirmation (it sets LDCO_MIGRATE_LIVE_HOST to the confirmed live host).
 export function assertLocal() {
   const host = new URL(process.env.MONGODB_URI ?? "mongodb://invalid").hostname;
+  if (process.env.LDCO_MIGRATE_LIVE_HOST && process.env.LDCO_MIGRATE_LIVE_HOST === host) return;
   if (host !== "localhost" && host !== "127.0.0.1") {
     throw new Error(`Refusing to run migrations: MONGODB_URI host "${host}" is not local.`);
   }

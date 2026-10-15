@@ -9,6 +9,8 @@ Contract package (`@ldco/database`) and admin UI for the shared LDCO MongoDB. De
 - `npm run contract:lock` after any schema change plus a `package.json` version bump; `prebuild` verifies the lock.
 - `npm run db:migrate -- status | plan <id> | apply <id>` — migrations in `src/migrations/files/`, registered in `src/migrations/index.ts`. Refuses unless `MONGODB_URI` is localhost.
 - `npm run db:migrate -- quarantine-plan [<db>.<collection>] | quarantine <db>.<collection>` — moves contract violations to `ldco-reviews` (decision 10). Local-only too.
+- `npm run db:backup-live` — gzip archives of every live database in `backups/` (gitignored). Read-only on live.
+- `npm run db:migrate -- --live status | plan <id> | apply <id>` — against live. `apply` needs `LIVE_WRITE_MONGODB_URI`, a backup under 24 hours old and typed confirmation. Follow [docs/rollout.md](docs/rollout.md).
 - `npm run db:sync-local` — copies live into the local Docker `ldco-mongo` container (read-only on live). In PowerShell, `-- --yes` isn't passed through; use `'sync' | npm run db:sync-local`.
 - `npx tsup` rebuilds `dist/` (the CLIs `ldco-db-check` and `ldco-db-init` that apps use).
 - `npm run typecheck`
