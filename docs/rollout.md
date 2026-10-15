@@ -6,8 +6,7 @@ Already live: `copperknob-alert` (pushed 2026-10-14, `18f4237`).
 
 ## 0. Prerequisites (one-time)
 
-- [ ] **Rotate the Atlas password** that was pasted into the Copilot chat.
-- [ ] **Two Atlas users:** a read-only one for `LIVE_MONGODB_URI` (sync, backups, dry runs) and one that can write, for `LIVE_WRITE_MONGODB_URI` (only used by `db:migrate -- --live apply`). Put both in this repo's `.env.local`.
+- [ ] **Two new Atlas users** for this repo: a read-only one for `LIVE_MONGODB_URI` (sync, backups, dry runs) and one that can write, for `LIVE_WRITE_MONGODB_URI` (only used by `db:migrate -- --live apply`). Put both in this repo's `.env.local`. Adding users doesn't affect the existing one the apps use, so nothing breaks.
 - [ ] **Package access from Vercel:** apps install `@ldco/database` from `github:stephenwike/ldco-database-contract`. If that repo is private, Vercel needs a GitHub token (set as a git credential in each Vercel project), or publish the package to a registry instead.
 - [ ] Pick a quiet time for step 4 (see the venues note).
 
@@ -58,6 +57,15 @@ Order:
 Afterwards:
 - [ ] `/collections` in the deployed UI shows no violations, and `/relationships` shows no new dangling references.
 - [ ] `npm run db:sync-local` to bring the local copy back in line with live.
+
+## 5. Rotate the shared password (last)
+
+The Atlas password of the user every app shares was pasted into the Copilot chat, so rotate it once everything above is done. Rotating it breaks every app until each has the new value, so do it in one sitting:
+- [ ] Rotate the password in Atlas.
+- [ ] Update `MONGODB_URI` in each app's Vercel project (all six, plus this repo's if it uses that user) and its local `.env.local`, then redeploy each. A redeploy is needed for Vercel to pick up the new value.
+- [ ] Check each app signs in and loads data.
+
+Optionally, give each app its own Atlas user at this point instead of one shared password, so a future rotation only affects one app.
 
 ## If something goes wrong
 
