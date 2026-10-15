@@ -50,6 +50,11 @@ Databases are organised by **purpose**, not by app, because apps share data. For
 
 Sign-in audit: "which user signed in to which app, and when" lives in `ldco.login_events`, written by ldco-auth for every sign-in. Apps read a user's name and email from `ldco.users` and don't keep their own copies.
 
+## 15. Stephen's schedule: on/off decides whether a class is running
+In `bld`, an event type is a recurring class at a venue, frequencies say when it repeats, events are its dated occurrences (projected from frequencies or stored), an event's embedded `lessons` are the plan for that night, and committing them writes the permanent history to `bld.lessons` (field notes: [data-model.md](data-model.md#stephens-class-schedule-bld)).
+
+A class is **running** when its event type is switched on and at least one of its frequencies is switched on and hasn't passed an end date. `isActive` missing counts as on. Switching off is the normal way to stop a class; start and end dates are optional. Every place that asks "is this running?" uses the same rule: `dance-folly-website`'s `lib/schedule.js` (current venues, the dance page's venue filter) and its events endpoint. Before 2026-10-15 the current-venues list only checked end dates, which is why Washington Park stayed listed after being switched off.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?

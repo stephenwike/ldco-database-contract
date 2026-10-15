@@ -18,3 +18,26 @@ Database `ldco`, collection `dances`.
 **Other `primaryTrack` gaps:** 41 dances have an empty `primaryTrack` (none have `songArtists`), and 1 ("Backstreet Attitude") points at a track that doesn't exist.
 
 **Open:** how to tell a stub track from a real one (empty `uri`?), and whether `primaryTrack` should be allowed to be empty for unmatched dances (41 non-import dances already have it empty).
+
+## Stephen's class schedule (`bld`)
+
+How the personal site (`dance-folly-website`, beyondlinedance.com) and the admin's BLD pages model Stephen's teaching. Decision 15 records the rules.
+
+| Collection | One document is | Example |
+|---|---|---|
+| `bld.event_types` | A recurring class at a venue: title, level, price, default start time and duration. Has an on/off switch (`isActive`). | "Charlies Country" at Charlie's Denver |
+| `bld.frequencies` | When an event type repeats: weekly on given days (`byDay`), or monthly on the nth weekday (`nth`, `weekday`). Optional start and end dates, and its own on/off switch. | Every Monday, Wednesday and Thursday |
+| `ldco.venues` | The venue that hosts it (shared with line-dance-manager since migration `0012`). `event_types.venueId` points here. | Charlie's Denver |
+| `bld.events` | One dated occurrence of an event type, with start time, duration, a substitute or cancellation note, and the planned `lessons`. | Charlie's on Monday 2026-10-12 |
+| `bld.events.lessons` (embedded) | The plan for that night: one entry per teaching slot (time, dance, level, link, `committed`). | 7:00 PM, "Copperhead Road", committed: false |
+| `bld.event_templates` | A reusable lesson plan for an event type, used to prefill an event's `lessons`. | Charlie's default 3-slot plan |
+| `bld.lessons` | History: one dance actually taught at a venue on a date. Written when an event's lessons are committed. | "Copperhead Road" at Charlie's Denver, 2026-10-12 7:00 PM |
+
+**Projected and planned events.** An event exists in one of two ways:
+- **Projected:** computed on the fly from a running frequency and never stored. The personal site shows these so the calendar fills forward without anyone creating documents.
+- **Planned:** stored in `bld.events`, either generated from the frequencies by the admin (generate-events) or created as a one-off. An event is stored once you want to attach a lesson plan, a substitute or a cancellation to it.
+
+**From plan to history.** The admin's "commit lessons" step takes an event's uncommitted `lessons`, marks them `committed`, and writes one `bld.lessons` document each: the date and time, the dance (`danceId`, or `danceName` if it isn't in the catalog), and the venue's **name as text**. That last part means `bld.lessons` doesn't follow venue renames. Old entries also carry labels such as "Barnum Rec Center - Tuesdays" or "Ladies Night at Stampede", and the dance page matches them to venues by name prefix.
+
+**Turning a class off.** Switch the event type (or just one frequency) off in the admin. It then stops being projected, its stored future events are hidden, and its venue drops out of "current venues". Its history in `bld.lessons` stays, so the venue still appears in the dance page's history filter. End dates are optional and only needed if you want a class to stop on a known date.
+

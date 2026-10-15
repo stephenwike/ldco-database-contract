@@ -37,11 +37,11 @@ export const descriptions: Record<string, string> = {
   "ldco.lessons": "A recurring weekly lesson in line-dance-manager: day, start time, duration, cost, difficulty, instructors and venue.",
   "ldco.events": "A venue event created from line-dance-manager's venue dashboard. Empty on live so far.",
   "bld.event_types":
-    "One of Stephen's class types for the personal site (title, level, price, default time) at a venue in ldco.venues. The site counts a venue as current while one of its event types has an open-ended frequency.",
-  "bld.frequencies": "When an event type repeats (e.g. every Tuesday, or the 2nd Saturday), with start and optional end dates.",
-  "bld.events": "One dated class occurrence on Stephen's schedule, with the dances taught (lessons), substitute and cancellation details.",
-  "bld.event_templates": "A reusable lesson plan for an event type, used to prefill an event's lessons.",
-  "bld.lessons": "A record of one dance taught at a venue on a date (the venue is free text). Feeds the personal site's dance history.",
+    "A recurring class Stephen teaches at a venue (ldco.venues): title, level, price, default time. Switched on or off with isActive; a class is running when it and one of its frequencies are on (decision 15).",
+  "bld.frequencies": "When an event type repeats: weekly on given days, or monthly on the nth weekday. Optional start/end dates and its own on/off switch. Running frequencies project events onto the calendar.",
+  "bld.events": "One stored, dated occurrence of an event type (generated from frequencies or a one-off), with substitute/cancellation notes and the planned lessons for that night. Unstored future dates are projected from frequencies.",
+  "bld.event_templates": "A reusable lesson plan for an event type, used to prefill an event's planned lessons.",
+  "bld.lessons": "History: one dance taught at a venue on a date, written when an event's planned lessons are committed in the admin. The venue is stored as its name (text) at the time.",
   "ldco-events.events": "A ticketed special event (e.g. a social) with its own registration page on the personal site.",
   "ldco-events.event_registrations": "One registration for a ticketed event: attendee details, waiver, payment status and song requests.",
 
