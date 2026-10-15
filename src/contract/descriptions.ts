@@ -1,0 +1,95 @@
+// What each collection holds: one document = one what, plus anything non-obvious (who writes it,
+// known quirks). Hand-maintained, outside the generated collections/ folder. Collections missing
+// from here show "No description yet" in the UI.
+
+export const descriptions: Record<string, string> = {
+  // Dance catalog
+  "ldco.dances":
+    "One line dance: name, difficulty, choreographers, stepsheet link(s) and its song. primaryTrack/tracks point at matched tracks; until a track is matched, the scraped song is kept in songArtists.",
+  "ldco.choreographers": "One choreographer. Created by the admin bulk import and copperknob-alert when a dance names someone new.",
+  "ldco.tracks": "One matched song (Spotify-shaped: name, artists, uri, isrc, duration). Only real matched tracks; placeholder tracks were removed by migration 0005.",
+  "ldco.dance_tracks":
+    "Links a dance to a track (isPrimary). A one-time snapshot from July 2025 that nothing reads or writes; its shape is the model for future dance-to-track links.",
+  "ldco.pending_dances": "A dance a user submitted in line-dance-manager, waiting for admin approval before it becomes an ldco.dances entry.",
+  "music_catalog.tracks":
+    "One song from MusicBrainz (title, artist, ISRCs, duration, year), cached when the lookup API finds it. Candidate universal track that dances will link to.",
+
+  // Dancer experience
+  "ldco.user_known_dances": "A dancer marked a dance as known.",
+  "ldco.user_favorite_dances": "A dancer marked a dance as a favourite.",
+  "ldco.user_flagged_dances": "A dance on a dancer's wishlist (shown as \"Wishlist\" in line-dance-manager; \"flagged\" in the data).",
+  "ldco.user_refresh_dances": "A dancer marked a dance as needing a refresh.",
+  "ldco.dance_collections": "A dancer's named list of dances (danceIds), optionally private, copyable or archived.",
+  "ldco.user_follow_collections": "A dancer follows another user's dance collection.",
+  "ldco.user_lessons": "A dancer plans to attend a lesson (ldco.lessons).",
+  "ldco.user_venues": "A dancer's \"My Venue\" favourite in line-dance-manager. Not the same as an instructor's venues (instructor_venues).",
+  "ldco.venue_checkins": "A dancer checked in at a venue on a given day (dateKey).",
+  "ldco.session_attendance": "A signed-in dancer was at a host's live DJ Feed event: first and last seen. Written by the DJ Feed.",
+  "ldco.host_dancers": "Summary of which dancers dance with which host (DJ or instructor): first/last seen and number of events.",
+  "djfeed.dancer_favorite_songs": "A dancer's favourite song in the DJ Feed.",
+
+  // Instructing
+  "ldco.instructors": "One instructor, optionally linked to a user account (userId).",
+  "ldco.instructor_venues": "An instructor teaches at a venue: their \"my venues\" in line-dance-manager's instructor dashboard.",
+  "ldco.venues":
+    "One venue: name, address, coordinates, phone, website. The single venue list shared by line-dance-manager and the personal site (bld.venues was merged in by migration 0012).",
+  "ldco.venue_users": "A user approved as managing a venue (from a venue claim reviewed in ldco-reviews.venue_users).",
+  "ldco.lessons": "A recurring weekly lesson in line-dance-manager: day, start time, duration, cost, difficulty, instructors and venue.",
+  "ldco.events": "A venue event created from line-dance-manager's venue dashboard. Empty on live so far.",
+  "bld.event_types":
+    "One of Stephen's class types for the personal site (title, level, price, default time) at a venue in ldco.venues. The site counts a venue as current while one of its event types has an open-ended frequency.",
+  "bld.frequencies": "When an event type repeats (e.g. every Tuesday, or the 2nd Saturday), with start and optional end dates.",
+  "bld.events": "One dated class occurrence on Stephen's schedule, with the dances taught (lessons), substitute and cancellation details.",
+  "bld.event_templates": "A reusable lesson plan for an event type, used to prefill an event's lessons.",
+  "bld.lessons": "A record of one dance taught at a venue on a date (the venue is free text). Feeds the personal site's dance history.",
+  "ldco-events.events": "A ticketed special event (e.g. a social) with its own registration page on the personal site.",
+  "ldco-events.event_registrations": "One registration for a ticketed event: attendee details, waiver, payment status and song requests.",
+
+  // DJ feed
+  "djfeed.dj_sessions": "One DJ event: owner, status (draft, active, closed), timing and feature settings (tipping, fairness, partner dances).",
+  "djfeed.dj_requests": "One song request in a DJ session: the dance, song, requester, queue position and play status. Requests from before the app split carry migratedFrom: \"bld\".",
+  "djfeed.dj_messages": "A message the DJ shows on the feed during a session.",
+  "djfeed.dj_direct_messages": "A private message from the DJ to one dancer.",
+  "djfeed.dj_notifications": "A notification for a DJ, e.g. a tip received.",
+  "djfeed.attendee_notifications": "A notification for a dancer, e.g. beats gifted by a DJ.",
+  "djfeed.dj_profiles": "A DJ's settings: Stripe account, payment links and feed display templates.",
+  "djfeed.dj_requester_nicknames": "A nickname a DJ gave a requester, kept across sessions.",
+  "djfeed.requester_history": "Everything one requester asked for in one session, kept after the session's requests are cleared.",
+  "djfeed.session_reports": "The summary of a finished DJ session: tracks played, duration and stats.",
+  "djfeed.beat_balances": "A dancer's current beats balance (the DJ Feed's tipping currency).",
+  "djfeed.beat_transactions": "One beats movement for a dancer: a purchase via Stripe or a tip spent on a request.",
+  "djfeed.dj_wallet_transactions": "One entry in a DJ's wallet ledger: tips received, payments for sessions, withdrawals. Balances are the sum of these.",
+  "djfeed.dj_wallet_locks": "Short-lived lock that stops two wallet updates for the same DJ running at once.",
+  "djfeed.session_transactions": "A DJ paying for a session or a session add-on.",
+  "djfeed.stripe_events": "A Stripe webhook event already processed, so retries aren't applied twice.",
+  "djfeed.free_access": "An email given free DJ Feed access (e.g. beta testers), optionally until a date.",
+
+  // Identity and social
+  "ldco.users": "One user account (name, email, profile; bcrypt password hash or Google id). Shared by every app through ldco-auth.",
+  "ldco.login_events":
+    "One sign-in: who, which app (OAuth client), provider, IP, user agent and time. Written by ldco-auth; this is the sign-in audit trail.",
+  "ldco.oauth_auth_codes": "Short-lived OAuth codes ldco-auth issues while an app signs a user in.",
+  "ldco.friend_requests": "A pending friend request between two users.",
+  "ldco.user_friends": "Two users who are friends.",
+  "ldco.user_follows": "A user follows another user.",
+
+  // Copperknob alerts
+  "copperknob_alert.watch_rules": "A rule for copperknob's new-dance feed (choreographer and/or dance name, fuzzy match) that sends Stephen a phone alert.",
+  "copperknob_alert.processed_items": "A feed item that matched a rule and was alerted, so it isn't alerted twice.",
+  "copperknob_alert.sync_metadata": "When the cron last copied new feed dances into ldco.dances, and how many.",
+
+  // Review and moderation
+  "ldco-reviews.dances": "Dances waiting for review, plus contract-violating dances quarantined from ldco.dances.",
+  "ldco-reviews.tracks": "Tracks waiting for review (line-dance-manager's add-track writes here first).",
+  "ldco-reviews.choreographers": "Choreographers waiting for review.",
+  "ldco-reviews.venues": "Venues waiting for review.",
+  "ldco-reviews.lessons": "Lessons waiting for review before they become ldco.lessons entries.",
+  "ldco-reviews.venue_users": "A user's claim to manage a venue, waiting for admin approval.",
+  "ldco-reviews.verify_user_instructor": "A user asking to be verified as an instructor, with the admin's resolution.",
+  "ldco-reviews.join_choreographer_appeals": "A user asking to be recognised as a choreographer (linked to a choreographer record), waiting for an admin.",
+  "ldco-reviews.reports": "A user report about a venue, lesson, instructor or event (issue type, description, suggested fix), waiting for an admin.",
+};
+
+export function describe(key: string): string | undefined {
+  return descriptions[key];
+}

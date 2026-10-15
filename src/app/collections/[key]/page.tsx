@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { collections } from "@/contract";
+import { describe } from "@/contract/descriptions";
 import { purposeOf } from "@/contract/purposes";
 import { getRelationships } from "@/server/relationships";
 import { schemaView } from "@/server/schema";
@@ -34,6 +35,9 @@ export default async function CollectionPage({ params }: { params: Promise<{ key
         <span className="muted">{report.database}.</span>
         {report.name}
       </h1>
+      <p className="lede" style={{ marginBottom: 6, color: "var(--text)" }}>
+        {describe(key) ?? <span className="muted">No description yet: add one in src/contract/descriptions.ts.</span>}
+      </p>
       <p className="lede">
         {report.total.toLocaleString()} documents, {report.sampled.toLocaleString()} validated,{" "}
         <span className={`badge ${report.invalid ? "bad" : "ok"}`}>{report.invalid} invalid</span>{" "}

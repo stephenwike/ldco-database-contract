@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { collections } from "@/contract";
+import { describe } from "@/contract/descriptions";
 import { purposeOf, purposes } from "@/contract/purposes";
 import { validateCollection, type CollectionKey } from "@/server/validate";
 
@@ -124,6 +125,7 @@ export default async function CollectionsPage({
                     <tr key={r.key}>
                       <td>
                         <Link href={`/collections/${r.key}`}>{collections[r.key].name}</Link>
+                        <div className="desc">{describe(r.key) ?? "No description yet."}</div>
                       </td>
                       <td className="muted">{byDatabase ? (purposeOf(r.key)?.name ?? "Unassigned") : r.database}</td>
                       {r.error ? (

@@ -1,12 +1,14 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
-import lock from "../../contract.lock.json";
-import pkg from "../../package.json";
+// Named imports so the bundler includes only these values, not the whole files: otherwise any
+// package.json edit (e.g. a new script) would change the published package build.
+import { hash as lockedHash } from "../../contract.lock.json";
+import { version } from "../../package.json";
 import { collections } from "./collections";
 
 export * from "./collections";
 
-export const CONTRACT_VERSION: string = pkg.version;
+export const CONTRACT_VERSION: string = version;
 
 // Computes the hash from the schemas. Its exact value depends on the zod version doing the
 // JSON Schema conversion, so it is only run here (by scripts/contract-lock.ts) and stored in
@@ -20,4 +22,4 @@ export function computeContractHash(): string {
 
 // The locked hash, bundled into the package: apps compare this with the API's, and it must not vary
 // with whichever zod version an app happens to resolve.
-export const CONTRACT_HASH: string = lock.hash;
+export const CONTRACT_HASH: string = lockedHash;

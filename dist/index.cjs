@@ -96,65 +96,10 @@ var import_node_crypto = require("crypto");
 var import_zod68 = require("zod");
 
 // contract.lock.json
-var contract_lock_default = {
-  version: "0.12.0",
-  hash: "693d089c553a10a253ff312cd8b7cf60a4ce2897c9bffc715069eba9bcd6f713"
-};
+var hash = "693d089c553a10a253ff312cd8b7cf60a4ce2897c9bffc715069eba9bcd6f713";
 
 // package.json
-var package_default = {
-  name: "@ldco/database",
-  version: "0.12.0",
-  private: false,
-  type: "module",
-  description: "Single source of truth for the shared LDCO MongoDB contract, plus the API that publishes the latest version.",
-  main: "./dist/index.cjs",
-  module: "./dist/index.js",
-  types: "./dist/index.d.ts",
-  exports: {
-    ".": {
-      types: "./dist/index.d.ts",
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    }
-  },
-  bin: {
-    "ldco-db-check": "./dist/cli/check.js",
-    "ldco-db-init": "./dist/cli/init.js"
-  },
-  files: [
-    "dist"
-  ],
-  scripts: {
-    dev: "next dev",
-    prebuild: "tsx scripts/contract-lock.ts --verify && tsx scripts/verify-dist.ts",
-    build: "next build",
-    start: "next start",
-    "package:build": "tsup",
-    "contract:lock": "tsx scripts/contract-lock.ts --write",
-    "contract:verify": "tsx scripts/contract-lock.ts --verify",
-    "db:sync-local": "tsx --env-file-if-exists=.env.local scripts/sync-from-live.ts",
-    "db:backup-live": "tsx --env-file-if-exists=.env.local scripts/backup-live.ts",
-    "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
-    "contract:infer": "tsx --env-file-if-exists=.env.local scripts/infer-contract.ts",
-    typecheck: "tsc --noEmit"
-  },
-  dependencies: {
-    mongodb: "^7.7.0",
-    zod: "^4.1.0"
-  },
-  devDependencies: {
-    "@types/node": "^22.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    next: "^16.1.4",
-    react: "^19.0.0",
-    "react-dom": "^19.0.0",
-    tsup: "^8.5.0",
-    tsx: "^4.20.0",
-    typescript: "^5.9.0"
-  }
-};
+var version = "0.12.0";
 
 // src/contract/collections/bld/event_templates.ts
 var import_zod2 = require("zod");
@@ -1143,12 +1088,12 @@ var collections = {
 };
 
 // src/contract/index.ts
-var CONTRACT_VERSION = package_default.version;
+var CONTRACT_VERSION = version;
 function computeContractHash() {
   const description = Object.entries(collections).sort(([a], [b]) => a.localeCompare(b)).map(([key, c]) => [key, c.database, c.name, import_zod68.z.toJSONSchema(c.schema, { unrepresentable: "any" })]);
   return (0, import_node_crypto.createHash)("sha256").update(JSON.stringify(description)).digest("hex");
 }
-var CONTRACT_HASH = contract_lock_default.hash;
+var CONTRACT_HASH = hash;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   BldEventTemplatesSchema,

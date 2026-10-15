@@ -2,7 +2,7 @@
 import {
   CONTRACT_HASH,
   CONTRACT_VERSION
-} from "../chunk-U7DT4N3R.js";
+} from "../chunk-DYTVOUIB.js";
 
 // src/cli/check.ts
 var baseUrl = process.env.LDCO_DATABASE_URL?.replace(/\/+$/, "");
