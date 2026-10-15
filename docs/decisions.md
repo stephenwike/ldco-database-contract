@@ -75,6 +75,7 @@ It is a large, breaking change, so it needs staging:
 1. Add the provider-link collection and define the universal track in the contract. Nothing breaks.
 2. Backfill: match existing `ldco.tracks` to catalog tracks and record the Spotify links. Do not rely on ISRC alone: 28,619 of the 34,137 catalog tracks (about 84%) have no ISRC, so matching has to fall back to normalised title and artist (`nTitle`, `nArtist`, `variantKey`) and needs human review for ambiguous cases. Unmatched tracks stay as they are.
 3. Add an optional `catalogTrackId` to dances alongside `primaryTrack`; apps read the new field and fall back to the old one.
+   Alternative worth weighing here: instead of a single field, a link collection such as the existing (stale) `ldco.dance_tracks` (`danceId`, `trackId`, `isPrimary`) pointing at catalog tracks. It allows several songs per dance with one marked primary, which a single field can't. See the `dance_tracks` row in [database-layout.md](database-layout.md#duplicate-investigation-2026-10-14).
 4. Migrate apps one at a time, then deprecate `primaryTrack` and the Spotify-shaped `tracks`.
 
 Each step keeps the old fields working, which is what the contract version check is for. Open: how a dance is linked while its track is not yet in MusicBrainz (a `manual:` entry, or leaving `catalogTrackId` unset until it is).
