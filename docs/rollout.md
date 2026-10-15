@@ -9,8 +9,8 @@ Already live: `copperknob-alert` (pushed 2026-10-14, `18f4237`).
 ## 0. Prerequisites (one-time)
 
 - [x] **Two new Atlas users** for this repo: a read-only one for `LIVE_MONGODB_URI` (sync, backups, dry runs) and one that can write, for `LIVE_WRITE_MONGODB_URI` (only used by `db:migrate -- --live apply`). Put both in this repo's `.env.local`. Adding users doesn't affect the existing one the apps use, so nothing breaks.
-- [ ] **Package access from Vercel:** apps install `@ldco/database` from `github:stephenwike/ldco-database-contract`. If that repo is private, Vercel needs a GitHub token (set as a git credential in each Vercel project), or publish the package to a registry instead.
-- [ ] Pick a quiet time for step 4 (see the venues note).
+- [x] **Package access from Vercel:** apps install `@ldco/database` from `github:stephenwike/ldco-database-contract`. If that repo is private, Vercel needs a GitHub token (set as a git credential in each Vercel project), or publish the package to a registry instead.
+- [x] Pick a quiet time for step 4 (see the venues note).
 
 ## 1. Back up and dry-run against live
 
