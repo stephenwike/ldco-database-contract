@@ -24,28 +24,35 @@ export default async function DocumentPage({ params }: { params: Promise<{ key: 
   if (!doc) notFound();
 
   return (
-    <main style={{ fontFamily: "sans-serif", padding: 24 }}>
-      <p>
-        <Link href={`/collections/${key}/documents`}>Back to {key} documents</Link>
-      </p>
-      <h1>
-        {key} / {id}
+    <main>
+      <div className="crumbs">
+        <Link href="/collections">Collections</Link> / <Link href={`/collections/${key}`}>{key}</Link> /{" "}
+        <Link href={`/collections/${key}/documents`}>Documents</Link>
+      </div>
+      <h1 className="mono" style={{ fontSize: 20 }}>
+        {id}
       </h1>
-      <p>Private fields are masked ({MASKED_FIELD_HINT}).</p>
+      <p className="lede">
+        {doc.issues.length === 0 ? (
+          <span className="badge ok">valid against the contract</span>
+        ) : (
+          <span className="badge bad">{doc.issues.length} contract violations</span>
+        )}{" "}
+        Private fields are masked ({MASKED_FIELD_HINT}).
+      </p>
 
-      <h2>Contract validation</h2>
-      {doc.issues.length === 0 ? (
-        <p style={{ color: "green" }}>Valid.</p>
-      ) : (
-        <ul style={{ color: "crimson" }}>
-          {doc.issues.map((i) => (
-            <li key={i}>{i}</li>
-          ))}
-        </ul>
-      )}
+      {doc.issues.length ? (
+        <div className="panel">
+          <h3>Violations</h3>
+          <ul className="notes bad-text">
+            {doc.issues.map((i) => (
+              <li key={i}>{i}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
-      <h2>Document</h2>
-      <pre style={{ background: "#f4f4f4", padding: 12, overflow: "auto" }}>{doc.masked}</pre>
+      <pre>{doc.masked}</pre>
     </main>
   );
 }

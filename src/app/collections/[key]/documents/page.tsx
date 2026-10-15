@@ -27,36 +27,43 @@ export default async function DocumentsPage({
     `${base}?page=${p}${field ? `&field=${encodeURIComponent(field)}&value=${encodeURIComponent(value ?? "")}` : ""}`;
 
   return (
-    <main style={{ fontFamily: "sans-serif", padding: 24 }}>
-      <p>
-        <Link href={`/collections/${key}`}>Back to {key}</Link>
-      </p>
-      <h1>{key} documents</h1>
-      <p>
+    <main>
+      <div className="crumbs">
+        <Link href="/collections">Collections</Link> / <Link href={`/collections/${key}`}>{key}</Link>
+      </div>
+      <h1>Documents</h1>
+      <p className="lede">
         {field ? (
           <>
             Where <code>{field}</code> = <code>{value}</code>. <Link href={base}>Clear filter</Link>.{" "}
           </>
         ) : null}
-        {total} documents, page {page} of {pages}. Private fields are masked ({MASKED_FIELD_HINT}).
+        {total.toLocaleString()} documents, page {page} of {pages}. Private fields are masked ({MASKED_FIELD_HINT}).
       </p>
-      <table cellPadding={6}>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.id}>
-              <td>
-                <Link href={`${base}/${encodeURIComponent(r.id)}`}>{r.id}</Link>
-              </td>
-              <td style={{ fontFamily: "monospace", fontSize: 12 }}>{r.preview}</td>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>_id</th>
+              <th>Preview</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <p>
-        {page > 1 ? <Link href={query(page - 1)}>Previous</Link> : null}
-        {page > 1 && page < pages ? " | " : null}
-        {page < pages ? <Link href={query(page + 1)}>Next</Link> : null}
-      </p>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id}>
+                <td className="mono" style={{ whiteSpace: "nowrap" }}>
+                  <Link href={`${base}/${encodeURIComponent(r.id)}`}>{r.id}</Link>
+                </td>
+                <td className="mono muted">{r.preview}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="pager">
+        {page > 1 ? <Link href={query(page - 1)}>← Previous</Link> : null}
+        {page < pages ? <Link href={query(page + 1)}>Next →</Link> : null}
+      </div>
     </main>
   );
 }

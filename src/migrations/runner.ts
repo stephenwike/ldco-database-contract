@@ -46,3 +46,16 @@ export async function apply(id: string): Promise<MigrationReport> {
   await db.collection<{ _id: string }>(LEDGER).insertOne({ _id: m.id, appliedAt: new Date(), report } as never);
   return report;
 }
+
+export interface LedgerEntry {
+  appliedAt: Date;
+  report: MigrationReport;
+}
+
+// What was recorded when a migration was applied, or null if it hasn't been.
+export async function ledgerEntry(id: string): Promise<LedgerEntry | null> {
+  const m = find(id);
+  const db = await getDb(m.database);
+  const row = await db.collection<{ _id: string; appliedAt: Date; report: MigrationReport }>(LEDGER).findOne({ _id: m.id });
+  return row ? { appliedAt: row.appliedAt, report: row.report } : null;
+}
