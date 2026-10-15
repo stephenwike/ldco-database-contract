@@ -1,5 +1,7 @@
 # Live rollout checklist
 
+**Status (2026-10-15): steps 0–4 done. Remaining: step 5, rotating the shared Atlas password.**
+
 Everything so far was built and tested against a local copy of live (synced 2026-10-14). This is the order for taking it live. Each migration runs only after the code that depends on it is deployed. Tick items off as you go.
 
 Already live: `copperknob-alert` (pushed 2026-10-14, `18f4237`).
@@ -52,34 +54,36 @@ In each app:
 4. Push. A build that fails the contract check doesn't replace the running deployment.
 
 Order:
-- [ ] `ldco-auth`: new Google users get string ids. Must be live before `0003`.
-- [ ] `line-dance-manager`: shows `songArtists` when a dance has no track. Before `0005`.
-- [ ] `line-dance-dj-feed` (branch `feat/dance-favorites`, merge it first): `songArtists` fallback; reads accounts from `ldco.users`. Before `0005` and `0006`.
-- [ ] `line-dance-manager-admin` (branch `feature/bulk-dances`, merge it first): string dance ids, no stub tracks, `ldco.users` emails, venues from `ldco.venues`. Before `0001`, `0005`, `0006`, `0012`.
-- [ ] `dance-folly-website`: `songArtists` fallback, old DJ code removed, venues from `ldco.venues`. Before `0005`, `0007`, `0012`.
+- [x] `ldco-auth`: new Google users get string ids. Must be live before `0003`.
+- [x] `line-dance-manager`: shows `songArtists` when a dance has no track. Before `0005`.
+- [x] `line-dance-dj-feed` (branch `feat/dance-favorites`, merge it first): `songArtists` fallback; reads accounts from `ldco.users`. Before `0005` and `0006`.
+- [x] `line-dance-manager-admin` (branch `feature/bulk-dances`, merge it first): string dance ids, no stub tracks, `ldco.users` emails, venues from `ldco.venues`. Before `0001`, `0005`, `0006`, `0012`.
+- [x] `dance-folly-website`: `songArtists` fallback, old DJ code removed, venues from `ldco.venues`. Before `0005`, `0007`, `0012`.
 
 ## 4. Migrate live
+
+Done 2026-10-15, 17:05–17:23 UTC (`0012` first, to close the venue gap on the personal site). Every result matched the dry runs; afterwards all 66 collections validated with 0 violations on live, the dangling references were only the known pre-existing ones, and the local copy was re-synced.
 
 Use `npm run db:migrate:live …`, not `npm run db:migrate -- --live …`: in PowerShell npm drops the `--`, so `--live` never reaches the script and it silently runs against the local database.
 
 `npm run db:migrate:live apply <id>`. Each run prints a dry run first, asks you to type the host and the migration id, and records itself in that database's `_migrations` ledger. Run them in order, checking the app or the UI after each:
 
-- [ ] `0001` dance ids to strings
-- [ ] `0002` `ldco` timestamps to Dates (Mountain Time for offset-less strings)
-- [ ] `0003` user ids to strings (after `ldco-auth` is live)
-- [ ] `0004` `bld.events.durationMinutes` to number
-- [ ] `0005` remove stub tracks (after `line-dance-manager`, `line-dance-dj-feed`, `dance-folly-website`)
-- [ ] `0006` retire `djfeed.user_profiles` (after `line-dance-dj-feed`, admin)
-- [ ] `0007` merge `bld` DJ history into `djfeed` (after `dance-folly-website`)
-- [ ] `0008` assign early-dev DJ owners to Stephen
-- [ ] `0009` drop `ldco.event_registrations`
-- [ ] `0010` drop `ldco.user_favorite_venues`
-- [ ] `0011` delete the two test venue events
-- [ ] `0012` merge venues (after admin and `dance-folly-website`). **Run it right after those two deploy:** until it runs, the new code reads venues from `ldco.venues` before the personal site's venues are there, so venue names on `dance-folly-website` show as unknown for those minutes.
+- [x] `0001` dance ids to strings
+- [x] `0002` `ldco` timestamps to Dates (Mountain Time for offset-less strings)
+- [x] `0003` user ids to strings (after `ldco-auth` is live)
+- [x] `0004` `bld.events.durationMinutes` to number
+- [x] `0005` remove stub tracks (after `line-dance-manager`, `line-dance-dj-feed`, `dance-folly-website`)
+- [x] `0006` retire `djfeed.user_profiles` (after `line-dance-dj-feed`, admin)
+- [x] `0007` merge `bld` DJ history into `djfeed` (after `dance-folly-website`)
+- [x] `0008` assign early-dev DJ owners to Stephen
+- [x] `0009` drop `ldco.event_registrations`
+- [x] `0010` drop `ldco.user_favorite_venues`
+- [x] `0011` delete the two test venue events
+- [x] `0012` merge venues (after admin and `dance-folly-website`). **Run it right after those two deploy:** until it runs, the new code reads venues from `ldco.venues` before the personal site's venues are there, so venue names on `dance-folly-website` show as unknown for those minutes.
 
 Afterwards:
-- [ ] `/collections` in the deployed UI shows no violations, and `/relationships` shows no new dangling references.
-- [ ] `npm run db:sync-local` to bring the local copy back in line with live.
+- [x] `/collections` in the deployed UI shows no violations, and `/relationships` shows no new dangling references.
+- [x] `npm run db:sync-local` to bring the local copy back in line with live.
 
 ## 5. Rotate the shared password (last)
 
