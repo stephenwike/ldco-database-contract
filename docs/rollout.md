@@ -94,6 +94,60 @@ The Atlas password of the user every app shares was pasted into the Copilot chat
 
 Optionally, give each app its own Atlas user at this point instead of one shared password, so a future rotation only affects one app.
 
+# Rollout 2: `ldco-lessons` (decisions 16 to 19, contract 0.13.0)
+
+**Status (2026-10-21): built and tested against the local copy; nothing pushed, nothing run on live.** Branches, all local and unpushed:
+
+| Repo | Branch | What |
+|---|---|---|
+| `ldco-database` | `feature/ldco-lessons` | Contract 0.13.0, migrations `0013` / `0014`, decisions 16 to 19 |
+| `line-dance-manager` | `feature/instructor-dashboard-redesign` | Instructor dashboard and schedule on `ldco-lessons` |
+| `line-dance-manager-admin` | `feature/bld-to-ldco-lessons` (worktree `../line-dance-manager-admin-lessons`) | BLD pages read and write `ldco-lessons` |
+| `dance-folly-website` | `feature/ldco-lessons` | Site reads `ldco-lessons`, same API responses as before |
+
+Tested locally: the site's `getevents` / `getvenues` / `getdances` and the admin's read routes return the same output from `ldco-lessons` as the old code does from `bld`; the admin's write paths (17 checks) and the dashboard (27 + 8 + 6 + 5 checks) pass; data written by the admin shows identically in the dashboard and on the site.
+
+## 0. Before starting
+
+- [ ] Commit the in-progress admin work (Social Posts, `lib/db.ts`, dashboard and layout) on admin `main`, then merge `feature/bld-to-ldco-lessons` into it. Both add a database accessor (`getLessonsDb` in `lib/db.ts` there, `lib/lessons.ts` here); keep one.
+- [ ] Decide when `beyond-line-dance-webhooks` and the admin's Social Posts move to `bld.social_posts` (decision 19). They can go live before or after this rollout; they only read the schedule.
+- [ ] Check the Atlas user the apps share can read and write a new database, `ldco-lessons` (a role scoped to named databases would need it added).
+- [ ] Pick a quiet time: between step 4 and step 5, anything changed in the admin's BLD pages goes to `bld` and has to be copied again.
+
+## 1. Back up and dry-run
+
+- [ ] `npm run db:backup-live` (now includes `ldco-lessons`, empty until step 4).
+- [ ] `npm run db:migrate:live plan 0013-create-ldco-lessons-from-bld`. Live has changed since the local copy (2026-10-15): expect more events and history rows. It reports **problems** if a history row names a venue label it doesn't know; add the label to `HISTORY_VENUES` in the migration before applying (apply refuses while there are problems).
+- [ ] `npm run db:migrate:live plan 0014-ldco-venue-time-zone-and-validation`.
+
+## 2. Publish the contract
+
+- [ ] Merge `feature/ldco-lessons` into `main` and push. Vercel deploys 0.13.0 to `/api/contract`.
+- [ ] Every app's next build now fails its contract check until it's updated: in each of the seven apps (`line-dance-manager`, `line-dance-manager-admin`, `dance-folly-website`, `line-dance-dj-feed`, `copperknob-alert`, `ldco-auth`, `beyond-line-dance-webhooks`) run `npm install github:stephenwike/ldco-database-contract` (`pnpm add …` for the pnpm apps) and commit the lockfile. Running deployments are unaffected until they rebuild.
+
+## 3. Push the app branches (don't deploy yet)
+
+- [ ] Push and open PRs for the three app branches above, so they're ready to merge in one sitting. Vercel preview builds need the 0.13.0 dependency from step 2.
+
+## 4. Migrate live
+
+- [ ] `npm run db:migrate:live apply 0013-create-ldco-lessons-from-bld` (insert-only; `bld` keeps working).
+- [ ] `npm run db:migrate:live apply 0014-ldco-venue-time-zone-and-validation`.
+- [ ] Check `/collections` shows `ldco-lessons` with no violations.
+
+## 5. Deploy, right after step 4
+
+- [ ] Merge and deploy `line-dance-manager-admin`, `dance-folly-website` and `line-dance-manager`.
+- [ ] If anything was changed in the admin's BLD pages since step 4, re-run `apply 0013` (it copies new documents; edits to already-copied ones have to be redone in the admin).
+- [ ] Check: beyondlinedance.com's calendar and current venues, a dance page's venue filter, the admin's Plan Lesson and Commit Lessons pages, and the instructor dashboard's Schedule tab all show the same classes and dates.
+- [ ] `npm run db:sync-local`.
+
+## 6. Afterwards
+
+- [ ] A migration dropping `bld`'s schedule collections (`event_types`, `frequencies`, `events`, `lessons`, `event_templates`); `bld` itself stays (decision 19).
+- [ ] Re-run `contract:infer` once special events, registered substitutes, confirmed documents, history `lessonId`s and co-instructor requests exist on live, and add `bld.social_posts` once it has documents.
+- [ ] Rollout 1's step 5 (rotate the shared Atlas password) is still open.
+
 ## If something goes wrong
 
 There is no automatic rollback (decision 11: fix forward). To restore one database from the step-1 backup:
