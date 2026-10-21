@@ -77,7 +77,7 @@ export const purposes: Purpose[] = [
     notes: [
       "ldco.venues is the one venue list; bld (Stephen's schedule) points at it from event_types.venueId. An instructor's own venues are instructor_venues.",
       "Three different collections are called events (venue events, class occurrences, ticketed events).",
-      "Decision 18: ldco-lessons is the instructors' own database (event types, frequencies, events, lessons, who teaches what). It replaces bld, which stays until the admin and the personal site read ldco-lessons; then a migration drops it. Dancer-facing apps read it; only instructor features write it.",
+      "Decision 18: ldco-lessons is the instructors' own database (event types, frequencies, events, lessons, who teaches what). It replaces bld's schedule collections, which stay until the admin and the personal site read ldco-lessons; bld itself stays for Beyond Line Dance-only data (decision 19). Dancer-facing apps read it; only instructor features write it.",
       "Venues, instructors and instructor_venues stay in ldco, so dancer-facing apps don't need instructor scopes.",
     ],
   },

@@ -104,6 +104,14 @@ Decided 2026-10-19. Supersedes decision 16's home, collection names and field fo
 - **Migrations:** `0013` creates `ldco-lessons` from `bld` (insert-only; `bld` keeps working until the apps switch), and `0014` gives `ldco.venues` a time zone and adds the validation fields to `ldco.venues` and `ldco.lessons`. Both were rewritten on 2026-10-19 before going live; the earlier local versions copied `bld` into `ldco` under decision 16's names and were never published. `db:sync-local` and `db:backup-live` include `ldco-lessons`.
 - **Open to change:** UTC times and the other formats can be adjusted if a better approach turns up while the consuming apps move over.
 
+## 19. `bld` stays, for data only Beyond Line Dance uses
+Decided 2026-10-21. Supersedes the part of decision 18 that drops `bld` entirely.
+
+- Data isolated to Stephen's instructor website and its tools (beyondlinedance.com / `dance-folly-website`, `beyond-line-dance-webhooks`, the admin's Beyond Line Dance pages) lives in `bld`. Shared instructor data stays in `ldco-lessons`, which every instructor uses.
+- First such collection: `bld.social_posts`, the Facebook posts `beyond-line-dance-webhooks` drafts and publishes from Stephen's schedule (lesson plans, the weekly outline, cancellations), reviewed on the admin's Social Posts page. It reads the schedule from `ldco-lessons` filtered to Stephen's instructor id, and writes only to `bld`.
+- What's dropped after the apps move is `bld`'s schedule collections (`event_types`, `frequencies`, `events`, `lessons`, `event_templates`), not the database.
+- `social_posts` joins the contract (under `bld`) once it has documents to infer from.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?
@@ -176,15 +184,16 @@ The step-by-step checklist is [rollout.md](rollout.md). Release order matters ev
 - Plan the moves and merges (starting with the duplicated DJ collections in `bld` / `djfeed`) as migrations, staged through the contract version check.
 - Remove the duplicates found in the investigation (table in [database-layout.md](database-layout.md#duplicate-investigation-2026-10-14)): (done locally: `djfeed.user_profiles` retired in favour of `ldco.login_events` and `ldco.users`), (done locally: `bld`'s DJ history merged into `djfeed`, its test-mode payments archived, `bld.spotify_tokens` dropped and the old DJ code removed from `dance-folly-website`), (done locally: `ldco.event_registrations` and `user_favorite_venues` dropped, early-dev DJ owners assigned to Stephen), (done locally: `ldco.venues` / `bld.venues` merged by migration `0012`, with "my venues" as `instructor_venues`).
 
-### Instructor schedule (decisions 16 to 18)
+### Instructor schedule (decisions 16 to 19)
 - Migrations `0013` (create `ldco-lessons` from `bld`) and `0014` (`ldco` venue time zone and validation fields) are applied locally only. On live, `0013` runs before the apps that read `ldco-lessons` deploy; it's insert-only, so `bld` keeps working meanwhile.
-- Point `line-dance-manager-admin`'s `/api/admin/bld/*` routes and `dance-folly-website` (`lib/schedule.js`, `getevents`, `getvenues`, `getdances`) at `ldco-lessons`, filtered to Stephen's instructor id through `event_instructors`, and adapt them to decision 18's formats (UTC `startAt` / `endAt`, 24-hour frequency times, string ids). Anything written to `bld` between `0013` and that deploy has to be re-copied, so do both in one sitting. Then add a migration that drops `bld`.
+- Point `line-dance-manager-admin`'s `/api/admin/bld/*` routes and `dance-folly-website` (`lib/schedule.js`, `getevents`, `getvenues`, `getdances`) at `ldco-lessons`, filtered to Stephen's instructor id through `event_instructors`, and adapt them to decision 18's formats (UTC `startAt` / `endAt`, 24-hour frequency times, string ids). Anything written to `bld` between `0013` and that deploy has to be re-copied, so do both in one sitting. Then add a migration that drops `bld`'s schedule collections (decision 19 keeps the database).
 - The admin's commit step stops hardcoding `-07:00` when it writes `ldco-lessons.lessons` (a UTC `date`).
 - `ldco.venues.timeZone` is now on every venue. Apps that create venues (`line-dance-manager`'s add-venue, the admin) must set it (`America/Denver` until venues outside Colorado exist).
 - Students for the new events: student counts and dance requests in `line-dance-manager` come from dancers saving a weekly lesson (`user_lessons` → `ldco.lessons`). Dancers need a way to save an event type (or an event) before the Students tab reflects events in `ldco-lessons`.
 - Re-run `contract:infer` once special events, event-level instructor links, registered substitutes, confirmed (`verifiedAt`) documents, history `lessonId`s and co-instructor requests exist (see the list in [data-model.md](data-model.md#instructor-schedule-ldco-lessons)).
 - On live, every app that creates venues or weekly lessons must write `verifiedAt: null` / `verifiedBy: null` (and venues a `timeZone`), or new documents violate the contract: `line-dance-manager` does; the admin's venue create and its approval of `ldco-reviews` venues and lessons into `ldco` don't yet.
 - Each app that reads or writes `ldco-lessons` needs it in its database access (the shared Atlas user, or per-app users after the password rotation in [rollout.md](rollout.md)).
+- `beyond-line-dance-webhooks` and the admin's Social Posts routes store posts in `bld.social_posts` (decision 19), not `ldco-lessons`; both currently point at `ldco-lessons` and need switching. Add `bld.social_posts` to the contract, purposes and descriptions once it has documents.
 - `line-dance-manager`'s instructor dashboard (branch `feature/instructor-dashboard-redesign`, uncommitted) reads and writes `ldco-lessons` with decision 18's names (`core/db/ldcoLessons.ts`), tested against the local copy. Its API responses keep their own field names (`danceName`, a lesson `status` worked out from `committed` / `skipped`, `substituteName`), mapped at the edge.
 
 ### Retire `beyondlinedance-companion`
