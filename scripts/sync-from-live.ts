@@ -3,7 +3,7 @@ import { createInterface } from "node:readline/promises";
 
 // Copies live -> local docker Mongo. Live is only read (mongodump); the restore target must be localhost.
 const container = process.env.LOCAL_MONGO_CONTAINER ?? "ldco-mongo";
-const databases = (process.env.SYNC_DATABASES ?? "ldco,djfeed,bld,copperknob_alert,ldco-events,ldco-reviews,music_catalog").split(",").map((d) => d.trim()).filter(Boolean);
+const databases = (process.env.SYNC_DATABASES ?? "ldco,djfeed,bld,copperknob_alert,ldco-events,ldco-reviews,ldco-lessons,music_catalog").split(",").map((d) => d.trim()).filter(Boolean);
 const liveUri = process.env.LIVE_MONGODB_URI;
 const localEnvUri = process.env.MONGODB_URI;
 

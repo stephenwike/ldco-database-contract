@@ -8,6 +8,9 @@ export const LdcoVenuesSchema = z.strictObject({
   geolocation: z.array(z.number()),
   phone: z.string(),
   website: z.string(),
+  timeZone: z.string(),
+  verifiedAt: z.null(),
+  verifiedBy: z.null(),
   city: z.string().optional(),
   state: z.string().optional(),
 });

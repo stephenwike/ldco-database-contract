@@ -1,4 +1,4 @@
-// Inferred from 548 documents by scripts/infer-contract.ts; review before relying on it.
+// Inferred from 551 documents by scripts/infer-contract.ts; review before relying on it.
 import { z } from "zod";
 import { bsonDate } from "../../bson";
 

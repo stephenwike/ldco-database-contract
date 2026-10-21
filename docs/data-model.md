@@ -21,6 +21,8 @@ Database `ldco`, collection `dances`.
 
 ## Stephen's class schedule (`bld`)
 
+The source of `ldco-lessons` (decision 18); `bld` is dropped once the admin and the personal site read `ldco-lessons`. Kept here to explain where the data came from.
+
 How the personal site (`dance-folly-website`, beyondlinedance.com) and the admin's BLD pages model Stephen's teaching. Decision 15 records the rules.
 
 | Collection | One document is | Example |
@@ -41,3 +43,36 @@ How the personal site (`dance-folly-website`, beyondlinedance.com) and the admin
 
 **Turning a class off.** Switch the event type (or just one frequency) off in the admin. It then stops being projected, its stored future events are hidden, and its venue drops out of "current venues". Its history in `bld.lessons` stays, so the venue still appears in the dance page's history filter. End dates are optional and only needed if you want a class to stop on a known date.
 
+
+## Instructor schedule (`ldco-lessons`)
+
+Decision 18. Any instructor's schedule, in its own database. Migration `0013` created it from `bld` (the section above), keeping `bld`'s collection and field names with the approved changes. Venues, instructors and `instructor_venues` stay in `ldco`.
+
+| Collection | One document is | Key fields |
+|---|---|---|
+| `event_types` | A recurring event at a venue | `venueId` (`ldco.venues`), `title`, `level`, `price`, `defaultStartTime` (`HH:mm`, local), `defaultDurationMinutes`, `isActive`, `createdBy` (instructor id, final say), `verifiedAt` / `verifiedBy` |
+| `frequencies` | When an event type repeats | `eventTypeId`, `kind`: `WEEKLY` (`byDay`: `MO`…`SU`) or `MONTHLY_NTH_WEEKDAY` (`weekday`, `nth`); `startTime` (`HH:mm`, local), `durationMinutes`, optional `startDate` / `endDate` (`YYYY-MM-DD`), optional `isActive` (missing = on) |
+| `events` | One stored event | `eventTypeId` (absent for a special event), `date` (local `YYYY-MM-DD`), `startAt` / `endAt` (UTC Dates), `timeZone`, `isCancelled`, `cancelNote`, `substitute` (name), `substituteInstructorId`, `specialNote`, `lessons[]`, `verifiedAt` / `verifiedBy` |
+| `events.lessons` (embedded) | One lesson planned or taught that day | `_id`, `startAt` (UTC, or null for no time yet), `dance` (name) and/or `danceId`, `level`, `link`, `committed` (taught), `skipped` |
+| `lessons` | History: one dance taught | `danceId` or `danceName`, `venue` (the name as written), `date` (UTC Date), `instructorId`, `venueId`, `eventId` (when known), `lessonId` (the `events` lesson it came from; null on migrated rows) |
+| `event_templates` | A reusable lesson plan for an event type | `name`, `isDefault`, `lessons[]` with `time` (`HH:mm`, local), `dance`, `level`, `link` |
+| `event_instructors` | An instructor teaching an event type or a special event | `instructorId`, and one of `eventTypeId` / `eventId`; `role`: `creator` or `co-instructor` |
+| `event_instructor_requests` | A request to co-teach, waiting for the creator | `instructorId`, one of `eventTypeId` / `eventId`, `requestedBy` (user id), `createdAt` |
+
+**A lesson's state** is `committed` (taught), `skipped`, or neither (planned). "Changed" is editing a planned lesson before marking it taught.
+
+**Special events** are `events` with no `eventTypeId`; they carry `venueId`, `title` and `createdBy`, and their instructors are `event_instructors` rows with an `eventId`. An event that runs several days just has a later `endAt`.
+
+**Finding an instructor's schedule:** their `event_instructors` rows → those `event_types` (and special `events`) → the types' `frequencies` and stored `events`. Projected dates come from running frequencies (decision 15's rule), matched to stored events on `eventTypeId` + `date`. Venue and instructor names come from `ldco` in a separate query (no `$lookup` across databases). The personal site does the same for Stephen's instructor id.
+
+**History:** `lessons.instructorId` and `venueId` are recorded when a lesson is marked taught, so later changes to who's linked don't rewrite it. 786 of the 1,579 migrated rows were matched to the exact event (one stored event at that venue containing the time); the rest predate stored events. `venue` keeps the label as written ("Barnum Rec Center - Tuesdays"), and `venueId` maps it to the venue. 779 migrated dates were an hour off (the admin's hardcoded `-07:00` during daylight time) and were corrected. A history query must never filter on an empty `lessonId`: migrated rows have none, so it would match all of them.
+
+**Fields the generated schemas don't show yet.** The contract is inferred from data, and the migrated data has no special events, registered substitutes, confirmed documents or co-instructor requests. These are part of the design and appear in the contract once real documents use them (re-run `contract:infer`):
+- `events` for a special event: no `eventTypeId`; `venueId`, `title` and `createdBy` instead.
+- `events.substituteInstructorId` as a string (only `null` so far).
+- `events.lessons.startAt` as `null` for a lesson with no time yet.
+- `event_instructors` rows with `eventId` instead of `eventTypeId`.
+- `event_instructor_requests` documents (the collection is empty).
+- `lessons.lessonId` as a string.
+- `event_templates.lessons.link` as a string.
+- `verifiedAt` as a Date and `verifiedBy` as a user id on `event_types` and `events` here, and on `ldco.venues` and `ldco.lessons` (decision 17; all null so far).

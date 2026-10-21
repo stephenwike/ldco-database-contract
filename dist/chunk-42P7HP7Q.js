@@ -1,12 +1,12 @@
 // src/contract/index.ts
 import { createHash } from "crypto";
-import { z as z68 } from "zod";
+import { z as z75 } from "zod";
 
 // contract.lock.json
-var hash = "693d089c553a10a253ff312cd8b7cf60a4ce2897c9bffc715069eba9bcd6f713";
+var hash = "8b02dc1516adf821a710870defb8da295593f280ae58f3053e518503528474b1";
 
 // package.json
-var version = "0.12.0";
+var version = "0.13.0";
 
 // src/contract/collections/bld/event_templates.ts
 import { z as z2 } from "zod";
@@ -571,7 +571,9 @@ import { z as z35 } from "zod";
 var LdcoInstructorVenuesSchema = z35.strictObject({
   _id: z35.string(),
   instructorId: z35.string(),
-  venueId: z35.string()
+  venueId: z35.string(),
+  createdAt: bsonDate.optional(),
+  updatedAt: bsonDate.optional()
 });
 
 // src/contract/collections/ldco/instructors.ts
@@ -580,7 +582,8 @@ var LdcoInstructorsSchema = z36.strictObject({
   _id: z36.string(),
   name: z36.string(),
   associatedUserId: z36.string().optional(),
-  userId: z36.string().optional()
+  userId: z36.string().optional(),
+  bio: z36.string().optional()
 });
 
 // src/contract/collections/ldco/lessons.ts
@@ -594,7 +597,9 @@ var LdcoLessonsSchema = z37.strictObject({
   lessoncost: z37.string(),
   notes: z37.string(),
   difficulty: z37.string(),
-  venueid: z37.string()
+  venueid: z37.string(),
+  verifiedAt: z37.null(),
+  verifiedBy: z37.null()
 });
 
 // src/contract/collections/ldco/login_events.ts
@@ -789,6 +794,9 @@ var LdcoVenuesSchema = z55.strictObject({
   geolocation: z55.array(z55.number()),
   phone: z55.string(),
   website: z55.string(),
+  timeZone: z55.string(),
+  verifiedAt: z55.null(),
+  verifiedBy: z55.null(),
   city: z55.string().optional(),
   state: z55.string().optional()
 });
@@ -841,87 +849,212 @@ var LdcoEventsEventsSchema = z57.strictObject({
   venueName: z57.string()
 });
 
-// src/contract/collections/ldco-reviews/choreographers.ts
+// src/contract/collections/ldco-lessons/event_instructor_requests.ts
 import { z as z58 } from "zod";
-var LdcoReviewsChoreographersSchema = z58.looseObject({ _id: z58.union([z58.string(), objectId]) });
+var LdcoLessonsEventInstructorRequestsSchema = z58.looseObject({ _id: z58.union([z58.string(), objectId]) });
+
+// src/contract/collections/ldco-lessons/event_instructors.ts
+import { z as z59 } from "zod";
+var LdcoLessonsEventInstructorsSchema = z59.strictObject({
+  _id: z59.string(),
+  instructorId: z59.string(),
+  eventTypeId: z59.string(),
+  createdAt: bsonDate,
+  role: z59.string()
+});
+
+// src/contract/collections/ldco-lessons/event_templates.ts
+import { z as z60 } from "zod";
+var LdcoLessonsEventTemplatesSchema = z60.strictObject({
+  _id: z60.string(),
+  createdAt: bsonDate,
+  eventTypeId: z60.string(),
+  isDefault: z60.boolean(),
+  lessons: z60.array(z60.strictObject({
+    time: z60.string(),
+    dance: z60.string().nullable(),
+    level: z60.string().nullable(),
+    link: z60.null()
+  })),
+  name: z60.string(),
+  updatedAt: bsonDate
+});
+
+// src/contract/collections/ldco-lessons/event_types.ts
+import { z as z61 } from "zod";
+var LdcoLessonsEventTypesSchema = z61.strictObject({
+  _id: z61.string(),
+  createdAt: bsonDate,
+  createdBy: z61.string(),
+  defaultDurationMinutes: z61.number(),
+  defaultStartTime: z61.string().nullable(),
+  isActive: z61.boolean(),
+  level: z61.string(),
+  price: z61.string(),
+  title: z61.string(),
+  updatedAt: bsonDate,
+  venueId: z61.string(),
+  verifiedAt: z61.null(),
+  verifiedBy: z61.null()
+});
+
+// src/contract/collections/ldco-lessons/events.ts
+import { z as z62 } from "zod";
+var LdcoLessonsEventsSchema = z62.strictObject({
+  _id: z62.string(),
+  cancelNote: z62.string().nullable(),
+  createdAt: bsonDate,
+  date: z62.string(),
+  endAt: bsonDate,
+  eventTypeId: z62.string(),
+  isCancelled: z62.boolean(),
+  lessons: z62.array(z62.strictObject({
+    _id: z62.string(),
+    startAt: bsonDate,
+    dance: z62.string().nullable(),
+    danceId: z62.string().nullable(),
+    level: z62.string().nullable(),
+    link: z62.string().nullable(),
+    committed: z62.boolean(),
+    skipped: z62.boolean()
+  })),
+  specialNote: z62.string().nullable(),
+  startAt: bsonDate,
+  substitute: z62.string().nullable(),
+  substituteInstructorId: z62.null(),
+  timeZone: z62.string(),
+  updatedAt: bsonDate,
+  verifiedAt: z62.null(),
+  verifiedBy: z62.null()
+});
+
+// src/contract/collections/ldco-lessons/frequencies.ts
+import { z as z63 } from "zod";
+var LdcoLessonsFrequenciesSchema = z63.strictObject({
+  _id: z63.string(),
+  byDay: z63.array(z63.string()).optional(),
+  createdAt: bsonDate,
+  durationMinutes: z63.number(),
+  eventTypeId: z63.string(),
+  isActive: z63.boolean().optional(),
+  kind: z63.string(),
+  startDate: z63.string().optional(),
+  startTime: z63.string(),
+  updatedAt: bsonDate,
+  endDate: z63.string().optional(),
+  nth: z63.number().optional(),
+  weekday: z63.string().optional()
+});
+
+// src/contract/collections/ldco-lessons/lessons.ts
+import { z as z64 } from "zod";
+var LdcoLessonsLessonsSchema = z64.strictObject({
+  _id: z64.string(),
+  danceId: z64.string().optional(),
+  date: bsonDate,
+  eventId: z64.string().nullable(),
+  instructorId: z64.string(),
+  lessonId: z64.null(),
+  venue: z64.string(),
+  venueId: z64.string(),
+  danceName: z64.string().optional()
+});
+
+// src/contract/collections/ldco-reviews/choreographers.ts
+import { z as z65 } from "zod";
+var LdcoReviewsChoreographersSchema = z65.looseObject({ _id: z65.union([z65.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/dances.ts
-import { z as z59 } from "zod";
-var LdcoReviewsDancesSchema = z59.looseObject({ _id: z59.union([z59.string(), objectId]) });
+import { z as z66 } from "zod";
+var LdcoReviewsDancesSchema = z66.looseObject({ _id: z66.union([z66.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/join_choreographer_appeals.ts
-import { z as z60 } from "zod";
-var LdcoReviewsJoinChoreographerAppealsSchema = z60.looseObject({ _id: z60.union([z60.string(), objectId]) });
+import { z as z67 } from "zod";
+var LdcoReviewsJoinChoreographerAppealsSchema = z67.looseObject({ _id: z67.union([z67.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/lessons.ts
-import { z as z61 } from "zod";
-var LdcoReviewsLessonsSchema = z61.strictObject({
+import { z as z68 } from "zod";
+var LdcoReviewsLessonsSchema = z68.strictObject({
   _id: objectId,
-  lessonday: z61.string(),
-  lessonstart: z61.string(),
-  instructors: z61.array(z61.string()),
-  duration: z61.string(),
-  lessoncost: z61.string(),
-  notes: z61.string(),
-  difficulty: z61.string(),
-  venueid: z61.string()
+  lessonday: z68.string(),
+  lessonstart: z68.string(),
+  instructors: z68.array(z68.string()),
+  duration: z68.string(),
+  lessoncost: z68.string(),
+  notes: z68.string(),
+  difficulty: z68.string(),
+  venueid: z68.string()
 });
 
 // src/contract/collections/ldco-reviews/reports.ts
-import { z as z62 } from "zod";
-var LdcoReviewsReportsSchema = z62.looseObject({ _id: z62.union([z62.string(), objectId]) });
+import { z as z69 } from "zod";
+var LdcoReviewsReportsSchema = z69.looseObject({ _id: z69.union([z69.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/tracks.ts
-import { z as z63 } from "zod";
-var LdcoReviewsTracksSchema = z63.looseObject({ _id: z63.union([z63.string(), objectId]) });
+import { z as z70 } from "zod";
+var LdcoReviewsTracksSchema = z70.looseObject({ _id: z70.union([z70.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/venue_users.ts
-import { z as z64 } from "zod";
-var LdcoReviewsVenueUsersSchema = z64.strictObject({
-  _id: z64.string(),
-  userId: z64.string(),
-  venueId: z64.string(),
+import { z as z71 } from "zod";
+var LdcoReviewsVenueUsersSchema = z71.strictObject({
+  _id: z71.string(),
+  userId: z71.string(),
+  venueId: z71.string(),
   createdAt: bsonDate,
-  requestedBy: z64.string()
+  requestedBy: z71.string()
 });
 
 // src/contract/collections/ldco-reviews/venues.ts
-import { z as z65 } from "zod";
-var LdcoReviewsVenuesSchema = z65.looseObject({ _id: z65.union([z65.string(), objectId]) });
+import { z as z72 } from "zod";
+var LdcoReviewsVenuesSchema = z72.strictObject({
+  _id: z72.string(),
+  venuename: z72.string(),
+  venueaddress: z72.string(),
+  geolocation: z72.array(z72.number()),
+  phone: z72.string(),
+  website: z72.string(),
+  contactName: z72.string(),
+  contactEmail: z72.string(),
+  contactPhone: z72.string(),
+  createdAt: bsonDate,
+  timeZone: z72.string(),
+  verifiedAt: z72.null(),
+  verifiedBy: z72.null()
+});
 
 // src/contract/collections/ldco-reviews/verify_user_instructor.ts
-import { z as z66 } from "zod";
-var LdcoReviewsVerifyUserInstructorSchema = z66.strictObject({
+import { z as z73 } from "zod";
+var LdcoReviewsVerifyUserInstructorSchema = z73.strictObject({
   _id: objectId,
-  userId: z66.string(),
-  instructorId: z66.string(),
+  userId: z73.string(),
+  instructorId: z73.string(),
   createdAt: bsonDate,
-  resolved: z66.boolean(),
-  resolution: z66.string(),
+  resolved: z73.boolean(),
+  resolution: z73.string(),
   resolvedAt: bsonDate,
-  resolvedBy: z66.string()
+  resolvedBy: z73.string()
 });
 
 // src/contract/collections/music_catalog/tracks.ts
-import { z as z67 } from "zod";
-var MusicCatalogTracksSchema = z67.strictObject({
-  _id: z67.string(),
-  artist: z67.string(),
+import { z as z74 } from "zod";
+var MusicCatalogTracksSchema = z74.strictObject({
+  _id: z74.string(),
+  artist: z74.string(),
   createdAt: bsonDate,
-  disambiguation: z67.string(),
-  durationMs: z67.number().nullable(),
-  isrcs: z67.array(z67.string()),
-  nArtist: z67.string(),
-  nTitle: z67.string(),
-  rank: z67.number(),
+  disambiguation: z74.string(),
+  durationMs: z74.number().nullable(),
+  isrcs: z74.array(z74.string()),
+  nArtist: z74.string(),
+  nTitle: z74.string(),
+  rank: z74.number(),
   rankedAt: bsonDate.optional(),
-  source: z67.string(),
-  sourceId: z67.string(),
-  title: z67.string(),
+  source: z74.string(),
+  sourceId: z74.string(),
+  title: z74.string(),
   updatedAt: bsonDate,
-  variantKey: z67.string(),
-  words: z67.array(z67.string()),
-  year: z67.number().nullable()
+  variantKey: z74.string(),
+  words: z74.array(z74.string()),
+  year: z74.number().nullable()
 });
 
 // src/contract/collections/index.ts
@@ -982,6 +1115,13 @@ var collections = {
   "ldco.venues": { database: "ldco", name: "venues", schema: LdcoVenuesSchema },
   "ldco-events.event_registrations": { database: "ldco-events", name: "event_registrations", schema: LdcoEventsEventRegistrationsSchema },
   "ldco-events.events": { database: "ldco-events", name: "events", schema: LdcoEventsEventsSchema },
+  "ldco-lessons.event_instructor_requests": { database: "ldco-lessons", name: "event_instructor_requests", schema: LdcoLessonsEventInstructorRequestsSchema },
+  "ldco-lessons.event_instructors": { database: "ldco-lessons", name: "event_instructors", schema: LdcoLessonsEventInstructorsSchema },
+  "ldco-lessons.event_templates": { database: "ldco-lessons", name: "event_templates", schema: LdcoLessonsEventTemplatesSchema },
+  "ldco-lessons.event_types": { database: "ldco-lessons", name: "event_types", schema: LdcoLessonsEventTypesSchema },
+  "ldco-lessons.events": { database: "ldco-lessons", name: "events", schema: LdcoLessonsEventsSchema },
+  "ldco-lessons.frequencies": { database: "ldco-lessons", name: "frequencies", schema: LdcoLessonsFrequenciesSchema },
+  "ldco-lessons.lessons": { database: "ldco-lessons", name: "lessons", schema: LdcoLessonsLessonsSchema },
   "ldco-reviews.choreographers": { database: "ldco-reviews", name: "choreographers", schema: LdcoReviewsChoreographersSchema },
   "ldco-reviews.dances": { database: "ldco-reviews", name: "dances", schema: LdcoReviewsDancesSchema },
   "ldco-reviews.join_choreographer_appeals": { database: "ldco-reviews", name: "join_choreographer_appeals", schema: LdcoReviewsJoinChoreographerAppealsSchema },
@@ -997,7 +1137,7 @@ var collections = {
 // src/contract/index.ts
 var CONTRACT_VERSION = version;
 function computeContractHash() {
-  const description = Object.entries(collections).sort(([a], [b]) => a.localeCompare(b)).map(([key, c]) => [key, c.database, c.name, z68.toJSONSchema(c.schema, { unrepresentable: "any" })]);
+  const description = Object.entries(collections).sort(([a], [b]) => a.localeCompare(b)).map(([key, c]) => [key, c.database, c.name, z75.toJSONSchema(c.schema, { unrepresentable: "any" })]);
   return createHash("sha256").update(JSON.stringify(description)).digest("hex");
 }
 var CONTRACT_HASH = hash;
@@ -1059,6 +1199,13 @@ export {
   LdcoVenuesSchema,
   LdcoEventsEventRegistrationsSchema,
   LdcoEventsEventsSchema,
+  LdcoLessonsEventInstructorRequestsSchema,
+  LdcoLessonsEventInstructorsSchema,
+  LdcoLessonsEventTemplatesSchema,
+  LdcoLessonsEventTypesSchema,
+  LdcoLessonsEventsSchema,
+  LdcoLessonsFrequenciesSchema,
+  LdcoLessonsLessonsSchema,
   LdcoReviewsChoreographersSchema,
   LdcoReviewsDancesSchema,
   LdcoReviewsJoinChoreographerAppealsSchema,

@@ -6,7 +6,7 @@ import { join } from "node:path";
 // Live is only read (mongodump, run inside the local Mongo container so its tools match live).
 // Restore one database: docker exec -i ldco-mongo mongorestore --uri="<uri>" --archive --gzip --drop --nsInclude="<db>.*" < <file>
 const container = process.env.LOCAL_MONGO_CONTAINER ?? "ldco-mongo";
-const databases = (process.env.SYNC_DATABASES ?? "ldco,djfeed,bld,copperknob_alert,ldco-events,ldco-reviews,music_catalog")
+const databases = (process.env.SYNC_DATABASES ?? "ldco,djfeed,bld,copperknob_alert,ldco-events,ldco-reviews,ldco-lessons,music_catalog")
   .split(",")
   .map((d) => d.trim())
   .filter(Boolean);

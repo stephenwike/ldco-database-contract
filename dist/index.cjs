@@ -59,6 +59,13 @@ __export(contract_exports, {
   LdcoHostDancersSchema: () => LdcoHostDancersSchema,
   LdcoInstructorVenuesSchema: () => LdcoInstructorVenuesSchema,
   LdcoInstructorsSchema: () => LdcoInstructorsSchema,
+  LdcoLessonsEventInstructorRequestsSchema: () => LdcoLessonsEventInstructorRequestsSchema,
+  LdcoLessonsEventInstructorsSchema: () => LdcoLessonsEventInstructorsSchema,
+  LdcoLessonsEventTemplatesSchema: () => LdcoLessonsEventTemplatesSchema,
+  LdcoLessonsEventTypesSchema: () => LdcoLessonsEventTypesSchema,
+  LdcoLessonsEventsSchema: () => LdcoLessonsEventsSchema,
+  LdcoLessonsFrequenciesSchema: () => LdcoLessonsFrequenciesSchema,
+  LdcoLessonsLessonsSchema: () => LdcoLessonsLessonsSchema,
   LdcoLessonsSchema: () => LdcoLessonsSchema,
   LdcoLoginEventsSchema: () => LdcoLoginEventsSchema,
   LdcoOauthAuthCodesSchema: () => LdcoOauthAuthCodesSchema,
@@ -93,13 +100,13 @@ __export(contract_exports, {
 });
 module.exports = __toCommonJS(contract_exports);
 var import_node_crypto = require("crypto");
-var import_zod68 = require("zod");
+var import_zod75 = require("zod");
 
 // contract.lock.json
-var hash = "693d089c553a10a253ff312cd8b7cf60a4ce2897c9bffc715069eba9bcd6f713";
+var hash = "8b02dc1516adf821a710870defb8da295593f280ae58f3053e518503528474b1";
 
 // package.json
-var version = "0.12.0";
+var version = "0.13.0";
 
 // src/contract/collections/bld/event_templates.ts
 var import_zod2 = require("zod");
@@ -664,7 +671,9 @@ var import_zod35 = require("zod");
 var LdcoInstructorVenuesSchema = import_zod35.z.strictObject({
   _id: import_zod35.z.string(),
   instructorId: import_zod35.z.string(),
-  venueId: import_zod35.z.string()
+  venueId: import_zod35.z.string(),
+  createdAt: bsonDate.optional(),
+  updatedAt: bsonDate.optional()
 });
 
 // src/contract/collections/ldco/instructors.ts
@@ -673,7 +682,8 @@ var LdcoInstructorsSchema = import_zod36.z.strictObject({
   _id: import_zod36.z.string(),
   name: import_zod36.z.string(),
   associatedUserId: import_zod36.z.string().optional(),
-  userId: import_zod36.z.string().optional()
+  userId: import_zod36.z.string().optional(),
+  bio: import_zod36.z.string().optional()
 });
 
 // src/contract/collections/ldco/lessons.ts
@@ -687,7 +697,9 @@ var LdcoLessonsSchema = import_zod37.z.strictObject({
   lessoncost: import_zod37.z.string(),
   notes: import_zod37.z.string(),
   difficulty: import_zod37.z.string(),
-  venueid: import_zod37.z.string()
+  venueid: import_zod37.z.string(),
+  verifiedAt: import_zod37.z.null(),
+  verifiedBy: import_zod37.z.null()
 });
 
 // src/contract/collections/ldco/login_events.ts
@@ -882,6 +894,9 @@ var LdcoVenuesSchema = import_zod55.z.strictObject({
   geolocation: import_zod55.z.array(import_zod55.z.number()),
   phone: import_zod55.z.string(),
   website: import_zod55.z.string(),
+  timeZone: import_zod55.z.string(),
+  verifiedAt: import_zod55.z.null(),
+  verifiedBy: import_zod55.z.null(),
   city: import_zod55.z.string().optional(),
   state: import_zod55.z.string().optional()
 });
@@ -934,87 +949,212 @@ var LdcoEventsEventsSchema = import_zod57.z.strictObject({
   venueName: import_zod57.z.string()
 });
 
-// src/contract/collections/ldco-reviews/choreographers.ts
+// src/contract/collections/ldco-lessons/event_instructor_requests.ts
 var import_zod58 = require("zod");
-var LdcoReviewsChoreographersSchema = import_zod58.z.looseObject({ _id: import_zod58.z.union([import_zod58.z.string(), objectId]) });
+var LdcoLessonsEventInstructorRequestsSchema = import_zod58.z.looseObject({ _id: import_zod58.z.union([import_zod58.z.string(), objectId]) });
+
+// src/contract/collections/ldco-lessons/event_instructors.ts
+var import_zod59 = require("zod");
+var LdcoLessonsEventInstructorsSchema = import_zod59.z.strictObject({
+  _id: import_zod59.z.string(),
+  instructorId: import_zod59.z.string(),
+  eventTypeId: import_zod59.z.string(),
+  createdAt: bsonDate,
+  role: import_zod59.z.string()
+});
+
+// src/contract/collections/ldco-lessons/event_templates.ts
+var import_zod60 = require("zod");
+var LdcoLessonsEventTemplatesSchema = import_zod60.z.strictObject({
+  _id: import_zod60.z.string(),
+  createdAt: bsonDate,
+  eventTypeId: import_zod60.z.string(),
+  isDefault: import_zod60.z.boolean(),
+  lessons: import_zod60.z.array(import_zod60.z.strictObject({
+    time: import_zod60.z.string(),
+    dance: import_zod60.z.string().nullable(),
+    level: import_zod60.z.string().nullable(),
+    link: import_zod60.z.null()
+  })),
+  name: import_zod60.z.string(),
+  updatedAt: bsonDate
+});
+
+// src/contract/collections/ldco-lessons/event_types.ts
+var import_zod61 = require("zod");
+var LdcoLessonsEventTypesSchema = import_zod61.z.strictObject({
+  _id: import_zod61.z.string(),
+  createdAt: bsonDate,
+  createdBy: import_zod61.z.string(),
+  defaultDurationMinutes: import_zod61.z.number(),
+  defaultStartTime: import_zod61.z.string().nullable(),
+  isActive: import_zod61.z.boolean(),
+  level: import_zod61.z.string(),
+  price: import_zod61.z.string(),
+  title: import_zod61.z.string(),
+  updatedAt: bsonDate,
+  venueId: import_zod61.z.string(),
+  verifiedAt: import_zod61.z.null(),
+  verifiedBy: import_zod61.z.null()
+});
+
+// src/contract/collections/ldco-lessons/events.ts
+var import_zod62 = require("zod");
+var LdcoLessonsEventsSchema = import_zod62.z.strictObject({
+  _id: import_zod62.z.string(),
+  cancelNote: import_zod62.z.string().nullable(),
+  createdAt: bsonDate,
+  date: import_zod62.z.string(),
+  endAt: bsonDate,
+  eventTypeId: import_zod62.z.string(),
+  isCancelled: import_zod62.z.boolean(),
+  lessons: import_zod62.z.array(import_zod62.z.strictObject({
+    _id: import_zod62.z.string(),
+    startAt: bsonDate,
+    dance: import_zod62.z.string().nullable(),
+    danceId: import_zod62.z.string().nullable(),
+    level: import_zod62.z.string().nullable(),
+    link: import_zod62.z.string().nullable(),
+    committed: import_zod62.z.boolean(),
+    skipped: import_zod62.z.boolean()
+  })),
+  specialNote: import_zod62.z.string().nullable(),
+  startAt: bsonDate,
+  substitute: import_zod62.z.string().nullable(),
+  substituteInstructorId: import_zod62.z.null(),
+  timeZone: import_zod62.z.string(),
+  updatedAt: bsonDate,
+  verifiedAt: import_zod62.z.null(),
+  verifiedBy: import_zod62.z.null()
+});
+
+// src/contract/collections/ldco-lessons/frequencies.ts
+var import_zod63 = require("zod");
+var LdcoLessonsFrequenciesSchema = import_zod63.z.strictObject({
+  _id: import_zod63.z.string(),
+  byDay: import_zod63.z.array(import_zod63.z.string()).optional(),
+  createdAt: bsonDate,
+  durationMinutes: import_zod63.z.number(),
+  eventTypeId: import_zod63.z.string(),
+  isActive: import_zod63.z.boolean().optional(),
+  kind: import_zod63.z.string(),
+  startDate: import_zod63.z.string().optional(),
+  startTime: import_zod63.z.string(),
+  updatedAt: bsonDate,
+  endDate: import_zod63.z.string().optional(),
+  nth: import_zod63.z.number().optional(),
+  weekday: import_zod63.z.string().optional()
+});
+
+// src/contract/collections/ldco-lessons/lessons.ts
+var import_zod64 = require("zod");
+var LdcoLessonsLessonsSchema = import_zod64.z.strictObject({
+  _id: import_zod64.z.string(),
+  danceId: import_zod64.z.string().optional(),
+  date: bsonDate,
+  eventId: import_zod64.z.string().nullable(),
+  instructorId: import_zod64.z.string(),
+  lessonId: import_zod64.z.null(),
+  venue: import_zod64.z.string(),
+  venueId: import_zod64.z.string(),
+  danceName: import_zod64.z.string().optional()
+});
+
+// src/contract/collections/ldco-reviews/choreographers.ts
+var import_zod65 = require("zod");
+var LdcoReviewsChoreographersSchema = import_zod65.z.looseObject({ _id: import_zod65.z.union([import_zod65.z.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/dances.ts
-var import_zod59 = require("zod");
-var LdcoReviewsDancesSchema = import_zod59.z.looseObject({ _id: import_zod59.z.union([import_zod59.z.string(), objectId]) });
+var import_zod66 = require("zod");
+var LdcoReviewsDancesSchema = import_zod66.z.looseObject({ _id: import_zod66.z.union([import_zod66.z.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/join_choreographer_appeals.ts
-var import_zod60 = require("zod");
-var LdcoReviewsJoinChoreographerAppealsSchema = import_zod60.z.looseObject({ _id: import_zod60.z.union([import_zod60.z.string(), objectId]) });
+var import_zod67 = require("zod");
+var LdcoReviewsJoinChoreographerAppealsSchema = import_zod67.z.looseObject({ _id: import_zod67.z.union([import_zod67.z.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/lessons.ts
-var import_zod61 = require("zod");
-var LdcoReviewsLessonsSchema = import_zod61.z.strictObject({
+var import_zod68 = require("zod");
+var LdcoReviewsLessonsSchema = import_zod68.z.strictObject({
   _id: objectId,
-  lessonday: import_zod61.z.string(),
-  lessonstart: import_zod61.z.string(),
-  instructors: import_zod61.z.array(import_zod61.z.string()),
-  duration: import_zod61.z.string(),
-  lessoncost: import_zod61.z.string(),
-  notes: import_zod61.z.string(),
-  difficulty: import_zod61.z.string(),
-  venueid: import_zod61.z.string()
+  lessonday: import_zod68.z.string(),
+  lessonstart: import_zod68.z.string(),
+  instructors: import_zod68.z.array(import_zod68.z.string()),
+  duration: import_zod68.z.string(),
+  lessoncost: import_zod68.z.string(),
+  notes: import_zod68.z.string(),
+  difficulty: import_zod68.z.string(),
+  venueid: import_zod68.z.string()
 });
 
 // src/contract/collections/ldco-reviews/reports.ts
-var import_zod62 = require("zod");
-var LdcoReviewsReportsSchema = import_zod62.z.looseObject({ _id: import_zod62.z.union([import_zod62.z.string(), objectId]) });
+var import_zod69 = require("zod");
+var LdcoReviewsReportsSchema = import_zod69.z.looseObject({ _id: import_zod69.z.union([import_zod69.z.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/tracks.ts
-var import_zod63 = require("zod");
-var LdcoReviewsTracksSchema = import_zod63.z.looseObject({ _id: import_zod63.z.union([import_zod63.z.string(), objectId]) });
+var import_zod70 = require("zod");
+var LdcoReviewsTracksSchema = import_zod70.z.looseObject({ _id: import_zod70.z.union([import_zod70.z.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/venue_users.ts
-var import_zod64 = require("zod");
-var LdcoReviewsVenueUsersSchema = import_zod64.z.strictObject({
-  _id: import_zod64.z.string(),
-  userId: import_zod64.z.string(),
-  venueId: import_zod64.z.string(),
+var import_zod71 = require("zod");
+var LdcoReviewsVenueUsersSchema = import_zod71.z.strictObject({
+  _id: import_zod71.z.string(),
+  userId: import_zod71.z.string(),
+  venueId: import_zod71.z.string(),
   createdAt: bsonDate,
-  requestedBy: import_zod64.z.string()
+  requestedBy: import_zod71.z.string()
 });
 
 // src/contract/collections/ldco-reviews/venues.ts
-var import_zod65 = require("zod");
-var LdcoReviewsVenuesSchema = import_zod65.z.looseObject({ _id: import_zod65.z.union([import_zod65.z.string(), objectId]) });
+var import_zod72 = require("zod");
+var LdcoReviewsVenuesSchema = import_zod72.z.strictObject({
+  _id: import_zod72.z.string(),
+  venuename: import_zod72.z.string(),
+  venueaddress: import_zod72.z.string(),
+  geolocation: import_zod72.z.array(import_zod72.z.number()),
+  phone: import_zod72.z.string(),
+  website: import_zod72.z.string(),
+  contactName: import_zod72.z.string(),
+  contactEmail: import_zod72.z.string(),
+  contactPhone: import_zod72.z.string(),
+  createdAt: bsonDate,
+  timeZone: import_zod72.z.string(),
+  verifiedAt: import_zod72.z.null(),
+  verifiedBy: import_zod72.z.null()
+});
 
 // src/contract/collections/ldco-reviews/verify_user_instructor.ts
-var import_zod66 = require("zod");
-var LdcoReviewsVerifyUserInstructorSchema = import_zod66.z.strictObject({
+var import_zod73 = require("zod");
+var LdcoReviewsVerifyUserInstructorSchema = import_zod73.z.strictObject({
   _id: objectId,
-  userId: import_zod66.z.string(),
-  instructorId: import_zod66.z.string(),
+  userId: import_zod73.z.string(),
+  instructorId: import_zod73.z.string(),
   createdAt: bsonDate,
-  resolved: import_zod66.z.boolean(),
-  resolution: import_zod66.z.string(),
+  resolved: import_zod73.z.boolean(),
+  resolution: import_zod73.z.string(),
   resolvedAt: bsonDate,
-  resolvedBy: import_zod66.z.string()
+  resolvedBy: import_zod73.z.string()
 });
 
 // src/contract/collections/music_catalog/tracks.ts
-var import_zod67 = require("zod");
-var MusicCatalogTracksSchema = import_zod67.z.strictObject({
-  _id: import_zod67.z.string(),
-  artist: import_zod67.z.string(),
+var import_zod74 = require("zod");
+var MusicCatalogTracksSchema = import_zod74.z.strictObject({
+  _id: import_zod74.z.string(),
+  artist: import_zod74.z.string(),
   createdAt: bsonDate,
-  disambiguation: import_zod67.z.string(),
-  durationMs: import_zod67.z.number().nullable(),
-  isrcs: import_zod67.z.array(import_zod67.z.string()),
-  nArtist: import_zod67.z.string(),
-  nTitle: import_zod67.z.string(),
-  rank: import_zod67.z.number(),
+  disambiguation: import_zod74.z.string(),
+  durationMs: import_zod74.z.number().nullable(),
+  isrcs: import_zod74.z.array(import_zod74.z.string()),
+  nArtist: import_zod74.z.string(),
+  nTitle: import_zod74.z.string(),
+  rank: import_zod74.z.number(),
   rankedAt: bsonDate.optional(),
-  source: import_zod67.z.string(),
-  sourceId: import_zod67.z.string(),
-  title: import_zod67.z.string(),
+  source: import_zod74.z.string(),
+  sourceId: import_zod74.z.string(),
+  title: import_zod74.z.string(),
   updatedAt: bsonDate,
-  variantKey: import_zod67.z.string(),
-  words: import_zod67.z.array(import_zod67.z.string()),
-  year: import_zod67.z.number().nullable()
+  variantKey: import_zod74.z.string(),
+  words: import_zod74.z.array(import_zod74.z.string()),
+  year: import_zod74.z.number().nullable()
 });
 
 // src/contract/collections/index.ts
@@ -1075,6 +1215,13 @@ var collections = {
   "ldco.venues": { database: "ldco", name: "venues", schema: LdcoVenuesSchema },
   "ldco-events.event_registrations": { database: "ldco-events", name: "event_registrations", schema: LdcoEventsEventRegistrationsSchema },
   "ldco-events.events": { database: "ldco-events", name: "events", schema: LdcoEventsEventsSchema },
+  "ldco-lessons.event_instructor_requests": { database: "ldco-lessons", name: "event_instructor_requests", schema: LdcoLessonsEventInstructorRequestsSchema },
+  "ldco-lessons.event_instructors": { database: "ldco-lessons", name: "event_instructors", schema: LdcoLessonsEventInstructorsSchema },
+  "ldco-lessons.event_templates": { database: "ldco-lessons", name: "event_templates", schema: LdcoLessonsEventTemplatesSchema },
+  "ldco-lessons.event_types": { database: "ldco-lessons", name: "event_types", schema: LdcoLessonsEventTypesSchema },
+  "ldco-lessons.events": { database: "ldco-lessons", name: "events", schema: LdcoLessonsEventsSchema },
+  "ldco-lessons.frequencies": { database: "ldco-lessons", name: "frequencies", schema: LdcoLessonsFrequenciesSchema },
+  "ldco-lessons.lessons": { database: "ldco-lessons", name: "lessons", schema: LdcoLessonsLessonsSchema },
   "ldco-reviews.choreographers": { database: "ldco-reviews", name: "choreographers", schema: LdcoReviewsChoreographersSchema },
   "ldco-reviews.dances": { database: "ldco-reviews", name: "dances", schema: LdcoReviewsDancesSchema },
   "ldco-reviews.join_choreographer_appeals": { database: "ldco-reviews", name: "join_choreographer_appeals", schema: LdcoReviewsJoinChoreographerAppealsSchema },
@@ -1090,7 +1237,7 @@ var collections = {
 // src/contract/index.ts
 var CONTRACT_VERSION = version;
 function computeContractHash() {
-  const description = Object.entries(collections).sort(([a], [b]) => a.localeCompare(b)).map(([key, c]) => [key, c.database, c.name, import_zod68.z.toJSONSchema(c.schema, { unrepresentable: "any" })]);
+  const description = Object.entries(collections).sort(([a], [b]) => a.localeCompare(b)).map(([key, c]) => [key, c.database, c.name, import_zod75.z.toJSONSchema(c.schema, { unrepresentable: "any" })]);
   return (0, import_node_crypto.createHash)("sha256").update(JSON.stringify(description)).digest("hex");
 }
 var CONTRACT_HASH = hash;
@@ -1135,6 +1282,13 @@ var CONTRACT_HASH = hash;
   LdcoHostDancersSchema,
   LdcoInstructorVenuesSchema,
   LdcoInstructorsSchema,
+  LdcoLessonsEventInstructorRequestsSchema,
+  LdcoLessonsEventInstructorsSchema,
+  LdcoLessonsEventTemplatesSchema,
+  LdcoLessonsEventTypesSchema,
+  LdcoLessonsEventsSchema,
+  LdcoLessonsFrequenciesSchema,
+  LdcoLessonsLessonsSchema,
   LdcoLessonsSchema,
   LdcoLoginEventsSchema,
   LdcoOauthAuthCodesSchema,

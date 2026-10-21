@@ -1,4 +1,4 @@
-// Inferred from 1577 documents by scripts/infer-contract.ts; review before relying on it.
+// Inferred from 1579 documents by scripts/infer-contract.ts; review before relying on it.
 import { z } from "zod";
 import { objectId } from "../../bson";
 

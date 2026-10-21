@@ -19,6 +19,7 @@ A dancer's own relationship to dances, lessons, venues and instructors.
 An instructor managing where and what they teach.
 - `ldco`: `instructors` (45), `instructor_venues` (69), `venues` (57), `venue_users` (1, approved venue claims), `lessons` (107, recurring weekly lessons)
 - `bld` (Stephen's own schedule; venues come from `ldco.venues`): `events` (280, dated class occurrences with the dances taught), `event_types` (19), `event_templates` (8), `frequencies` (7), `lessons` (1,577, dance taught at a venue on a date). Written by `line-dance-manager-admin`'s `/api/admin/bld/*` routes (formerly `beyondlinedance-companion`).
+- **Decided (decision 18, 2026-10-19):** `ldco-lessons` is this purpose's own database for direct instructor operations, made from `bld` by migration `0013` (local only so far): `event_types`, `frequencies`, `events`, `lessons`, `event_templates`, plus `event_instructors` and `event_instructor_requests`. `bld` is dropped once the admin and `dance-folly-website` read it. `instructors`, `instructor_venues`, `venues` and the weekly `lessons` stay in `ldco`, so dancer-facing apps don't need instructor scopes there; dancer-facing apps read `ldco-lessons`, and only instructor features write it.
 - Ticketed events: `ldco-events.events` (2), `ldco-events.event_registrations` (47). Written by `dance-folly-website` and the admin registrations pages.
 
 ### 4. DJ feed: sessions, requests, reports, beats

@@ -55,6 +55,13 @@ import { LdcoVenueUsersSchema } from "./ldco/venue_users";
 import { LdcoVenuesSchema } from "./ldco/venues";
 import { LdcoEventsEventRegistrationsSchema } from "./ldco-events/event_registrations";
 import { LdcoEventsEventsSchema } from "./ldco-events/events";
+import { LdcoLessonsEventInstructorRequestsSchema } from "./ldco-lessons/event_instructor_requests";
+import { LdcoLessonsEventInstructorsSchema } from "./ldco-lessons/event_instructors";
+import { LdcoLessonsEventTemplatesSchema } from "./ldco-lessons/event_templates";
+import { LdcoLessonsEventTypesSchema } from "./ldco-lessons/event_types";
+import { LdcoLessonsEventsSchema } from "./ldco-lessons/events";
+import { LdcoLessonsFrequenciesSchema } from "./ldco-lessons/frequencies";
+import { LdcoLessonsLessonsSchema } from "./ldco-lessons/lessons";
 import { LdcoReviewsChoreographersSchema } from "./ldco-reviews/choreographers";
 import { LdcoReviewsDancesSchema } from "./ldco-reviews/dances";
 import { LdcoReviewsJoinChoreographerAppealsSchema } from "./ldco-reviews/join_choreographer_appeals";
@@ -122,6 +129,13 @@ export * from "./ldco/venue_users";
 export * from "./ldco/venues";
 export * from "./ldco-events/event_registrations";
 export * from "./ldco-events/events";
+export * from "./ldco-lessons/event_instructor_requests";
+export * from "./ldco-lessons/event_instructors";
+export * from "./ldco-lessons/event_templates";
+export * from "./ldco-lessons/event_types";
+export * from "./ldco-lessons/events";
+export * from "./ldco-lessons/frequencies";
+export * from "./ldco-lessons/lessons";
 export * from "./ldco-reviews/choreographers";
 export * from "./ldco-reviews/dances";
 export * from "./ldco-reviews/join_choreographer_appeals";
@@ -191,6 +205,13 @@ export const collections = {
   "ldco.venues": { database: "ldco", name: "venues", schema: LdcoVenuesSchema },
   "ldco-events.event_registrations": { database: "ldco-events", name: "event_registrations", schema: LdcoEventsEventRegistrationsSchema },
   "ldco-events.events": { database: "ldco-events", name: "events", schema: LdcoEventsEventsSchema },
+  "ldco-lessons.event_instructor_requests": { database: "ldco-lessons", name: "event_instructor_requests", schema: LdcoLessonsEventInstructorRequestsSchema },
+  "ldco-lessons.event_instructors": { database: "ldco-lessons", name: "event_instructors", schema: LdcoLessonsEventInstructorsSchema },
+  "ldco-lessons.event_templates": { database: "ldco-lessons", name: "event_templates", schema: LdcoLessonsEventTemplatesSchema },
+  "ldco-lessons.event_types": { database: "ldco-lessons", name: "event_types", schema: LdcoLessonsEventTypesSchema },
+  "ldco-lessons.events": { database: "ldco-lessons", name: "events", schema: LdcoLessonsEventsSchema },
+  "ldco-lessons.frequencies": { database: "ldco-lessons", name: "frequencies", schema: LdcoLessonsFrequenciesSchema },
+  "ldco-lessons.lessons": { database: "ldco-lessons", name: "lessons", schema: LdcoLessonsLessonsSchema },
   "ldco-reviews.choreographers": { database: "ldco-reviews", name: "choreographers", schema: LdcoReviewsChoreographersSchema },
   "ldco-reviews.dances": { database: "ldco-reviews", name: "dances", schema: LdcoReviewsDancesSchema },
   "ldco-reviews.join_choreographer_appeals": { database: "ldco-reviews", name: "join_choreographer_appeals", schema: LdcoReviewsJoinChoreographerAppealsSchema },

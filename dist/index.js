@@ -38,6 +38,13 @@ import {
   LdcoHostDancersSchema,
   LdcoInstructorVenuesSchema,
   LdcoInstructorsSchema,
+  LdcoLessonsEventInstructorRequestsSchema,
+  LdcoLessonsEventInstructorsSchema,
+  LdcoLessonsEventTemplatesSchema,
+  LdcoLessonsEventTypesSchema,
+  LdcoLessonsEventsSchema,
+  LdcoLessonsFrequenciesSchema,
+  LdcoLessonsLessonsSchema,
   LdcoLessonsSchema,
   LdcoLoginEventsSchema,
   LdcoOauthAuthCodesSchema,
@@ -69,7 +76,7 @@ import {
   MusicCatalogTracksSchema,
   collections,
   computeContractHash
-} from "./chunk-DYTVOUIB.js";
+} from "./chunk-42P7HP7Q.js";
 export {
   BldEventTemplatesSchema,
   BldEventTypesSchema,
@@ -110,6 +117,13 @@ export {
   LdcoHostDancersSchema,
   LdcoInstructorVenuesSchema,
   LdcoInstructorsSchema,
+  LdcoLessonsEventInstructorRequestsSchema,
+  LdcoLessonsEventInstructorsSchema,
+  LdcoLessonsEventTemplatesSchema,
+  LdcoLessonsEventTypesSchema,
+  LdcoLessonsEventsSchema,
+  LdcoLessonsFrequenciesSchema,
+  LdcoLessonsLessonsSchema,
   LdcoLessonsSchema,
   LdcoLoginEventsSchema,
   LdcoOauthAuthCodesSchema,

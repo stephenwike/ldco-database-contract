@@ -10,7 +10,9 @@ import { migration as m0009 } from "./files/0009-drop-ldco-event-registrations";
 import { migration as m0010 } from "./files/0010-drop-ldco-user-favorite-venues";
 import { migration as m0011 } from "./files/0011-delete-test-venue-events";
 import { migration as m0012 } from "./files/0012-merge-bld-venues-into-ldco";
+import { migration as m0013 } from "./files/0013-create-ldco-lessons-from-bld";
+import { migration as m0014 } from "./files/0014-ldco-venue-time-zone-and-validation";
 import type { Migration } from "./types";
 
 // Append new migrations in order; never reorder or edit applied ones.
-export const migrations: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007, m0008, m0009, m0010, m0011, m0012];
+export const migrations: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007, m0008, m0009, m0010, m0011, m0012, m0013, m0014];

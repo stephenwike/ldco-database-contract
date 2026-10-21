@@ -1,4 +1,4 @@
-// Inferred from 1401 documents by scripts/infer-contract.ts; review before relying on it.
+// Inferred from 1402 documents by scripts/infer-contract.ts; review before relying on it.
 import { z } from "zod";
 
 export const LdcoTracksSchema = z.strictObject({

@@ -6,6 +6,7 @@ export const LdcoInstructorsSchema = z.strictObject({
   name: z.string(),
   associatedUserId: z.string().optional(),
   userId: z.string().optional(),
+  bio: z.string().optional(),
 });
 
 export type LdcoInstructors = z.infer<typeof LdcoInstructorsSchema>;

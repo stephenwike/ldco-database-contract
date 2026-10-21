@@ -634,6 +634,8 @@ declare const LdcoInstructorVenuesSchema: z.ZodObject<{
     _id: z.ZodString;
     instructorId: z.ZodString;
     venueId: z.ZodString;
+    createdAt: z.ZodOptional<z.ZodDate>;
+    updatedAt: z.ZodOptional<z.ZodDate>;
 }, z.core.$strict>;
 type LdcoInstructorVenues = z.infer<typeof LdcoInstructorVenuesSchema>;
 
@@ -642,6 +644,7 @@ declare const LdcoInstructorsSchema: z.ZodObject<{
     name: z.ZodString;
     associatedUserId: z.ZodOptional<z.ZodString>;
     userId: z.ZodOptional<z.ZodString>;
+    bio: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 type LdcoInstructors = z.infer<typeof LdcoInstructorsSchema>;
 
@@ -655,6 +658,8 @@ declare const LdcoLessonsSchema: z.ZodObject<{
     notes: z.ZodString;
     difficulty: z.ZodString;
     venueid: z.ZodString;
+    verifiedAt: z.ZodNull;
+    verifiedBy: z.ZodNull;
 }, z.core.$strict>;
 type LdcoLessons = z.infer<typeof LdcoLessonsSchema>;
 
@@ -841,6 +846,9 @@ declare const LdcoVenuesSchema: z.ZodObject<{
     geolocation: z.ZodArray<z.ZodNumber>;
     phone: z.ZodString;
     website: z.ZodString;
+    timeZone: z.ZodString;
+    verifiedAt: z.ZodNull;
+    verifiedBy: z.ZodNull;
     city: z.ZodOptional<z.ZodString>;
     state: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
@@ -899,6 +907,116 @@ declare const LdcoEventsEventsSchema: z.ZodObject<{
     venueName: z.ZodString;
 }, z.core.$strict>;
 type LdcoEventsEvents = z.infer<typeof LdcoEventsEventsSchema>;
+
+declare const LdcoLessonsEventInstructorRequestsSchema: z.ZodObject<{
+    _id: z.ZodUnion<readonly [z.ZodString, z.ZodCustom<{
+        toHexString(): string;
+    }, {
+        toHexString(): string;
+    }>]>;
+}, z.core.$loose>;
+type LdcoLessonsEventInstructorRequests = z.infer<typeof LdcoLessonsEventInstructorRequestsSchema>;
+
+declare const LdcoLessonsEventInstructorsSchema: z.ZodObject<{
+    _id: z.ZodString;
+    instructorId: z.ZodString;
+    eventTypeId: z.ZodString;
+    createdAt: z.ZodDate;
+    role: z.ZodString;
+}, z.core.$strict>;
+type LdcoLessonsEventInstructors = z.infer<typeof LdcoLessonsEventInstructorsSchema>;
+
+declare const LdcoLessonsEventTemplatesSchema: z.ZodObject<{
+    _id: z.ZodString;
+    createdAt: z.ZodDate;
+    eventTypeId: z.ZodString;
+    isDefault: z.ZodBoolean;
+    lessons: z.ZodArray<z.ZodObject<{
+        time: z.ZodString;
+        dance: z.ZodNullable<z.ZodString>;
+        level: z.ZodNullable<z.ZodString>;
+        link: z.ZodNull;
+    }, z.core.$strict>>;
+    name: z.ZodString;
+    updatedAt: z.ZodDate;
+}, z.core.$strict>;
+type LdcoLessonsEventTemplates = z.infer<typeof LdcoLessonsEventTemplatesSchema>;
+
+declare const LdcoLessonsEventTypesSchema: z.ZodObject<{
+    _id: z.ZodString;
+    createdAt: z.ZodDate;
+    createdBy: z.ZodString;
+    defaultDurationMinutes: z.ZodNumber;
+    defaultStartTime: z.ZodNullable<z.ZodString>;
+    isActive: z.ZodBoolean;
+    level: z.ZodString;
+    price: z.ZodString;
+    title: z.ZodString;
+    updatedAt: z.ZodDate;
+    venueId: z.ZodString;
+    verifiedAt: z.ZodNull;
+    verifiedBy: z.ZodNull;
+}, z.core.$strict>;
+type LdcoLessonsEventTypes = z.infer<typeof LdcoLessonsEventTypesSchema>;
+
+declare const LdcoLessonsEventsSchema: z.ZodObject<{
+    _id: z.ZodString;
+    cancelNote: z.ZodNullable<z.ZodString>;
+    createdAt: z.ZodDate;
+    date: z.ZodString;
+    endAt: z.ZodDate;
+    eventTypeId: z.ZodString;
+    isCancelled: z.ZodBoolean;
+    lessons: z.ZodArray<z.ZodObject<{
+        _id: z.ZodString;
+        startAt: z.ZodDate;
+        dance: z.ZodNullable<z.ZodString>;
+        danceId: z.ZodNullable<z.ZodString>;
+        level: z.ZodNullable<z.ZodString>;
+        link: z.ZodNullable<z.ZodString>;
+        committed: z.ZodBoolean;
+        skipped: z.ZodBoolean;
+    }, z.core.$strict>>;
+    specialNote: z.ZodNullable<z.ZodString>;
+    startAt: z.ZodDate;
+    substitute: z.ZodNullable<z.ZodString>;
+    substituteInstructorId: z.ZodNull;
+    timeZone: z.ZodString;
+    updatedAt: z.ZodDate;
+    verifiedAt: z.ZodNull;
+    verifiedBy: z.ZodNull;
+}, z.core.$strict>;
+type LdcoLessonsEvents = z.infer<typeof LdcoLessonsEventsSchema>;
+
+declare const LdcoLessonsFrequenciesSchema: z.ZodObject<{
+    _id: z.ZodString;
+    byDay: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    createdAt: z.ZodDate;
+    durationMinutes: z.ZodNumber;
+    eventTypeId: z.ZodString;
+    isActive: z.ZodOptional<z.ZodBoolean>;
+    kind: z.ZodString;
+    startDate: z.ZodOptional<z.ZodString>;
+    startTime: z.ZodString;
+    updatedAt: z.ZodDate;
+    endDate: z.ZodOptional<z.ZodString>;
+    nth: z.ZodOptional<z.ZodNumber>;
+    weekday: z.ZodOptional<z.ZodString>;
+}, z.core.$strict>;
+type LdcoLessonsFrequencies = z.infer<typeof LdcoLessonsFrequenciesSchema>;
+
+declare const LdcoLessonsLessonsSchema: z.ZodObject<{
+    _id: z.ZodString;
+    danceId: z.ZodOptional<z.ZodString>;
+    date: z.ZodDate;
+    eventId: z.ZodNullable<z.ZodString>;
+    instructorId: z.ZodString;
+    lessonId: z.ZodNull;
+    venue: z.ZodString;
+    venueId: z.ZodString;
+    danceName: z.ZodOptional<z.ZodString>;
+}, z.core.$strict>;
+type LdcoLessonsLessons = z.infer<typeof LdcoLessonsLessonsSchema>;
 
 declare const LdcoReviewsChoreographersSchema: z.ZodObject<{
     _id: z.ZodUnion<readonly [z.ZodString, z.ZodCustom<{
@@ -972,12 +1090,20 @@ declare const LdcoReviewsVenueUsersSchema: z.ZodObject<{
 type LdcoReviewsVenueUsers = z.infer<typeof LdcoReviewsVenueUsersSchema>;
 
 declare const LdcoReviewsVenuesSchema: z.ZodObject<{
-    _id: z.ZodUnion<readonly [z.ZodString, z.ZodCustom<{
-        toHexString(): string;
-    }, {
-        toHexString(): string;
-    }>]>;
-}, z.core.$loose>;
+    _id: z.ZodString;
+    venuename: z.ZodString;
+    venueaddress: z.ZodString;
+    geolocation: z.ZodArray<z.ZodNumber>;
+    phone: z.ZodString;
+    website: z.ZodString;
+    contactName: z.ZodString;
+    contactEmail: z.ZodString;
+    contactPhone: z.ZodString;
+    createdAt: z.ZodDate;
+    timeZone: z.ZodString;
+    verifiedAt: z.ZodNull;
+    verifiedBy: z.ZodNull;
+}, z.core.$strict>;
 type LdcoReviewsVenues = z.infer<typeof LdcoReviewsVenuesSchema>;
 
 declare const LdcoReviewsVerifyUserInstructorSchema: z.ZodObject<{
@@ -1719,6 +1845,8 @@ declare const collections: {
             _id: zod.ZodString;
             instructorId: zod.ZodString;
             venueId: zod.ZodString;
+            createdAt: zod.ZodOptional<zod.ZodDate>;
+            updatedAt: zod.ZodOptional<zod.ZodDate>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco.instructors": {
@@ -1729,6 +1857,7 @@ declare const collections: {
             name: zod.ZodString;
             associatedUserId: zod.ZodOptional<zod.ZodString>;
             userId: zod.ZodOptional<zod.ZodString>;
+            bio: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco.lessons": {
@@ -1744,6 +1873,8 @@ declare const collections: {
             notes: zod.ZodString;
             difficulty: zod.ZodString;
             venueid: zod.ZodString;
+            verifiedAt: zod.ZodNull;
+            verifiedBy: zod.ZodNull;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco.login_events": {
@@ -1966,6 +2097,9 @@ declare const collections: {
             geolocation: zod.ZodArray<zod.ZodNumber>;
             phone: zod.ZodString;
             website: zod.ZodString;
+            timeZone: zod.ZodString;
+            verifiedAt: zod.ZodNull;
+            verifiedBy: zod.ZodNull;
             city: zod.ZodOptional<zod.ZodString>;
             state: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
@@ -2026,6 +2160,130 @@ declare const collections: {
             title: zod.ZodString;
             venueAddress: zod.ZodString;
             venueName: zod.ZodString;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "ldco-lessons.event_instructor_requests": {
+        readonly database: "ldco-lessons";
+        readonly name: "event_instructor_requests";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodUnion<readonly [zod.ZodString, zod.ZodCustom<{
+                toHexString(): string;
+            }, {
+                toHexString(): string;
+            }>]>;
+        }, zod_v4_core.$loose>;
+    };
+    readonly "ldco-lessons.event_instructors": {
+        readonly database: "ldco-lessons";
+        readonly name: "event_instructors";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            instructorId: zod.ZodString;
+            eventTypeId: zod.ZodString;
+            createdAt: zod.ZodDate;
+            role: zod.ZodString;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "ldco-lessons.event_templates": {
+        readonly database: "ldco-lessons";
+        readonly name: "event_templates";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            createdAt: zod.ZodDate;
+            eventTypeId: zod.ZodString;
+            isDefault: zod.ZodBoolean;
+            lessons: zod.ZodArray<zod.ZodObject<{
+                time: zod.ZodString;
+                dance: zod.ZodNullable<zod.ZodString>;
+                level: zod.ZodNullable<zod.ZodString>;
+                link: zod.ZodNull;
+            }, zod_v4_core.$strict>>;
+            name: zod.ZodString;
+            updatedAt: zod.ZodDate;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "ldco-lessons.event_types": {
+        readonly database: "ldco-lessons";
+        readonly name: "event_types";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            createdAt: zod.ZodDate;
+            createdBy: zod.ZodString;
+            defaultDurationMinutes: zod.ZodNumber;
+            defaultStartTime: zod.ZodNullable<zod.ZodString>;
+            isActive: zod.ZodBoolean;
+            level: zod.ZodString;
+            price: zod.ZodString;
+            title: zod.ZodString;
+            updatedAt: zod.ZodDate;
+            venueId: zod.ZodString;
+            verifiedAt: zod.ZodNull;
+            verifiedBy: zod.ZodNull;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "ldco-lessons.events": {
+        readonly database: "ldco-lessons";
+        readonly name: "events";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            cancelNote: zod.ZodNullable<zod.ZodString>;
+            createdAt: zod.ZodDate;
+            date: zod.ZodString;
+            endAt: zod.ZodDate;
+            eventTypeId: zod.ZodString;
+            isCancelled: zod.ZodBoolean;
+            lessons: zod.ZodArray<zod.ZodObject<{
+                _id: zod.ZodString;
+                startAt: zod.ZodDate;
+                dance: zod.ZodNullable<zod.ZodString>;
+                danceId: zod.ZodNullable<zod.ZodString>;
+                level: zod.ZodNullable<zod.ZodString>;
+                link: zod.ZodNullable<zod.ZodString>;
+                committed: zod.ZodBoolean;
+                skipped: zod.ZodBoolean;
+            }, zod_v4_core.$strict>>;
+            specialNote: zod.ZodNullable<zod.ZodString>;
+            startAt: zod.ZodDate;
+            substitute: zod.ZodNullable<zod.ZodString>;
+            substituteInstructorId: zod.ZodNull;
+            timeZone: zod.ZodString;
+            updatedAt: zod.ZodDate;
+            verifiedAt: zod.ZodNull;
+            verifiedBy: zod.ZodNull;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "ldco-lessons.frequencies": {
+        readonly database: "ldco-lessons";
+        readonly name: "frequencies";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            byDay: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            createdAt: zod.ZodDate;
+            durationMinutes: zod.ZodNumber;
+            eventTypeId: zod.ZodString;
+            isActive: zod.ZodOptional<zod.ZodBoolean>;
+            kind: zod.ZodString;
+            startDate: zod.ZodOptional<zod.ZodString>;
+            startTime: zod.ZodString;
+            updatedAt: zod.ZodDate;
+            endDate: zod.ZodOptional<zod.ZodString>;
+            nth: zod.ZodOptional<zod.ZodNumber>;
+            weekday: zod.ZodOptional<zod.ZodString>;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "ldco-lessons.lessons": {
+        readonly database: "ldco-lessons";
+        readonly name: "lessons";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            danceId: zod.ZodOptional<zod.ZodString>;
+            date: zod.ZodDate;
+            eventId: zod.ZodNullable<zod.ZodString>;
+            instructorId: zod.ZodString;
+            lessonId: zod.ZodNull;
+            venue: zod.ZodString;
+            venueId: zod.ZodString;
+            danceName: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco-reviews.choreographers": {
@@ -2117,12 +2375,20 @@ declare const collections: {
         readonly database: "ldco-reviews";
         readonly name: "venues";
         readonly schema: zod.ZodObject<{
-            _id: zod.ZodUnion<readonly [zod.ZodString, zod.ZodCustom<{
-                toHexString(): string;
-            }, {
-                toHexString(): string;
-            }>]>;
-        }, zod_v4_core.$loose>;
+            _id: zod.ZodString;
+            venuename: zod.ZodString;
+            venueaddress: zod.ZodString;
+            geolocation: zod.ZodArray<zod.ZodNumber>;
+            phone: zod.ZodString;
+            website: zod.ZodString;
+            contactName: zod.ZodString;
+            contactEmail: zod.ZodString;
+            contactPhone: zod.ZodString;
+            createdAt: zod.ZodDate;
+            timeZone: zod.ZodString;
+            verifiedAt: zod.ZodNull;
+            verifiedBy: zod.ZodNull;
+        }, zod_v4_core.$strict>;
     };
     readonly "ldco-reviews.verify_user_instructor": {
         readonly database: "ldco-reviews";
@@ -2171,4 +2437,4 @@ declare const CONTRACT_VERSION: string;
 declare function computeContractHash(): string;
 declare const CONTRACT_HASH: string;
 
-export { type BldEventTemplates, BldEventTemplatesSchema, type BldEventTypes, BldEventTypesSchema, type BldEvents, BldEventsSchema, type BldFrequencies, BldFrequenciesSchema, type BldLessons, BldLessonsSchema, CONTRACT_HASH, CONTRACT_VERSION, type CopperknobAlertProcessedItems, CopperknobAlertProcessedItemsSchema, type CopperknobAlertSyncMetadata, CopperknobAlertSyncMetadataSchema, type CopperknobAlertWatchRules, CopperknobAlertWatchRulesSchema, type DjfeedAttendeeNotifications, DjfeedAttendeeNotificationsSchema, type DjfeedBeatBalances, DjfeedBeatBalancesSchema, type DjfeedBeatTransactions, DjfeedBeatTransactionsSchema, type DjfeedDancerFavoriteSongs, DjfeedDancerFavoriteSongsSchema, type DjfeedDjDirectMessages, DjfeedDjDirectMessagesSchema, type DjfeedDjMessages, DjfeedDjMessagesSchema, type DjfeedDjNotifications, DjfeedDjNotificationsSchema, type DjfeedDjProfiles, DjfeedDjProfilesSchema, type DjfeedDjRequesterNicknames, DjfeedDjRequesterNicknamesSchema, type DjfeedDjRequests, DjfeedDjRequestsSchema, type DjfeedDjSessions, DjfeedDjSessionsSchema, type DjfeedDjWalletLocks, DjfeedDjWalletLocksSchema, type DjfeedDjWalletTransactions, DjfeedDjWalletTransactionsSchema, type DjfeedFreeAccess, DjfeedFreeAccessSchema, type DjfeedRequesterHistory, DjfeedRequesterHistorySchema, type DjfeedSessionReports, DjfeedSessionReportsSchema, type DjfeedSessionTransactions, DjfeedSessionTransactionsSchema, type DjfeedStripeEvents, DjfeedStripeEventsSchema, type LdcoChoreographers, LdcoChoreographersSchema, type LdcoDanceCollections, LdcoDanceCollectionsSchema, type LdcoDanceTracks, LdcoDanceTracksSchema, type LdcoDances, LdcoDancesSchema, type LdcoEvents, type LdcoEventsEventRegistrations, LdcoEventsEventRegistrationsSchema, type LdcoEventsEvents, LdcoEventsEventsSchema, LdcoEventsSchema, type LdcoFriendRequests, LdcoFriendRequestsSchema, type LdcoHostDancers, LdcoHostDancersSchema, type LdcoInstructorVenues, LdcoInstructorVenuesSchema, type LdcoInstructors, LdcoInstructorsSchema, type LdcoLessons, LdcoLessonsSchema, type LdcoLoginEvents, LdcoLoginEventsSchema, type LdcoOauthAuthCodes, LdcoOauthAuthCodesSchema, type LdcoPendingDances, LdcoPendingDancesSchema, type LdcoReviewsChoreographers, LdcoReviewsChoreographersSchema, type LdcoReviewsDances, LdcoReviewsDancesSchema, type LdcoReviewsJoinChoreographerAppeals, LdcoReviewsJoinChoreographerAppealsSchema, type LdcoReviewsLessons, LdcoReviewsLessonsSchema, type LdcoReviewsReports, LdcoReviewsReportsSchema, type LdcoReviewsTracks, LdcoReviewsTracksSchema, type LdcoReviewsVenueUsers, LdcoReviewsVenueUsersSchema, type LdcoReviewsVenues, LdcoReviewsVenuesSchema, type LdcoReviewsVerifyUserInstructor, LdcoReviewsVerifyUserInstructorSchema, type LdcoSessionAttendance, LdcoSessionAttendanceSchema, type LdcoTracks, LdcoTracksSchema, type LdcoUserFavoriteDances, LdcoUserFavoriteDancesSchema, type LdcoUserFlaggedDances, LdcoUserFlaggedDancesSchema, type LdcoUserFollowCollections, LdcoUserFollowCollectionsSchema, type LdcoUserFollows, LdcoUserFollowsSchema, type LdcoUserFriends, LdcoUserFriendsSchema, type LdcoUserKnownDances, LdcoUserKnownDancesSchema, type LdcoUserLessons, LdcoUserLessonsSchema, type LdcoUserRefreshDances, LdcoUserRefreshDancesSchema, type LdcoUserVenues, LdcoUserVenuesSchema, type LdcoUsers, LdcoUsersSchema, type LdcoVenueCheckins, LdcoVenueCheckinsSchema, type LdcoVenueUsers, LdcoVenueUsersSchema, type LdcoVenues, LdcoVenuesSchema, type MusicCatalogTracks, MusicCatalogTracksSchema, collections, computeContractHash };
+export { type BldEventTemplates, BldEventTemplatesSchema, type BldEventTypes, BldEventTypesSchema, type BldEvents, BldEventsSchema, type BldFrequencies, BldFrequenciesSchema, type BldLessons, BldLessonsSchema, CONTRACT_HASH, CONTRACT_VERSION, type CopperknobAlertProcessedItems, CopperknobAlertProcessedItemsSchema, type CopperknobAlertSyncMetadata, CopperknobAlertSyncMetadataSchema, type CopperknobAlertWatchRules, CopperknobAlertWatchRulesSchema, type DjfeedAttendeeNotifications, DjfeedAttendeeNotificationsSchema, type DjfeedBeatBalances, DjfeedBeatBalancesSchema, type DjfeedBeatTransactions, DjfeedBeatTransactionsSchema, type DjfeedDancerFavoriteSongs, DjfeedDancerFavoriteSongsSchema, type DjfeedDjDirectMessages, DjfeedDjDirectMessagesSchema, type DjfeedDjMessages, DjfeedDjMessagesSchema, type DjfeedDjNotifications, DjfeedDjNotificationsSchema, type DjfeedDjProfiles, DjfeedDjProfilesSchema, type DjfeedDjRequesterNicknames, DjfeedDjRequesterNicknamesSchema, type DjfeedDjRequests, DjfeedDjRequestsSchema, type DjfeedDjSessions, DjfeedDjSessionsSchema, type DjfeedDjWalletLocks, DjfeedDjWalletLocksSchema, type DjfeedDjWalletTransactions, DjfeedDjWalletTransactionsSchema, type DjfeedFreeAccess, DjfeedFreeAccessSchema, type DjfeedRequesterHistory, DjfeedRequesterHistorySchema, type DjfeedSessionReports, DjfeedSessionReportsSchema, type DjfeedSessionTransactions, DjfeedSessionTransactionsSchema, type DjfeedStripeEvents, DjfeedStripeEventsSchema, type LdcoChoreographers, LdcoChoreographersSchema, type LdcoDanceCollections, LdcoDanceCollectionsSchema, type LdcoDanceTracks, LdcoDanceTracksSchema, type LdcoDances, LdcoDancesSchema, type LdcoEvents, type LdcoEventsEventRegistrations, LdcoEventsEventRegistrationsSchema, type LdcoEventsEvents, LdcoEventsEventsSchema, LdcoEventsSchema, type LdcoFriendRequests, LdcoFriendRequestsSchema, type LdcoHostDancers, LdcoHostDancersSchema, type LdcoInstructorVenues, LdcoInstructorVenuesSchema, type LdcoInstructors, LdcoInstructorsSchema, type LdcoLessons, type LdcoLessonsEventInstructorRequests, LdcoLessonsEventInstructorRequestsSchema, type LdcoLessonsEventInstructors, LdcoLessonsEventInstructorsSchema, type LdcoLessonsEventTemplates, LdcoLessonsEventTemplatesSchema, type LdcoLessonsEventTypes, LdcoLessonsEventTypesSchema, type LdcoLessonsEvents, LdcoLessonsEventsSchema, type LdcoLessonsFrequencies, LdcoLessonsFrequenciesSchema, type LdcoLessonsLessons, LdcoLessonsLessonsSchema, LdcoLessonsSchema, type LdcoLoginEvents, LdcoLoginEventsSchema, type LdcoOauthAuthCodes, LdcoOauthAuthCodesSchema, type LdcoPendingDances, LdcoPendingDancesSchema, type LdcoReviewsChoreographers, LdcoReviewsChoreographersSchema, type LdcoReviewsDances, LdcoReviewsDancesSchema, type LdcoReviewsJoinChoreographerAppeals, LdcoReviewsJoinChoreographerAppealsSchema, type LdcoReviewsLessons, LdcoReviewsLessonsSchema, type LdcoReviewsReports, LdcoReviewsReportsSchema, type LdcoReviewsTracks, LdcoReviewsTracksSchema, type LdcoReviewsVenueUsers, LdcoReviewsVenueUsersSchema, type LdcoReviewsVenues, LdcoReviewsVenuesSchema, type LdcoReviewsVerifyUserInstructor, LdcoReviewsVerifyUserInstructorSchema, type LdcoSessionAttendance, LdcoSessionAttendanceSchema, type LdcoTracks, LdcoTracksSchema, type LdcoUserFavoriteDances, LdcoUserFavoriteDancesSchema, type LdcoUserFlaggedDances, LdcoUserFlaggedDancesSchema, type LdcoUserFollowCollections, LdcoUserFollowCollectionsSchema, type LdcoUserFollows, LdcoUserFollowsSchema, type LdcoUserFriends, LdcoUserFriendsSchema, type LdcoUserKnownDances, LdcoUserKnownDancesSchema, type LdcoUserLessons, LdcoUserLessonsSchema, type LdcoUserRefreshDances, LdcoUserRefreshDancesSchema, type LdcoUserVenues, LdcoUserVenuesSchema, type LdcoUsers, LdcoUsersSchema, type LdcoVenueCheckins, LdcoVenueCheckinsSchema, type LdcoVenueUsers, LdcoVenueUsersSchema, type LdcoVenues, LdcoVenuesSchema, type MusicCatalogTracks, MusicCatalogTracksSchema, collections, computeContractHash };

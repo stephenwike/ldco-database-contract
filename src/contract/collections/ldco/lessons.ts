@@ -11,6 +11,8 @@ export const LdcoLessonsSchema = z.strictObject({
   notes: z.string(),
   difficulty: z.string(),
   venueid: z.string(),
+  verifiedAt: z.null(),
+  verifiedBy: z.null(),
 });
 
 export type LdcoLessons = z.infer<typeof LdcoLessonsSchema>;
