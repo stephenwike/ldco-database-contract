@@ -110,9 +110,9 @@ Tested locally: the site's `getevents` / `getvenues` / `getdances` and the admin
 ## 0. Before starting
 
 - [x] Commit the in-progress admin work on admin `main` (pushed 2026-10-21, `85b4c43`). `feature/bld-to-ldco-lessons` is rebased onto it and uses its `getLessonsDb`; merge it in step 5.
-- [ ] Decide when `beyond-line-dance-webhooks` and the admin's Social Posts move to `bld.social_posts` (decision 19). They can go live before or after this rollout; they only read the schedule.
-- [ ] Check the Atlas user the apps share can read and write a new database, `ldco-lessons` (a role scoped to named databases would need it added).
-- [ ] Pick a quiet time: between step 4 and step 5, anything changed in the admin's BLD pages goes to `bld` and has to be copied again.
+- [x] Decide when `beyond-line-dance-webhooks` and the admin's Social Posts move to `bld.social_posts` (decision 19). They can go live before or after this rollout; they only read the schedule. (2026-10-21: the admin's Social Posts reads `bld` from `f65c48f`; the webhooks app is changed locally but not yet committed or deployed.)
+- [x] Check the Atlas user the apps share can read and write a new database, `ldco-lessons` (a role scoped to named databases would need it added). (confirmed 2026-10-21.)
+- [x] Pick a quiet time: between step 4 and step 5, anything changed in the admin's BLD pages goes to `bld` and has to be copied again. (2026-10-21, ~21:10–22:40 UTC.)
 
 ## 1. Back up and dry-run
 
@@ -134,20 +134,20 @@ Results (2026-10-21), compared with the local copy (2026-10-15):
 
 ## 3. Push the app branches (don't deploy yet)
 
-- [ ] Push and open PRs for the three app branches above, so they're ready to merge in one sitting. Vercel preview builds need the 0.13.0 dependency from step 2.
+- [x] Push and open PRs for the three app branches above, so they're ready to merge in one sitting. Vercel preview builds need the 0.13.0 dependency from step 2. (pushed 2026-10-21; PRs not opened, there's no `gh` CLI. Preview builds first failed on "LDCO_DATABASE_URL is not set", fixed in `f4ad3cd`: the check needs no env vars.)
 
 ## 4. Migrate live
 
-- [ ] `npm run db:migrate:live apply 0013-create-ldco-lessons-from-bld` (insert-only; `bld` keeps working).
-- [ ] `npm run db:migrate:live apply 0014-ldco-venue-time-zone-and-validation`.
+- [x] `npm run db:migrate:live apply 0013-create-ldco-lessons-from-bld` (insert-only; `bld` keeps working). (2026-10-21; live counts match the dry run.)
+- [x] `npm run db:migrate:live apply 0014-ldco-venue-time-zone-and-validation`. (2026-10-21; all 68 venues and 107 lessons have the new fields.)
 - [ ] Check `/collections` shows `ldco-lessons` with no violations.
 
 ## 5. Deploy, right after step 4
 
-- [ ] Merge and deploy `line-dance-manager-admin`, `dance-folly-website` and `line-dance-manager`.
-- [ ] If anything was changed in the admin's BLD pages since step 4, re-run `apply 0013` (it copies new documents; edits to already-copied ones have to be redone in the admin).
+- [x] Merge and deploy `line-dance-manager-admin`, `dance-folly-website` and `line-dance-manager`. (2026-10-21, fast-forward pushes: admin `f65c48f`, `dance-folly-website` `568f342`, `line-dance-manager` `10c20e4`; also `line-dance-dj-feed` `365f9b5`, `copperknob-alert` `927d5ec`.)
+- [x] If anything was changed in the admin's BLD pages since step 4, re-run `apply 0013` (it copies new documents; edits to already-copied ones have to be redone in the admin). (nothing was changed; not needed.)
 - [ ] Check: beyondlinedance.com's calendar and current venues, a dance page's venue filter, the admin's Plan Lesson and Commit Lessons pages, and the instructor dashboard's Schedule tab all show the same classes and dates.
-- [ ] `npm run db:sync-local`.
+- [x] `npm run db:sync-local`. (2026-10-21, right after step 4.)
 
 ## 6. Afterwards
 
