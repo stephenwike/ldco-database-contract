@@ -50,7 +50,7 @@ Collections in the contract but not yet on live (`ldco.events`, `ldco.venue_user
 In each app:
 1. `npm install github:stephenwike/ldco-database-contract` (or `pnpm add …` for `line-dance-dj-feed` and `dance-folly-website`). This replaces the local link and adds the dependency.
 2. Keep the `prebuild: ldco-db-check` script that local testing added to `package.json`. Commit it together with the dependency, never on its own.
-3. In the app's Vercel project, set `LDCO_DATABASE_URL=https://ldco-database-contract.vercel.app` and `LDCO_DATABASE_TOKEN` (same value as `CONTRACT_API_TOKEN`) for **Production and Preview**. Branch pushes build as Preview; without the variables there they fail with "LDCO_DATABASE_URL is not set" (found 2026-10-21, when rollout 2 pushed the first feature branches).
+3. Nothing to set in Vercel. Since 2026-10-21 `ldco-db-check` defaults to `https://ldco-database-contract.vercel.app` and reads the public `/api/contract/version` (version and hash only), so no `LDCO_DATABASE_URL` or token is needed. Before that, builds failed with "LDCO_DATABASE_URL is not set" wherever the variable wasn't supplied (found when rollout 2 pushed the first feature branches).
 4. Push. A build that fails the contract check doesn't replace the running deployment.
 
 Order:

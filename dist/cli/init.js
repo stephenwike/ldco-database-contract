@@ -18,4 +18,4 @@ if (existing?.includes("ldco-db-check")) {
   writeFileSync(file, JSON.stringify(pkg, null, 2) + "\n");
   console.log(`[ldco-db-init] prebuild set to: ${pkg.scripts.prebuild}`);
 }
-console.log("Set LDCO_DATABASE_URL and LDCO_DATABASE_TOKEN in this app's local and Vercel environments.");
+console.log("No environment variables needed: the check calls the public https://ldco-database-contract.vercel.app/api/contract/version. Set LDCO_DATABASE_URL only to test against another contract API.");

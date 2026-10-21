@@ -1065,8 +1065,8 @@ var CONTRACT_VERSION = version;
 var CONTRACT_HASH = hash;
 
 // src/cli/check.ts
-var baseUrl = process.env.LDCO_DATABASE_URL?.replace(/\/+$/, "");
-var token = process.env.LDCO_DATABASE_TOKEN;
+var DEFAULT_URL = "https://ldco-database-contract.vercel.app";
+var baseUrl = (process.env.LDCO_DATABASE_URL || DEFAULT_URL).replace(/\/+$/, "");
 function fail(message) {
   console.error(`
 [ldco-db-check] ${message}
@@ -1078,13 +1078,9 @@ async function main() {
     console.warn("[ldco-db-check] Skipped (LDCO_DATABASE_SKIP_CHECK=1).");
     return;
   }
-  if (!baseUrl) fail("LDCO_DATABASE_URL is not set; cannot verify the database contract.");
   let latest;
   try {
-    const res = await fetch(`${baseUrl}/api/contract`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-      signal: AbortSignal.timeout(1e4)
-    });
+    const res = await fetch(`${baseUrl}/api/contract/version`, { signal: AbortSignal.timeout(1e4) });
     if (!res.ok) fail(`Contract API responded ${res.status} ${res.statusText}.`);
     latest = await res.json();
   } catch (err) {
