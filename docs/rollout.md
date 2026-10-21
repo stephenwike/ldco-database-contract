@@ -109,16 +109,23 @@ Tested locally: the site's `getevents` / `getvenues` / `getdances` and the admin
 
 ## 0. Before starting
 
-- [ ] Commit the in-progress admin work (Social Posts, `lib/db.ts`, dashboard and layout) on admin `main`, then merge `feature/bld-to-ldco-lessons` into it. Both add a database accessor (`getLessonsDb` in `lib/db.ts` there, `lib/lessons.ts` here); keep one.
+- [x] Commit the in-progress admin work on admin `main` (pushed 2026-10-21, `85b4c43`). `feature/bld-to-ldco-lessons` is rebased onto it and uses its `getLessonsDb`; merge it in step 5.
 - [ ] Decide when `beyond-line-dance-webhooks` and the admin's Social Posts move to `bld.social_posts` (decision 19). They can go live before or after this rollout; they only read the schedule.
 - [ ] Check the Atlas user the apps share can read and write a new database, `ldco-lessons` (a role scoped to named databases would need it added).
 - [ ] Pick a quiet time: between step 4 and step 5, anything changed in the admin's BLD pages goes to `bld` and has to be copied again.
 
 ## 1. Back up and dry-run
 
-- [ ] `npm run db:backup-live` (now includes `ldco-lessons`, empty until step 4).
-- [ ] `npm run db:migrate:live plan 0013-create-ldco-lessons-from-bld`. Live has changed since the local copy (2026-10-15): expect more events and history rows. It reports **problems** if a history row names a venue label it doesn't know; add the label to `HISTORY_VENUES` in the migration before applying (apply refuses while there are problems).
-- [ ] `npm run db:migrate:live plan 0014-ldco-venue-time-zone-and-validation`.
+- [x] `npm run db:backup-live` (now includes `ldco-lessons`, empty until step 4). Taken 2026-10-21: `backups/2026-10-21T20-42-15-237Z`.
+- [x] `npm run db:migrate:live plan 0013-create-ldco-lessons-from-bld`. Live has changed since the local copy (2026-10-15): expect more events and history rows. It reports **problems** if a history row names a venue label it doesn't know; add the label to `HISTORY_VENUES` in the migration before applying (apply refuses while there are problems).
+- [x] `npm run db:migrate:live plan 0014-ldco-venue-time-zone-and-validation`.
+
+Results (2026-10-21), compared with the local copy (2026-10-15):
+
+| Migration | Live dry run | Notes |
+|---|---|---|
+| `0013` | 19 event types, 7 frequencies, 286 events (708 lessons, 672 taught), 8 templates, 1,594 history rows; 794 times corrected, 800 linked to an event; 0 problems | 6 more events and 15 more history rows than locally; no unknown venue labels. |
+| `0014` | 68 venues get a time zone; 68 venues and 107 lessons marked not validated | Same as locally. |
 
 ## 2. Publish the contract
 
