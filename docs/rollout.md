@@ -151,7 +151,7 @@ Results (2026-10-21), compared with the local copy (2026-10-15):
 
 ## 6. Afterwards
 
-- [ ] A migration dropping `bld`'s schedule collections (`event_types`, `frequencies`, `events`, `lessons`, `event_templates`); `bld` itself stays (decision 19).
+- [ ] A migration dropping `bld`'s schedule collections (`event_types`, `frequencies`, `events`, `lessons`, `event_templates`); `bld` itself stays (decision 19). Nothing reads them since 2026-10-21: `beyondlinedance-companion` (the old BLD admin) is retired and `dance-folly-website`'s old sync script is removed. Waiting about a week as the rollback path.
 - [ ] Re-run `contract:infer` once special events, registered substitutes, confirmed documents, history `lessonId`s and co-instructor requests exist on live, and add `bld.social_posts` once it has documents.
 - [ ] Rollout 1's step 5 (rotate the shared Atlas password) is still open.
 
