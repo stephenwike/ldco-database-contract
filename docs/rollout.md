@@ -129,8 +129,8 @@ Results (2026-10-21), compared with the local copy (2026-10-15):
 
 ## 2. Publish the contract
 
-- [ ] Merge `feature/ldco-lessons` into `main` and push. Vercel deploys 0.13.0 to `/api/contract`.
-- [ ] Every app's next build now fails its contract check until it's updated: in each of the seven apps (`line-dance-manager`, `line-dance-manager-admin`, `dance-folly-website`, `line-dance-dj-feed`, `copperknob-alert`, `ldco-auth`, `beyond-line-dance-webhooks`) run `npm install github:stephenwike/ldco-database-contract` (`pnpm add …` for the pnpm apps) and commit the lockfile. Running deployments are unaffected until they rebuild.
+- [x] Merge `feature/ldco-lessons` into `main` and push. Vercel deploys 0.13.0 to `/api/contract`. (2026-10-21, `365f527`; `/api/contract` reports 0.13.0.)
+- [x] Every app's next build now fails its contract check until it's updated (done 2026-10-21: `line-dance-manager`, the admin and `dance-folly-website` on their feature branches; `line-dance-dj-feed` and `copperknob-alert` on `chore/contract-0.13.0`; each passes `ldco-db-check`. `ldco-auth` and `beyond-line-dance-webhooks` don't commit a lockfile, so their next Vercel install picks up 0.13.0 by itself): in each of the seven apps (`line-dance-manager`, `line-dance-manager-admin`, `dance-folly-website`, `line-dance-dj-feed`, `copperknob-alert`, `ldco-auth`, `beyond-line-dance-webhooks`) run `npm install github:stephenwike/ldco-database-contract` (`pnpm add …` for the pnpm apps) and commit the lockfile. Running deployments are unaffected until they rebuild.
 
 ## 3. Push the app branches (don't deploy yet)
 
