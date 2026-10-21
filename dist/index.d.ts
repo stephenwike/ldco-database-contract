@@ -398,6 +398,8 @@ declare const DjfeedDjSessionsSchema: z.ZodObject<{
     suppressedClientIds: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
     addOns: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
     migratedFrom: z.ZodOptional<z.ZodString>;
+    shareTimeZone: z.ZodOptional<z.ZodString>;
+    shareToken: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 type DjfeedDjSessions = z.infer<typeof DjfeedDjSessionsSchema>;
 
@@ -505,6 +507,7 @@ declare const DjfeedSessionReportsSchema: z.ZodObject<{
         }, z.core.$strict>>;
         totalTips: z.ZodNumber;
         requesterCount: z.ZodNumber;
+        catalogTrackId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     }, z.core.$strict>>;
     sessionName: z.ZodString;
     startedAt: z.ZodDate;
@@ -1579,6 +1582,8 @@ declare const collections: {
             suppressedClientIds: zod.ZodOptional<zod.ZodArray<zod.ZodUnknown>>;
             addOns: zod.ZodOptional<zod.ZodArray<zod.ZodUnknown>>;
             migratedFrom: zod.ZodOptional<zod.ZodString>;
+            shareTimeZone: zod.ZodOptional<zod.ZodString>;
+            shareToken: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
     readonly "djfeed.dj_wallet_locks": {
@@ -1696,6 +1701,7 @@ declare const collections: {
                 }, zod_v4_core.$strict>>;
                 totalTips: zod.ZodNumber;
                 requesterCount: zod.ZodNumber;
+                catalogTrackId: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
             }, zod_v4_core.$strict>>;
             sessionName: zod.ZodString;
             startedAt: zod.ZodDate;

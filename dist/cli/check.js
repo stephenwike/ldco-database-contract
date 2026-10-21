@@ -2,7 +2,7 @@
 import {
   CONTRACT_HASH,
   CONTRACT_VERSION
-} from "../chunk-42P7HP7Q.js";
+} from "../chunk-4YSVBO64.js";
 
 // src/cli/check.ts
 var DEFAULT_URL = "https://ldco-database-contract.vercel.app";

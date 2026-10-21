@@ -6,10 +6,10 @@ var import_node_crypto = require("crypto");
 var import_zod75 = require("zod");
 
 // contract.lock.json
-var hash = "8b02dc1516adf821a710870defb8da295593f280ae58f3053e518503528474b1";
+var hash = "cd204146402d84dc66f68bdb6e63edda912e5312fb899ac31430a805ca410fa7";
 
 // package.json
-var version = "0.13.0";
+var version = "0.13.1";
 
 // src/contract/collections/bld/event_templates.ts
 var import_zod2 = require("zod");
@@ -349,7 +349,9 @@ var DjfeedDjSessionsSchema = import_zod20.z.strictObject({
   requestsEnabled: import_zod20.z.boolean().optional(),
   suppressedClientIds: import_zod20.z.array(import_zod20.z.unknown()).optional(),
   addOns: import_zod20.z.array(import_zod20.z.unknown()).optional(),
-  migratedFrom: import_zod20.z.string().optional()
+  migratedFrom: import_zod20.z.string().optional(),
+  shareTimeZone: import_zod20.z.string().optional(),
+  shareToken: import_zod20.z.string().optional()
 });
 
 // src/contract/collections/djfeed/dj_wallet_locks.ts
@@ -439,7 +441,8 @@ var DjfeedSessionReportsSchema = import_zod25.z.strictObject({
       tipCents: import_zod25.z.number()
     })),
     totalTips: import_zod25.z.number(),
-    requesterCount: import_zod25.z.number()
+    requesterCount: import_zod25.z.number(),
+    catalogTrackId: import_zod25.z.string().nullable().optional()
   })),
   sessionName: import_zod25.z.string(),
   startedAt: bsonDate,

@@ -1,4 +1,4 @@
-// Inferred from 133 documents by scripts/infer-contract.ts; review before relying on it.
+// Inferred from 140 documents by scripts/infer-contract.ts; review before relying on it.
 import { z } from "zod";
 import { bsonDate, objectId } from "../../bson";
 
@@ -27,6 +27,8 @@ export const DjfeedDjSessionsSchema = z.strictObject({
   suppressedClientIds: z.array(z.unknown()).optional(),
   addOns: z.array(z.unknown()).optional(),
   migratedFrom: z.string().optional(),
+  shareTimeZone: z.string().optional(),
+  shareToken: z.string().optional(),
 });
 
 export type DjfeedDjSessions = z.infer<typeof DjfeedDjSessionsSchema>;

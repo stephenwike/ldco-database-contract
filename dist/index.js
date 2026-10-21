@@ -76,7 +76,7 @@ import {
   MusicCatalogTracksSchema,
   collections,
   computeContractHash
-} from "./chunk-42P7HP7Q.js";
+} from "./chunk-4YSVBO64.js";
 export {
   BldEventTemplatesSchema,
   BldEventTypesSchema,

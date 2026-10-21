@@ -1,4 +1,4 @@
-// Inferred from 91 documents by scripts/infer-contract.ts; review before relying on it.
+// Inferred from 97 documents by scripts/infer-contract.ts; review before relying on it.
 import { z } from "zod";
 import { bsonDate, objectId } from "../../bson";
 
@@ -32,6 +32,7 @@ export const DjfeedSessionReportsSchema = z.strictObject({
     })),
     totalTips: z.number(),
     requesterCount: z.number(),
+    catalogTrackId: z.string().nullable().optional(),
   })),
   sessionName: z.string(),
   startedAt: bsonDate,

@@ -3,10 +3,10 @@ import { createHash } from "crypto";
 import { z as z75 } from "zod";
 
 // contract.lock.json
-var hash = "8b02dc1516adf821a710870defb8da295593f280ae58f3053e518503528474b1";
+var hash = "cd204146402d84dc66f68bdb6e63edda912e5312fb899ac31430a805ca410fa7";
 
 // package.json
-var version = "0.13.0";
+var version = "0.13.1";
 
 // src/contract/collections/bld/event_templates.ts
 import { z as z2 } from "zod";
@@ -346,7 +346,9 @@ var DjfeedDjSessionsSchema = z20.strictObject({
   requestsEnabled: z20.boolean().optional(),
   suppressedClientIds: z20.array(z20.unknown()).optional(),
   addOns: z20.array(z20.unknown()).optional(),
-  migratedFrom: z20.string().optional()
+  migratedFrom: z20.string().optional(),
+  shareTimeZone: z20.string().optional(),
+  shareToken: z20.string().optional()
 });
 
 // src/contract/collections/djfeed/dj_wallet_locks.ts
@@ -436,7 +438,8 @@ var DjfeedSessionReportsSchema = z25.strictObject({
       tipCents: z25.number()
     })),
     totalTips: z25.number(),
-    requesterCount: z25.number()
+    requesterCount: z25.number(),
+    catalogTrackId: z25.string().nullable().optional()
   })),
   sessionName: z25.string(),
   startedAt: bsonDate,
