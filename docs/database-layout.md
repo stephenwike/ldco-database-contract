@@ -12,7 +12,7 @@ What exists in the line-dance world, independent of any user.
 ### 2. Dancer experience
 A dancer's own relationship to dances, lessons, venues and instructors.
 - Dance library: `ldco.user_known_dances` (1,790), `user_favorite_dances` (548), `user_flagged_dances` (484), `user_refresh_dances` (513), `dance_collections` (63), `user_follow_collections` (2)
-- Lessons and venues: `ldco.user_lessons` (6, lessons they plan to attend), `user_venues` (13, the dancer's "My Venue" favourites), `venue_checkins` (24), `session_attendance` (144), `host_dancers` (18)
+- Lessons and venues: `ldco.user_lessons` (6, lessons they plan to attend), `user_venues` (13, the dancer's "My Venue" favourites), `venue_checkins` (24)
 - **?** `djfeed.dancer_favorite_songs` (1): here, or in the DJ feed?
 
 ### 3. Instructing: venues, lessons, schedules, events
@@ -23,7 +23,7 @@ An instructor managing where and what they teach.
 - Ticketed events: `ldco-events.events` (2), `ldco-events.event_registrations` (47). Written by `dance-folly-website` and the admin registrations pages.
 
 ### 4. DJ feed: sessions, requests, reports, beats
-- `djfeed`: `dj_sessions` (106), `dj_requests` (5,658), `dj_messages` (87), `dj_direct_messages` (11), `dj_notifications` (8), `attendee_notifications` (13), `dj_profiles` (2), `dj_requester_nicknames` (2), `requester_history` (1,173), `session_reports` (91), `spotify_tokens` (per-DJ Spotify login; none in the local copy yet)
+- `djfeed`: `dj_sessions` (106), `dj_requests` (5,658), `dj_messages` (87), `dj_direct_messages` (11), `dj_notifications` (8), `attendee_notifications` (13), `dj_profiles` (2), `dj_requester_nicknames` (2), `requester_history` (1,173), `session_reports` (91), `session_attendance` (144) and `host_dancers` (18) (moved from `ldco` by migration `0015`, decision 20), `feed_lessons` (new, decision 20), `spotify_tokens` (per-DJ Spotify login; none in the local copy yet)
 - Beats (the DJ feed's money system): attendees buy beats through Stripe and spend them on tips; DJs get paid into a wallet and can withdraw. `beat_balances` (22), `beat_transactions` (493), `dj_wallet_transactions` (691), `dj_wallet_locks` (0), `session_transactions` (3), `stripe_events` (13), `free_access` (10). Part of the DJ feed unless another app starts charging.
 - History from the pre-split era in `bld` is merged in (migration `0007`); its test-mode payments are archived in `djfeed._archive_bld_*`.
 - Legacy owner ids: the pre-ldco-auth `user_…` ids and the sessions with no owner were all Stephen during early development; migration `0008` assigned them (34 sessions and their requests, messages, reports and history) to his account. The `_archive_bld_*` copies are unchanged.

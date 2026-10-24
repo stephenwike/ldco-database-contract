@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { bsonDate } from "../../bson";
 
-export const LdcoSessionAttendanceSchema = z.strictObject({
+export const DjfeedSessionAttendanceSchema = z.strictObject({
   _id: z.string(),
   sessionId: z.string(),
   userId: z.string(),
@@ -11,4 +11,4 @@ export const LdcoSessionAttendanceSchema = z.strictObject({
   lastSeenAt: bsonDate,
 });
 
-export type LdcoSessionAttendance = z.infer<typeof LdcoSessionAttendanceSchema>;
+export type DjfeedSessionAttendance = z.infer<typeof DjfeedSessionAttendanceSchema>;

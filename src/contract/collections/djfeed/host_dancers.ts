@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { bsonDate } from "../../bson";
 
-export const LdcoHostDancersSchema = z.strictObject({
+export const DjfeedHostDancersSchema = z.strictObject({
   _id: z.string(),
   hostId: z.string(),
   userId: z.string(),
@@ -12,4 +12,4 @@ export const LdcoHostDancersSchema = z.strictObject({
   lastSessionId: z.string(),
 });
 
-export type LdcoHostDancers = z.infer<typeof LdcoHostDancersSchema>;
+export type DjfeedHostDancers = z.infer<typeof DjfeedHostDancersSchema>;

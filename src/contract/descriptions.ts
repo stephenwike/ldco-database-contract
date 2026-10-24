@@ -24,8 +24,10 @@ export const descriptions: Record<string, string> = {
   "ldco.user_lessons": "A dancer plans to attend a lesson (ldco.lessons).",
   "ldco.user_venues": "A dancer's \"My Venue\" favourite in line-dance-manager. Not the same as an instructor's venues (instructor_venues).",
   "ldco.venue_checkins": "A dancer checked in at a venue on a given day (dateKey).",
-  "ldco.session_attendance": "A signed-in dancer was at a host's live DJ Feed event: first and last seen. Written by the DJ Feed.",
-  "ldco.host_dancers": "Summary of which dancers dance with which host (DJ or instructor): first/last seen and number of events.",
+  "djfeed.session_attendance": "A signed-in dancer was at a host's live DJ Feed event: first and last seen. Written by the DJ Feed; moved from ldco (decision 20).",
+  "djfeed.host_dancers": "Summary of which dancers dance with which host (DJ or instructor): first/last seen and number of events. Written by the DJ Feed; moved from ldco (decision 20).",
+  "djfeed.feed_lessons":
+    "A dance a host ran as a lesson block at a DJ Feed event (one per dance per event). Written by the DJ Feed. Not the taught history: ldco-lessons.lessons (committed in the admin) is the source of truth; joined by host, dance and local date to find which dancers were at a lesson (decision 20).",
   "djfeed.dancer_favorite_songs": "A dancer's favourite song in the DJ Feed.",
 
   // Instructing

@@ -44,6 +44,20 @@ How the personal site (`dance-folly-website`, beyondlinedance.com) and the admin
 **Turning a class off.** Switch the event type (or just one frequency) off in the admin. It then stops being projected, its stored future events are hidden, and its venue drops out of "current venues". Its history in `bld.lessons` stays, so the venue still appears in the dance page's history filter. End dates are optional and only needed if you want a class to stop on a known date.
 
 
+## DJ Feed attendance and lessons (`djfeed`)
+
+Decision 20. Written by line-dance-dj-feed; moved from `ldco` (`session_attendance`, `host_dancers`) or new (`feed_lessons`).
+
+| Collection | One document is | Key fields |
+|---|---|---|
+| `session_attendance` | A signed-in dancer at a host's live DJ Feed event | `sessionId`, `hostId`, `userId`, `firstSeenAt`, `lastSeenAt`; unique (`sessionId`, `userId`) |
+| `host_dancers` | One host and one dancer, summarising the above | `hostId`, `userId`, `firstSeenAt`, `lastSeenAt`, `sessionCount`, `lastSessionId`; unique (`hostId`, `userId`) |
+| `feed_lessons` | A dance a host ran as a lesson block at an event | `sessionId`, `hostId`, `danceId`, `startedAt`; unique (`sessionId`, `danceId`) |
+
+`hostId` is the host's user id: the same id as `ldco.instructors.userId` when the host is an instructor. Ids are strings (`new ObjectId().toString()`) and times UTC Dates.
+
+**A feed lesson isn't a taught lesson.** `ldco-lessons.lessons` is the source of truth for what was taught. To find the dancers at a taught lesson: its `instructorId` → `ldco.instructors.userId` (= `hostId`), the same `danceId`, and the same local date (the lesson event's `timeZone`) → the feed lesson's `sessionId` → `session_attendance` rows for that session. `$lookup` can't cross databases, so the join runs in app code.
+
 ## Instructor schedule (`ldco-lessons`)
 
 Decision 18. Any instructor's schedule, in its own database. Migration `0013` created it from `bld` (the section above), keeping `bld`'s collection and field names with the approved changes. Venues, instructors and `instructor_venues` stay in `ldco`.

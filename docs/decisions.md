@@ -112,6 +112,18 @@ Decided 2026-10-21. Supersedes the part of decision 18 that drops `bld` entirely
 - What's dropped after the apps move is `bld`'s schedule collections (`event_types`, `frequencies`, `events`, `lessons`, `event_templates`), not the database.
 - `social_posts` joins the contract (under `bld`) once it has documents to infer from.
 
+## 20. The DJ Feed's records of its events live in `djfeed`; lessons get `djfeed.feed_lessons`
+Decided 2026-10-24. Field notes: [data-model.md](data-model.md#dj-feed-attendance-and-lessons-djfeed).
+
+- **Scope by database, as in decision 18.** What the DJ Feed writes about its own events belongs in `djfeed`, next to `dj_sessions`: `session_attendance` and `host_dancers` move there from `ldco`, and the new `feed_lessons` starts there. They were in `ldco` so line-dance-manager could read them easily, but a reader is no reason to put data in a database; apps read across databases already (decision 18), and these joins run in app code anyway.
+- **`feed_lessons`:** a host ran a dance as a lesson block at a DJ Feed event: `sessionId` (`djfeed.dj_sessions`), `hostId` (the host's user id), `danceId` (`ldco.dances`) and `startedAt` (when the block started). One document per dance per event (unique `sessionId` + `danceId`), so replaying a block or teaching a dance twice in a night doesn't add another. Indexed on (`hostId`, `startedAt`).
+- **Not the taught history.** `ldco-lessons.lessons`, committed in the admin, stays the source of truth for what was taught (decision 18). Plans change during a night and a DJ Feed queue is easy to get wrong, so a lesson block never commits or creates an `ldco-lessons` lesson, and `ldco-lessons.lessons` gets no DJ Feed field.
+- **Who was at a lesson** comes from joining them: a committed lesson's `instructorId` → `ldco.instructors.userId` = `feed_lessons.hostId`, the same `danceId`, and the same local date (the lesson event's `timeZone`) → that feed lesson's `sessionId` → `djfeed.session_attendance` → the dancers. A feed lesson with no matching committed lesson (a changed plan, or a host who isn't in `ldco.instructors` yet) joins to nothing.
+- **Readers:** line-dance-dj-feed writes all three. line-dance-manager reads `host_dancers` (Student Insights), so it reads `djfeed` from this change on; with per-app database users it needs `djfeed` read access.
+- **Migration `0015`** copies `ldco.session_attendance` and `ldco.host_dancers` into `djfeed` (insert-only, matched on their natural keys, dates only widen) and creates the indexes for all three. Run it on live right before deploying line-dance-dj-feed and line-dance-manager reading `djfeed`; attendance written to `ldco` in between would need copying again (rerunning `0015` does that). A later migration drops the `ldco` copies.
+- **Back-filled** lessons come from the DJ Feed's old lesson markers ("LESSON: X" in-queue comments, and custom tracks named "X - Lesson") by a script in line-dance-dj-feed, dry run first.
+- **Hand-written schema** for `feed_lessons`: there were no documents to infer it from; re-run `contract:infer` once there are.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?
@@ -195,6 +207,11 @@ The step-by-step checklist is [rollout.md](rollout.md). Release order matters ev
 - Each app that reads or writes `ldco-lessons` needs it in its database access (the shared Atlas user, or per-app users after the password rotation in [rollout.md](rollout.md)).
 - `beyond-line-dance-webhooks` and the admin's Social Posts routes store posts in `bld.social_posts` (decision 19), not `ldco-lessons`; both currently point at `ldco-lessons` and need switching. Add `bld.social_posts` to the contract, purposes and descriptions once it has documents.
 - `line-dance-manager`'s instructor dashboard (branch `feature/instructor-dashboard-redesign`, uncommitted) reads and writes `ldco-lessons` with decision 18's names (`core/db/ldcoLessons.ts`), tested against the local copy. Its API responses keep their own field names (`danceName`, a lesson `status` worked out from `committed` / `skipped`, `substituteName`), mapped at the edge.
+
+### DJ Feed attendance and lessons (decision 20)
+- On live: back up, run `0015`, then deploy line-dance-dj-feed and line-dance-manager reading `djfeed` in the same sitting (rerun `0015` if attendance landed in `ldco` in between).
+- After both apps are live on `djfeed`: a migration that drops `ldco.session_attendance` and `ldco.host_dancers` once every row is in `djfeed`.
+- Re-run `contract:infer` for `djfeed.feed_lessons` once it has documents.
 
 ### Retire `beyondlinedance-companion`
 It was absorbed into `line-dance-manager-admin` and is not part of the rollout. It still has code that reads and writes `bld`, `ldco` and `ldco-reviews` (last commit 2026-06-02).

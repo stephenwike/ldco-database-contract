@@ -20,8 +20,11 @@ import { DjfeedDjRequestsSchema } from "./djfeed/dj_requests";
 import { DjfeedDjSessionsSchema } from "./djfeed/dj_sessions";
 import { DjfeedDjWalletLocksSchema } from "./djfeed/dj_wallet_locks";
 import { DjfeedDjWalletTransactionsSchema } from "./djfeed/dj_wallet_transactions";
+import { DjfeedFeedLessonsSchema } from "./djfeed/feed_lessons";
 import { DjfeedFreeAccessSchema } from "./djfeed/free_access";
+import { DjfeedHostDancersSchema } from "./djfeed/host_dancers";
 import { DjfeedRequesterHistorySchema } from "./djfeed/requester_history";
+import { DjfeedSessionAttendanceSchema } from "./djfeed/session_attendance";
 import { DjfeedSessionReportsSchema } from "./djfeed/session_reports";
 import { DjfeedSessionTransactionsSchema } from "./djfeed/session_transactions";
 import { DjfeedStripeEventsSchema } from "./djfeed/stripe_events";
@@ -31,14 +34,12 @@ import { LdcoDanceTracksSchema } from "./ldco/dance_tracks";
 import { LdcoDancesSchema } from "./ldco/dances";
 import { LdcoEventsSchema } from "./ldco/events";
 import { LdcoFriendRequestsSchema } from "./ldco/friend_requests";
-import { LdcoHostDancersSchema } from "./ldco/host_dancers";
 import { LdcoInstructorVenuesSchema } from "./ldco/instructor_venues";
 import { LdcoInstructorsSchema } from "./ldco/instructors";
 import { LdcoLessonsSchema } from "./ldco/lessons";
 import { LdcoLoginEventsSchema } from "./ldco/login_events";
 import { LdcoOauthAuthCodesSchema } from "./ldco/oauth_auth_codes";
 import { LdcoPendingDancesSchema } from "./ldco/pending_dances";
-import { LdcoSessionAttendanceSchema } from "./ldco/session_attendance";
 import { LdcoTracksSchema } from "./ldco/tracks";
 import { LdcoUserFavoriteDancesSchema } from "./ldco/user_favorite_dances";
 import { LdcoUserFlaggedDancesSchema } from "./ldco/user_flagged_dances";
@@ -94,8 +95,11 @@ export * from "./djfeed/dj_requests";
 export * from "./djfeed/dj_sessions";
 export * from "./djfeed/dj_wallet_locks";
 export * from "./djfeed/dj_wallet_transactions";
+export * from "./djfeed/feed_lessons";
 export * from "./djfeed/free_access";
+export * from "./djfeed/host_dancers";
 export * from "./djfeed/requester_history";
+export * from "./djfeed/session_attendance";
 export * from "./djfeed/session_reports";
 export * from "./djfeed/session_transactions";
 export * from "./djfeed/stripe_events";
@@ -105,14 +109,12 @@ export * from "./ldco/dance_tracks";
 export * from "./ldco/dances";
 export * from "./ldco/events";
 export * from "./ldco/friend_requests";
-export * from "./ldco/host_dancers";
 export * from "./ldco/instructor_venues";
 export * from "./ldco/instructors";
 export * from "./ldco/lessons";
 export * from "./ldco/login_events";
 export * from "./ldco/oauth_auth_codes";
 export * from "./ldco/pending_dances";
-export * from "./ldco/session_attendance";
 export * from "./ldco/tracks";
 export * from "./ldco/user_favorite_dances";
 export * from "./ldco/user_flagged_dances";
@@ -170,8 +172,11 @@ export const collections = {
   "djfeed.dj_sessions": { database: "djfeed", name: "dj_sessions", schema: DjfeedDjSessionsSchema },
   "djfeed.dj_wallet_locks": { database: "djfeed", name: "dj_wallet_locks", schema: DjfeedDjWalletLocksSchema },
   "djfeed.dj_wallet_transactions": { database: "djfeed", name: "dj_wallet_transactions", schema: DjfeedDjWalletTransactionsSchema },
+  "djfeed.feed_lessons": { database: "djfeed", name: "feed_lessons", schema: DjfeedFeedLessonsSchema },
   "djfeed.free_access": { database: "djfeed", name: "free_access", schema: DjfeedFreeAccessSchema },
+  "djfeed.host_dancers": { database: "djfeed", name: "host_dancers", schema: DjfeedHostDancersSchema },
   "djfeed.requester_history": { database: "djfeed", name: "requester_history", schema: DjfeedRequesterHistorySchema },
+  "djfeed.session_attendance": { database: "djfeed", name: "session_attendance", schema: DjfeedSessionAttendanceSchema },
   "djfeed.session_reports": { database: "djfeed", name: "session_reports", schema: DjfeedSessionReportsSchema },
   "djfeed.session_transactions": { database: "djfeed", name: "session_transactions", schema: DjfeedSessionTransactionsSchema },
   "djfeed.stripe_events": { database: "djfeed", name: "stripe_events", schema: DjfeedStripeEventsSchema },
@@ -181,14 +186,12 @@ export const collections = {
   "ldco.dances": { database: "ldco", name: "dances", schema: LdcoDancesSchema },
   "ldco.events": { database: "ldco", name: "events", schema: LdcoEventsSchema },
   "ldco.friend_requests": { database: "ldco", name: "friend_requests", schema: LdcoFriendRequestsSchema },
-  "ldco.host_dancers": { database: "ldco", name: "host_dancers", schema: LdcoHostDancersSchema },
   "ldco.instructor_venues": { database: "ldco", name: "instructor_venues", schema: LdcoInstructorVenuesSchema },
   "ldco.instructors": { database: "ldco", name: "instructors", schema: LdcoInstructorsSchema },
   "ldco.lessons": { database: "ldco", name: "lessons", schema: LdcoLessonsSchema },
   "ldco.login_events": { database: "ldco", name: "login_events", schema: LdcoLoginEventsSchema },
   "ldco.oauth_auth_codes": { database: "ldco", name: "oauth_auth_codes", schema: LdcoOauthAuthCodesSchema },
   "ldco.pending_dances": { database: "ldco", name: "pending_dances", schema: LdcoPendingDancesSchema },
-  "ldco.session_attendance": { database: "ldco", name: "session_attendance", schema: LdcoSessionAttendanceSchema },
   "ldco.tracks": { database: "ldco", name: "tracks", schema: LdcoTracksSchema },
   "ldco.user_favorite_dances": { database: "ldco", name: "user_favorite_dances", schema: LdcoUserFavoriteDancesSchema },
   "ldco.user_flagged_dances": { database: "ldco", name: "user_flagged_dances", schema: LdcoUserFlaggedDancesSchema },
