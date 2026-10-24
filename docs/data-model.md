@@ -53,6 +53,7 @@ Decision 20. Written by line-dance-dj-feed; moved from `ldco` (`session_attendan
 | `session_attendance` | A signed-in dancer at a host's live DJ Feed event | `sessionId`, `hostId`, `userId`, `firstSeenAt`, `lastSeenAt`; unique (`sessionId`, `userId`) |
 | `host_dancers` | One host and one dancer, summarising the above | `hostId`, `userId`, `firstSeenAt`, `lastSeenAt`, `sessionCount`, `lastSessionId`; unique (`hostId`, `userId`) |
 | `feed_lessons` | A dance a host ran as a lesson block at an event | `sessionId`, `hostId`, `danceId`, `startedAt`; unique (`sessionId`, `danceId`) |
+| `lesson_checks` | A dancer's answer about a wishlisted dance they were taught | `userId`, `feedLessonId`, `answer` (`known` / `refresh` / `not_taken`), `answeredAt`; unique (`userId`, `feedLessonId`) |
 
 `hostId` is the host's user id: the same id as `ldco.instructors.userId` when the host is an instructor. Ids are strings (`new ObjectId().toString()`) and times UTC Dates.
 

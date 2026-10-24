@@ -45,6 +45,7 @@ export const purposes: Purpose[] = [
       "djfeed.session_attendance",
       "djfeed.host_dancers",
       "djfeed.feed_lessons",
+      "djfeed.lesson_checks",
       "djfeed.dancer_favorite_songs",
     ],
     notes: ["user_venues is the dancer's \"My Venue\" favourite, distinct from an instructor's own venues."],

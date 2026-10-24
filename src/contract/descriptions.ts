@@ -28,6 +28,8 @@ export const descriptions: Record<string, string> = {
   "djfeed.host_dancers": "Summary of which dancers dance with which host (DJ or instructor): first/last seen and number of events. Written by the DJ Feed; moved from ldco (decision 20).",
   "djfeed.feed_lessons":
     "A dance a host ran as a lesson block at a DJ Feed event (one per dance per event). Written by the DJ Feed. Not the taught history: ldco-lessons.lessons (committed in the admin) is the source of truth; joined by host, dance and local date to find which dancers were at a lesson (decision 20).",
+  "djfeed.lesson_checks":
+    "A dancer's answer, after a lesson they were at, about a dance on their wishlist (known, refresh or not_taken), per feed lesson so they're asked once. Written by the DJ Feed (decision 20).",
   "djfeed.dancer_favorite_songs": "A dancer's favourite song in the DJ Feed.",
 
   // Instructing

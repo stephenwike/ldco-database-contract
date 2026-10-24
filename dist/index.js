@@ -25,6 +25,7 @@ import {
   DjfeedFeedLessonsSchema,
   DjfeedFreeAccessSchema,
   DjfeedHostDancersSchema,
+  DjfeedLessonChecksSchema,
   DjfeedRequesterHistorySchema,
   DjfeedSessionAttendanceSchema,
   DjfeedSessionReportsSchema,
@@ -77,7 +78,7 @@ import {
   MusicCatalogTracksSchema,
   collections,
   computeContractHash
-} from "./chunk-JKBFNMVP.js";
+} from "./chunk-G7I6ASLX.js";
 export {
   BldEventTemplatesSchema,
   BldEventTypesSchema,
@@ -105,6 +106,7 @@ export {
   DjfeedFeedLessonsSchema,
   DjfeedFreeAccessSchema,
   DjfeedHostDancersSchema,
+  DjfeedLessonChecksSchema,
   DjfeedRequesterHistorySchema,
   DjfeedSessionAttendanceSchema,
   DjfeedSessionReportsSchema,

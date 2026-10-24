@@ -23,6 +23,7 @@ import { DjfeedDjWalletTransactionsSchema } from "./djfeed/dj_wallet_transaction
 import { DjfeedFeedLessonsSchema } from "./djfeed/feed_lessons";
 import { DjfeedFreeAccessSchema } from "./djfeed/free_access";
 import { DjfeedHostDancersSchema } from "./djfeed/host_dancers";
+import { DjfeedLessonChecksSchema } from "./djfeed/lesson_checks";
 import { DjfeedRequesterHistorySchema } from "./djfeed/requester_history";
 import { DjfeedSessionAttendanceSchema } from "./djfeed/session_attendance";
 import { DjfeedSessionReportsSchema } from "./djfeed/session_reports";
@@ -98,6 +99,7 @@ export * from "./djfeed/dj_wallet_transactions";
 export * from "./djfeed/feed_lessons";
 export * from "./djfeed/free_access";
 export * from "./djfeed/host_dancers";
+export * from "./djfeed/lesson_checks";
 export * from "./djfeed/requester_history";
 export * from "./djfeed/session_attendance";
 export * from "./djfeed/session_reports";
@@ -175,6 +177,7 @@ export const collections = {
   "djfeed.feed_lessons": { database: "djfeed", name: "feed_lessons", schema: DjfeedFeedLessonsSchema },
   "djfeed.free_access": { database: "djfeed", name: "free_access", schema: DjfeedFreeAccessSchema },
   "djfeed.host_dancers": { database: "djfeed", name: "host_dancers", schema: DjfeedHostDancersSchema },
+  "djfeed.lesson_checks": { database: "djfeed", name: "lesson_checks", schema: DjfeedLessonChecksSchema },
   "djfeed.requester_history": { database: "djfeed", name: "requester_history", schema: DjfeedRequesterHistorySchema },
   "djfeed.session_attendance": { database: "djfeed", name: "session_attendance", schema: DjfeedSessionAttendanceSchema },
   "djfeed.session_reports": { database: "djfeed", name: "session_reports", schema: DjfeedSessionReportsSchema },
