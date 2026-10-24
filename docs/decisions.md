@@ -210,7 +210,7 @@ The step-by-step checklist is [rollout.md](rollout.md). Release order matters ev
 - `line-dance-manager`'s instructor dashboard (branch `feature/instructor-dashboard-redesign`, uncommitted) reads and writes `ldco-lessons` with decision 18's names (`core/db/ldcoLessons.ts`), tested against the local copy. Its API responses keep their own field names (`danceName`, a lesson `status` worked out from `committed` / `skipped`, `substituteName`), mapped at the edge.
 
 ### DJ Feed attendance and lessons (decision 20)
-- On live: back up, run `0015`, then deploy line-dance-dj-feed and line-dance-manager reading `djfeed` in the same sitting (rerun `0015` if attendance landed in `ldco` in between).
+- Done 2026-10-24: backup `backups/2026-10-24T20-01-33-902Z`; contract 0.14.0 published (`b3b3158`); `0015` applied on live (181 attendance and 30 host-dancer rows copied, indexes created); line-dance-dj-feed (`b1c0531`) and line-dance-manager (`d2d71c9`) pushed to `main` right after; 21 old lessons back-filled into `djfeed.feed_lessons` (`scripts/backfill-feed-lessons.js`; 22 markers with no catalog dance skipped). Rerun `0015` if any attendance landed in `ldco` before the DJ Feed deploy finished.
 - After both apps are live on `djfeed`: a migration that drops `ldco.session_attendance` and `ldco.host_dancers` once every row is in `djfeed`.
 - Re-run `contract:infer` for `djfeed.feed_lessons` once it has documents.
 
