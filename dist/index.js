@@ -4,6 +4,7 @@ import {
   BldEventsSchema,
   BldFrequenciesSchema,
   BldLessonsSchema,
+  COLLECTION_HASHES,
   CONTRACT_HASH,
   CONTRACT_VERSION,
   CopperknobAlertProcessedItemsSchema,
@@ -77,14 +78,19 @@ import {
   LdcoVenuesSchema,
   MusicCatalogTracksSchema,
   collections,
-  computeContractHash
-} from "./chunk-G7I6ASLX.js";
+  computeCollectionHashes,
+  computeContractHash,
+  inScope,
+  scopeFromPackageJson,
+  unmatchedEntries
+} from "./chunk-COIMSJCV.js";
 export {
   BldEventTemplatesSchema,
   BldEventTypesSchema,
   BldEventsSchema,
   BldFrequenciesSchema,
   BldLessonsSchema,
+  COLLECTION_HASHES,
   CONTRACT_HASH,
   CONTRACT_VERSION,
   CopperknobAlertProcessedItemsSchema,
@@ -158,5 +164,9 @@ export {
   LdcoVenuesSchema,
   MusicCatalogTracksSchema,
   collections,
-  computeContractHash
+  computeCollectionHashes,
+  computeContractHash,
+  inScope,
+  scopeFromPackageJson,
+  unmatchedEntries
 };

@@ -13,6 +13,7 @@ Contract package (`@ldco/database`) and admin UI for the shared LDCO MongoDB. De
 - `npm run db:migrate:live status | plan <id> | apply <id>` — against live. `apply` needs `LIVE_WRITE_MONGODB_URI`, a backup under 24 hours old and typed confirmation. Follow [docs/rollout.md](docs/rollout.md).
 - `npm run db:sync-local` — copies live into the local Docker `ldco-mongo` container (read-only on live). In PowerShell, `-- --yes` isn't passed through; use `'sync' | npm run db:sync-local`.
 - `npm run package:build` rebuilds `dist/` (the package apps install: contract plus the `ldco-db-check` / `ldco-db-init` CLIs). `dist/` is committed so apps install without running a build (pnpm 10 / newer npm block install scripts from git dependencies); `prebuild` fails if it's stale, so rebuild and commit it with any contract or CLI change.
+- App scopes (decision 21): each app lists the collections it uses in its `package.json` (`"ldco": { "uses": [...] }`); `ldco-db-check` only fails its build when one of those changed. `npx ldco-db-scope [--write]`, run in an app, suggests a scope from its code.
 - `npm run typecheck`
 
 ## Ground rules

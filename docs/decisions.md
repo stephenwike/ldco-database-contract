@@ -125,6 +125,14 @@ Decided 2026-10-24. Field notes: [data-model.md](data-model.md#dj-feed-attendanc
 - **Back-filled** lessons come from the DJ Feed's old lesson markers ("LESSON: X" in-queue comments, and custom tracks named "X - Lesson") by a script in line-dance-dj-feed, dry run first.
 - **Hand-written schema** for `feed_lessons`: there were no documents to infer it from; re-run `contract:infer` once there are.
 
+## 21. An app's build check covers only the collections it uses
+Decision 12 made the check mandatory, but comparing the whole contract meant every change forced every app to reinstall, even apps that never touch what changed. Now each app declares its **scope** in its own `package.json`: `"ldco": { "uses": ["copperknob_alert.*", "ldco.dances", "ldco.choreographers"] }`, where an entry is `"*"`, `"<database>.*"` or `"<database>.<collection>"`. `ldco-db-check` fails the build only when a collection in scope changed or was removed. A collection added to the contract never forces an update, since the app can't be using it yet. An app with no scope is checked against the whole contract, as before.
+- **Why the scope lives in the app.** The consumer knows what it uses, so its scope changes in the same commit as the code that starts using a collection, and the contract doesn't depend on a list of its consumers. This is the consumer-driven-contract pattern. A provider-side view of "who uses what" can later be built from scopes the check reports, rather than kept by hand.
+- **Granularity.** Mostly whole databases (`djfeed.*`, `ldco-lessons.*`); `ldco` is big and shared, so apps list the `ldco` collections they use individually.
+- **How it works.** `contract.lock.json` holds a hash per collection (computed like the overall hash), the package ships them as `COLLECTION_HASHES`, and the public `/api/contract/version` returns them, so the check compares only the app's collections. If the API predates per-collection hashes, the check falls back to the whole contract. Scope entries that match nothing produce a warning.
+- **Bootstrapping a scope.** `npx ldco-db-scope` (in an app) suggests a scope from string literals in the app's code that name contract databases and collections; `--write` saves it. Text search can miss a name that only arrives through a variable, so check the result; it errs towards including too much, which only means extra checks.
+- **Risk.** A collection the app uses but left out of its scope is no longer checked. Keep scopes current; when in doubt, scope the whole database.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?

@@ -16,7 +16,8 @@
   },
   "bin": {
     "ldco-db-check": "./dist/cli/check.js",
-    "ldco-db-init": "./dist/cli/init.js"
+    "ldco-db-init": "./dist/cli/init.js",
+    "ldco-db-scope": "./dist/cli/scope.js"
   },
   "files": [
     "dist"
