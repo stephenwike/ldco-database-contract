@@ -639,6 +639,7 @@ declare const LdcoDancesSchema: z.ZodObject<{
         song: z.ZodString;
         artist: z.ZodString;
     }, z.core.$strict>>>;
+    publishedAt: z.ZodOptional<z.ZodDate>;
 }, z.core.$strict>;
 type LdcoDances = z.infer<typeof LdcoDancesSchema>;
 
@@ -1875,6 +1876,7 @@ declare const collections: {
                 song: zod.ZodString;
                 artist: zod.ZodString;
             }, zod_v4_core.$strict>>>;
+            publishedAt: zod.ZodOptional<zod.ZodDate>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco.events": {

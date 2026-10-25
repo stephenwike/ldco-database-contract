@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { declaredFields } from "../src/contract/declared-fields";
 import { getDb } from "../src/server/mongo";
 
 // Infers Zod schemas from live documents and writes src/contract/collections/<db>/<name>.ts.
@@ -139,10 +140,17 @@ ${kept}`);
       continue;
     }
     const mixed: string[] = [];
-    const body = shape.count
+    let body = shape.count
       ? gen(shape, `${database}.${name}`, mixed, "")
       : "z.looseObject({ _id: z.union([z.string(), objectId]) })";
     allMixed.push(...mixed);
+
+    // Fields declared ahead of data (decision 22): add any the documents didn't show, before the closing "})"
+    const declared = Object.entries(declaredFields[`${database}.${name}`] ?? {}).filter(([field]) => !shape.fields.has(field));
+    if (shape.count && declared.length) {
+      const lines = declared.map(([field, expr]) => `  ${field}: ${expr}, // declared in src/contract/declared-fields.ts`).join("\n");
+      body = body.replace(/\n\}\)$/, `\n${lines}\n})`);
+    }
 
     const header = shape.count
       ? `// Inferred from ${shape.count} documents by scripts/infer-contract.ts; review before relying on it.`

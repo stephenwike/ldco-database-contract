@@ -5,7 +5,7 @@
 export const descriptions: Record<string, string> = {
   // Dance catalog
   "ldco.dances":
-    "One line dance: name, difficulty, choreographers, stepsheet link(s) and its song. primaryTrack/tracks point at matched tracks; until a track is matched, the scraped song is kept in songArtists.",
+    "One line dance: name, difficulty, choreographers, stepsheet link(s) and its song. primaryTrack/tracks point at matched tracks; until a track is matched, the scraped song is kept in songArtists. publishedAt is the copperknob publish date, set only for dances that came through the feed.",
   "ldco.choreographers": "One choreographer. Created by the admin bulk import and copperknob-alert when a dance names someone new.",
   "ldco.tracks": "One matched song (Spotify-shaped: name, artists, uri, isrc, duration). Only real matched tracks; placeholder tracks were removed by migration 0005.",
   "ldco.dance_tracks":

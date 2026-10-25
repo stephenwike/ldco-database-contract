@@ -62,7 +62,7 @@ var collections = {
   "ldco.choreographers": "3704f8f6e16f9af8b612405ff62bd207f0981d4d403326f36526da1cc2e47d08",
   "ldco.dance_collections": "ef290b6abf788b8a58f430be110a74f03846d9497b40418664bef45f8dae4b27",
   "ldco.dance_tracks": "12fe8ff9b34e4b93dad33cf51109aa9b3edcaf118fe6b64aa258912f0218c923",
-  "ldco.dances": "d00a95e60c4725e29b629ab8175a0844042dc704dd54378e78e0ebe50e8bc631",
+  "ldco.dances": "f8e8bcbf4b3eee8f5888bbd4ba323c08bf6f9ec64dea442e4b8c2f3968c55a4b",
   "ldco.events": "b53ee78587109ccd2ac3a19a09b1ec3bcb31748cc46041cb9faf8b37a29da85c",
   "ldco.friend_requests": "3c44575c6c295a73d8ace89c24529975b13f0716b5676de2dda31fe5e0020f63",
   "ldco.instructor_venues": "ec684ffe975ca167804e53157f10c03042c72d5b9e2b9a930af89176010481a2",
@@ -652,7 +652,9 @@ var LdcoDancesSchema = import_zod35.z.strictObject({
   songArtists: import_zod35.z.array(import_zod35.z.strictObject({
     song: import_zod35.z.string(),
     artist: import_zod35.z.string()
-  })).optional()
+  })).optional(),
+  publishedAt: bsonDate.optional()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/ldco/events.ts

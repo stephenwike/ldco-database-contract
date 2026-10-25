@@ -133,6 +133,12 @@ Decision 12 made the check mandatory, but comparing the whole contract meant eve
 - **Bootstrapping a scope.** `npx ldco-db-scope` (in an app) suggests a scope from string literals in the app's code that name contract databases and collections; `--write` saves it. Text search can miss a name that only arrives through a variable, so check the result; it errs towards including too much, which only means extra checks.
 - **Risk.** A collection the app uses but left out of its scope is no longer checked. Keep scopes current; when in doubt, scope the whole database.
 
+## 22. Dances record when they were published, real dates only
+`ldco.dances.publishedAt` (optional BSON Date) is when the stepsheet was published on copperknob: the RSS item's `pubDate`, an exact timestamp. copperknob-alert's sync sets it for dances that come through the feed (new ones, and existing ones still in the feed that don't have it yet). Other dance writers (admin bulk import, approved pending dances) leave it unset. line-dance-manager uses it to sort by most recent.
+- **Real dates only.** No backfill and no estimates in the data: there is no reliable source for older dances (copperknob has bot protection and isn't scraped; numeric stepsheet ids give an order but not a date; Wayback captures aren't publish dates). Apps that need an estimate compute it when reading.
+- **No precision field.** `pubDate` is always a full timestamp. The month in a choreographer credit ("… - October 2026") is when the dance was **choreographed**, a different fact; if wanted, it would be a separate field, not a less precise `publishedAt`.
+- **Fields declared ahead of data.** The contract is inferred from documents, and none had `publishedAt` yet, so `src/contract/declared-fields.ts` lists fields the generator must include even when it hasn't seen them.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?
