@@ -640,6 +640,13 @@ declare const LdcoDancesSchema: z.ZodObject<{
         artist: z.ZodString;
     }, z.core.$strict>>>;
     publishedAt: z.ZodOptional<z.ZodDate>;
+    published: z.ZodOptional<z.ZodString>;
+    publishedSource: z.ZodOptional<z.ZodEnum<{
+        feed: "feed";
+        "feed-archive": "feed-archive";
+        "sync-time": "sync-time";
+        "id-estimate": "id-estimate";
+    }>>;
 }, z.core.$strict>;
 type LdcoDances = z.infer<typeof LdcoDancesSchema>;
 
@@ -1877,6 +1884,13 @@ declare const collections: {
                 artist: zod.ZodString;
             }, zod_v4_core.$strict>>>;
             publishedAt: zod.ZodOptional<zod.ZodDate>;
+            published: zod.ZodOptional<zod.ZodString>;
+            publishedSource: zod.ZodOptional<zod.ZodEnum<{
+                feed: "feed";
+                "feed-archive": "feed-archive";
+                "sync-time": "sync-time";
+                "id-estimate": "id-estimate";
+            }>>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco.events": {

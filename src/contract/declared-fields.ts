@@ -4,7 +4,13 @@
 // Values are zod source text; objectId and bsonDate from ../bson are available.
 
 export const declaredFields: Record<string, Record<string, string>> = {
-  // When the stepsheet was published on copperknob (the feed item's pubDate). Real dates only: set by
-  // copperknob-alert's sync for dances that come through the feed; older dances leave it unset.
-  "ldco.dances": { publishedAt: "bsonDate.optional()" },
+  // Publish dates at the precision the evidence supports (decision 22, amended). publishedAt is an exact
+  // copperknob timestamp (feed or archived feed); published is the date as YYYY, YYYY-MM or YYYY-MM-DD (UTC);
+  // publishedSource says where it came from. When publishedAt is set, published is its UTC day and the
+  // source is "feed" or "feed-archive".
+  "ldco.dances": {
+    publishedAt: "bsonDate.optional()",
+    published: String.raw`z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/).optional()`,
+    publishedSource: 'z.enum(["feed", "feed-archive", "sync-time", "id-estimate"]).optional()',
+  },
 };

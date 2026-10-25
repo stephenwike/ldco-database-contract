@@ -133,11 +133,21 @@ Decision 12 made the check mandatory, but comparing the whole contract meant eve
 - **Bootstrapping a scope.** `npx ldco-db-scope` (in an app) suggests a scope from string literals in the app's code that name contract databases and collections; `--write` saves it. Text search can miss a name that only arrives through a variable, so check the result; it errs towards including too much, which only means extra checks.
 - **Risk.** A collection the app uses but left out of its scope is no longer checked. Keep scopes current; when in doubt, scope the whole database.
 
-## 22. Dances record when they were published, real dates only
-`ldco.dances.publishedAt` (optional BSON Date) is when the stepsheet was published on copperknob: the RSS item's `pubDate`, an exact timestamp. copperknob-alert's sync sets it for dances that come through the feed (new ones, and existing ones still in the feed that don't have it yet). Other dance writers (admin bulk import, approved pending dances) leave it unset. line-dance-manager uses it to sort by most recent.
-- **Real dates only.** No backfill and no estimates in the data: there is no reliable source for older dances (copperknob has bot protection and isn't scraped; numeric stepsheet ids give an order but not a date; Wayback captures aren't publish dates). Apps that need an estimate compute it when reading.
-- **No precision field.** `pubDate` is always a full timestamp. The month in a choreographer credit ("… - October 2026") is when the dance was **choreographed**, a different fact; if wanted, it would be a separate field, not a less precise `publishedAt`.
-- **Fields declared ahead of data.** The contract is inferred from documents, and none had `publishedAt` yet, so `src/contract/declared-fields.ts` lists fields the generator must include even when it hasn't seen them.
+## 22. Dances record when they were published, at the precision the evidence supports
+*Amended 2026-10-25: the first version stored real dates only (`publishedAt`); it now also stores estimates, but only at a precision the evidence guarantees.*
+
+Three optional fields on `ldco.dances`:
+- `publishedAt` (BSON Date): an exact copperknob timestamp, the RSS item's `pubDate`, from today's feed or an archived copy of it.
+- `published` (string `YYYY`, `YYYY-MM` or `YYYY-MM-DD`, UTC): the most precise calendar unit that contains the whole uncertainty window of the dance's best evidence. If no unit does, nothing is recorded.
+- `publishedSource`: `"feed"` | `"feed-archive"` | `"sync-time"` | `"id-estimate"`.
+
+Rule: when `publishedAt` is set, `published` is its UTC day and the source is `"feed"` or `"feed-archive"`.
+- **Sources.** `feed` is today's feed; `feed-archive` is 119 Wayback copies of the feed (6,572 dated stepsheets). `sync-time` is the creation time of dances copperknob-alert's sync made from 2026-10-15 on, identified by three checks: creation date, the alert's field order and the 5-minute cron timing. `id-estimate` is interpolation between numeric stepsheet ids, bounded by the bracketing archive dates, with error bounds from a hold-out test. Year-only precision is never inferred from letter-code stepsheets, because copperknob has re-keyed old ones.
+- **Backfill.** Migration `0016` writes 1,473 dates (74 feed, 58 feed-archive, 339 sync-time, 1,002 id-estimate) from `src/migrations/data/publish-dates/publish-dates.json`. That file is built by `scripts/build-publish-dates.ts` from a fresh local copy and the committed evidence; method and checks are in the README next to it. It never changes a dance that already has `published`.
+- **Going forward.** copperknob-alert writes all three for new dances. A same-URL dance only takes the feed date if it was created around that date, which also upgrades a weaker estimate; an old stepsheet that copperknob lists again keeps its date. A name match never sets it. Other dance writers leave the fields unset.
+- **Sorting.** Sort by the end of the period (`"2026-01"` sorts as 2026-01-31T23:59:59.999Z), with ties broken by stepsheet number, in app code. MongoDB's string order sorts by start of period.
+- **Not a publish date.** The month in a choreographer credit ("… - October 2026") is when the dance was *choreographed*.
+- **Fields declared ahead of data.** `src/contract/declared-fields.ts` lists fields the generator must include even before any document has them.
 
 ## Future considerations (not decided)
 

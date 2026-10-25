@@ -13,7 +13,8 @@ import { migration as m0012 } from "./files/0012-merge-bld-venues-into-ldco";
 import { migration as m0013 } from "./files/0013-create-ldco-lessons-from-bld";
 import { migration as m0014 } from "./files/0014-ldco-venue-time-zone-and-validation";
 import { migration as m0015 } from "./files/0015-move-dj-feed-attendance-to-djfeed";
+import { migration as m0016 } from "./files/0016-ldco-dances-publish-dates";
 import type { Migration } from "./types";
 
 // Append new migrations in order; never reorder or edit applied ones.
-export const migrations: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007, m0008, m0009, m0010, m0011, m0012, m0013, m0014, m0015];
+export const migrations: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007, m0008, m0009, m0010, m0011, m0012, m0013, m0014, m0015, m0016];
