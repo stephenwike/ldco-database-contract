@@ -651,6 +651,9 @@ declare const LdcoDancesSchema: z.ZodObject<{
         "sync-time": "sync-time";
         "id-estimate": "id-estimate";
     }>>;
+    reviewed: z.ZodOptional<z.ZodBoolean>;
+    reviewedAt: z.ZodOptional<z.ZodDate>;
+    reviewedBy: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 type LdcoDances = z.infer<typeof LdcoDancesSchema>;
 
@@ -1902,6 +1905,9 @@ declare const collections: {
                 "sync-time": "sync-time";
                 "id-estimate": "id-estimate";
             }>>;
+            reviewed: zod.ZodOptional<zod.ZodBoolean>;
+            reviewedAt: zod.ZodOptional<zod.ZodDate>;
+            reviewedBy: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco.events": {

@@ -55,11 +55,11 @@ test("inserting into an array element keeps the closing brace's indent", () => {
   assert.equal(applyDeclaredFields(next, { "playedTracks[].lesson": "z.string().optional()" }), next);
 });
 
-test("contract version is 0.17.0 and matches the lock", () => {
-  assert.equal(CONTRACT_VERSION, "0.17.0");
+test("contract version is 0.18.0 and matches the lock", () => {
+  assert.equal(CONTRACT_VERSION, "0.18.0");
   assert.equal(computeContractHash(), CONTRACT_HASH);
   const lock = JSON.parse(readFileSync("contract.lock.json", "utf8")) as { version: string };
-  assert.equal(lock.version, "0.17.0");
+  assert.equal(lock.version, "0.18.0");
 });
 
 test("dj_requests.lessonPhase is an optional string or null", () => {
@@ -320,6 +320,28 @@ test("ldco.dances.published stays a calendar string", () => {
   accept(LdcoDancesSchema, dance);
   accept(LdcoDancesSchema, { ...dance, published: "2026-10-27", publishedSource: "feed", publishedAt: at });
   reject(LdcoDancesSchema, { ...dance, published: true });
+});
+
+test("ldco.dances review fields are optional and widening only", () => {
+  const dance = {
+    _id: "d",
+    difficulty: "Improver",
+    tracks: [],
+    primaryTrack: "",
+    danceName: "Dance",
+    choreographers: [],
+  };
+  accept(LdcoDancesSchema, dance);
+  accept(LdcoDancesSchema, { ...dance, reviewed: true });
+  accept(LdcoDancesSchema, { ...dance, reviewed: false, reviewedAt: at, reviewedBy: "user-1" });
+  accept(LdcoDancesSchema, { ...dance, published: "2026", publishedSource: "id-estimate", reviewed: true, reviewedAt: at, reviewedBy: "user-1" });
+  reject(LdcoDancesSchema, { ...dance, reviewed: "yes" });
+  reject(LdcoDancesSchema, { ...dance, reviewed: null });
+  reject(LdcoDancesSchema, { ...dance, reviewedAt: at.toISOString() });
+  reject(LdcoDancesSchema, { ...dance, reviewedAt: null });
+  reject(LdcoDancesSchema, { ...dance, reviewedBy: 1 });
+  reject(LdcoDancesSchema, { ...dance, reviewedBy: null });
+  reject(LdcoDancesSchema, { ...dance, published: true, reviewed: true });
 });
 
 test("notifyWebhookUrl is masked in the dashboard", () => {

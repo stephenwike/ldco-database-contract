@@ -18,6 +18,9 @@ export const LdcoDancesSchema = z.strictObject({
   publishedAt: bsonDate.optional(), // declared in src/contract/declared-fields.ts
   published: z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/).optional(), // declared in src/contract/declared-fields.ts
   publishedSource: z.enum(["feed", "feed-archive", "sync-time", "id-estimate"]).optional(), // declared in src/contract/declared-fields.ts
+  reviewed: z.boolean().optional(), // declared in src/contract/declared-fields.ts
+  reviewedAt: bsonDate.optional(), // declared in src/contract/declared-fields.ts
+  reviewedBy: z.string().optional(), // declared in src/contract/declared-fields.ts
 });
 
 export type LdcoDances = z.infer<typeof LdcoDancesSchema>;

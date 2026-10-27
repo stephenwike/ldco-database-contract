@@ -110,7 +110,7 @@ var import_node_crypto = require("crypto");
 var import_zod77 = require("zod");
 
 // contract.lock.json
-var hash = "65e7fd1c6e125c69e3d44aa40165a858e283cf757758139ca3b7d58755948e9c";
+var hash = "434034b5d0ad8335569eac5326daf5bb6be3830e9581463ef308ba7c2fc2f290";
 var collections = {
   "bld.event_templates": "1df4e84dea2413051623a8d5118f26507f7dc8767233a154ade9d17b1ca093d9",
   "bld.event_types": "72df6b91d956eccc5eb094833bdd45135f175ac9697e3e878a7da9dd241d0cb2",
@@ -163,7 +163,7 @@ var collections = {
   "ldco.choreographers": "3704f8f6e16f9af8b612405ff62bd207f0981d4d403326f36526da1cc2e47d08",
   "ldco.dance_collections": "ef290b6abf788b8a58f430be110a74f03846d9497b40418664bef45f8dae4b27",
   "ldco.dance_tracks": "12fe8ff9b34e4b93dad33cf51109aa9b3edcaf118fe6b64aa258912f0218c923",
-  "ldco.dances": "2c941ec81b43d68319866f7c55c37538f9759f34bd42cc3ea5763e5c6c931abe",
+  "ldco.dances": "1f77bd6c1728b5d859197ee3ba3efd4f2c51af930e5fddf4f3878a6ed3429d82",
   "ldco.events": "b53ee78587109ccd2ac3a19a09b1ec3bcb31748cc46041cb9faf8b37a29da85c",
   "ldco.friend_requests": "3c44575c6c295a73d8ace89c24529975b13f0716b5676de2dda31fe5e0020f63",
   "ldco.instructor_venues": "ec684ffe975ca167804e53157f10c03042c72d5b9e2b9a930af89176010481a2",
@@ -190,7 +190,7 @@ var collections = {
 };
 
 // package.json
-var version = "0.17.0";
+var version = "0.18.0";
 
 // src/contract/collections/bld/event_templates.ts
 var import_zod2 = require("zod");
@@ -772,7 +772,13 @@ var LdcoDancesSchema = import_zod35.z.strictObject({
   // declared in src/contract/declared-fields.ts
   published: import_zod35.z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/).optional(),
   // declared in src/contract/declared-fields.ts
-  publishedSource: import_zod35.z.enum(["feed", "feed-archive", "sync-time", "id-estimate"]).optional()
+  publishedSource: import_zod35.z.enum(["feed", "feed-archive", "sync-time", "id-estimate"]).optional(),
+  // declared in src/contract/declared-fields.ts
+  reviewed: import_zod35.z.boolean().optional(),
+  // declared in src/contract/declared-fields.ts
+  reviewedAt: bsonDate.optional(),
+  // declared in src/contract/declared-fields.ts
+  reviewedBy: import_zod35.z.string().optional()
   // declared in src/contract/declared-fields.ts
 });
 

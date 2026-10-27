@@ -149,6 +149,15 @@ Rule: when `publishedAt` is set, `published` is its UTC day and the source is `"
 - **Not a publish date.** The month in a choreographer credit ("… - October 2026") is when the dance was *choreographed*.
 - **Fields declared ahead of data.** `src/contract/declared-fields.ts` lists fields the generator must include even before any document has them.
 
+## 23. A dance can be marked reviewed, separately from when it was published
+Decided 2026-10-27. `line-dance-manager-admin` writes three optional fields on `ldco.dances` when an admin reviews a dance. They are not the publish-date fields (decision 22) and not the venue or lesson `verifiedAt` / `verifiedBy` pair (decision 17).
+
+- `reviewed` (boolean, optional): an admin has reviewed this dance.
+- `reviewedAt` (BSON Date, optional): when it was reviewed.
+- `reviewedBy` (string, optional): the user id of who reviewed it.
+
+All three may be absent, so a dance that already validates still validates. `null` is not a value for these three. Declared in `src/contract/declared-fields.ts` so the next `contract:infer` keeps them. This decision does not write to the database and does not accept the legacy boolean `published: true`.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?
