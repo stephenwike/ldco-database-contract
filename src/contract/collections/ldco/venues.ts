@@ -1,5 +1,6 @@
 // Inferred from 68 documents by scripts/infer-contract.ts; review before relying on it.
 import { z } from "zod";
+import { bsonDate } from "../../bson";
 
 export const LdcoVenuesSchema = z.strictObject({
   _id: z.string(),
@@ -9,8 +10,8 @@ export const LdcoVenuesSchema = z.strictObject({
   phone: z.string(),
   website: z.string(),
   timeZone: z.string(),
-  verifiedAt: z.null(),
-  verifiedBy: z.null(),
+  verifiedAt: bsonDate.nullable(), // declared in src/contract/declared-fields.ts
+  verifiedBy: z.string().nullable(), // declared in src/contract/declared-fields.ts
   city: z.string().optional(),
   state: z.string().optional(),
 });

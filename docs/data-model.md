@@ -57,6 +57,8 @@ Decision 20. Written by line-dance-dj-feed; moved from `ldco` (`session_attendan
 
 `hostId` is the host's user id: the same id as `ldco.instructors.userId` when the host is an instructor. Ids are strings (`new ObjectId().toString()`) and times UTC Dates.
 
+**Contract 0.17, declared ahead of the next infer.** The DJ Feed writes these and the last inference didn't see them: `dj_requests.lessonPhase` (string or null, and older requests omit it); `session_reports.playedTracks[].lesson` (a string or a boolean, or null; not every played row is a lesson); `dj_sessions.extensions` (optional array, same as the report's `extensions`, whose items are still unknown); `dj_sessions.durationMinutes` may be null.
+
 **A feed lesson isn't a taught lesson.** `ldco-lessons.lessons` is the source of truth for what was taught. To find the dancers at a taught lesson: its `instructorId` → `ldco.instructors.userId` (= `hostId`), the same `danceId`, and the same local date (the lesson event's `timeZone`) → the feed lesson's `sessionId` → `session_attendance` rows for that session. `$lookup` can't cross databases, so the join runs in app code.
 
 ## Instructor schedule (`ldco-lessons`)
@@ -82,12 +84,18 @@ Decision 18. Any instructor's schedule, in its own database. Migration `0013` cr
 
 **History:** `lessons.instructorId` and `venueId` are recorded when a lesson is marked taught, so later changes to who's linked don't rewrite it. 786 of the 1,579 migrated rows were matched to the exact event (one stored event at that venue containing the time); the rest predate stored events. `venue` keeps the label as written ("Barnum Rec Center - Tuesdays"), and `venueId` maps it to the venue. 779 migrated dates were an hour off (the admin's hardcoded `-07:00` during daylight time) and were corrected. A history query must never filter on an empty `lessonId`: migrated rows have none, so it would match all of them.
 
-**Fields the generated schemas don't show yet.** The contract is inferred from data, and the migrated data has no special events, registered substitutes, confirmed documents or co-instructor requests. These are part of the design and appear in the contract once real documents use them (re-run `contract:infer`):
-- `events` for a special event: no `eventTypeId`; `venueId`, `title` and `createdBy` instead.
-- `events.substituteInstructorId` as a string (only `null` so far).
-- `events.lessons.startAt` as `null` for a lesson with no time yet.
+**Declared in contract 0.17** (`src/contract/declared-fields.ts`; the generator keeps these expressions, so a sample that only has nulls can't narrow them again):
+- `events` for a special event: `eventTypeId` may be absent or null; optional `venueId`, `title` and `createdBy`.
+- `events.substituteInstructorId` is a string or null.
+- `lessons.lessonId` is a string or null.
+- `event_templates.lessons.link` is a string or null.
+- `verifiedAt` is a Date or null and `verifiedBy` is a user id or null, on `event_types` and `events` here and on `ldco.venues` and `ldco.lessons` (decision 17).
+
+**Still not in the generated shape.** No document in the last inference showed these, and 0.17 doesn't guess them:
+- `events.lessons.startAt` as `null` for a lesson with no time yet (it stays a Date).
 - `event_instructors` rows with `eventId` instead of `eventTypeId`.
 - `event_instructor_requests` documents (the collection is empty).
-- `lessons.lessonId` as a string.
-- `event_templates.lessons.link` as a string.
-- `verifiedAt` as a Date and `verifiedBy` as a user id on `event_types` and `events` here, and on `ldco.venues` and `ldco.lessons` (decision 17; all null so far).
+
+## Copperknob alerts (`copperknob_alert`)
+
+A watch rule matches the new-dance feed on a dance name, and optionally a choreographer (`choreographer` may be omitted). `notifyWebhookUrl` is where a match is posted; rules created before that field omit it. `processed_items.details.choreographer` is a string and may be empty when the feed item named no choreographer.

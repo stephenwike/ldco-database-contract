@@ -39,6 +39,7 @@ export const DjfeedDjRequestsSchema = z.strictObject({
   playLengthMs: z.number().optional(),
   volumeDb: z.number().optional(),
   migratedFrom: z.string().optional(),
+  lessonPhase: z.string().nullable().optional(), // declared in src/contract/declared-fields.ts
 });
 
 export type DjfeedDjRequests = z.infer<typeof DjfeedDjRequestsSchema>;

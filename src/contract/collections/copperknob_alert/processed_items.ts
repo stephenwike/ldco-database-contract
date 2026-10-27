@@ -9,7 +9,7 @@ export const CopperknobAlertProcessedItemsSchema = z.strictObject({
   details: z.strictObject({
     method: z.string(),
     score: z.number(),
-    choreographer: z.string(),
+    choreographer: z.string(), // declared in src/contract/declared-fields.ts
   }),
   matchedRule: z.string(),
   processedAt: bsonDate,

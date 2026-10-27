@@ -33,6 +33,7 @@ export const DjfeedSessionReportsSchema = z.strictObject({
     totalTips: z.number(),
     requesterCount: z.number(),
     catalogTrackId: z.string().nullable().optional(),
+    lesson: z.union([z.string(), z.boolean()]).nullable().optional(), // declared in src/contract/declared-fields.ts
   })),
   sessionName: z.string(),
   startedAt: bsonDate,

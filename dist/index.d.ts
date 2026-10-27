@@ -156,10 +156,11 @@ declare const CopperknobAlertWatchRulesSchema: z.ZodObject<{
     }>;
     id: z.ZodString;
     checkIntervalMinutes: z.ZodNumber;
-    choreographer: z.ZodString;
+    choreographer: z.ZodOptional<z.ZodString>;
     danceName: z.ZodString;
     fuzzyThreshold: z.ZodNumber;
     lastCheckedAt: z.ZodString;
+    notifyWebhookUrl: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 type CopperknobAlertWatchRules = z.infer<typeof CopperknobAlertWatchRulesSchema>;
 
@@ -366,6 +367,7 @@ declare const DjfeedDjRequestsSchema: z.ZodObject<{
     playLengthMs: z.ZodOptional<z.ZodNumber>;
     volumeDb: z.ZodOptional<z.ZodNumber>;
     migratedFrom: z.ZodOptional<z.ZodString>;
+    lessonPhase: z.ZodOptional<z.ZodNullable<z.ZodString>>;
 }, z.core.$strict>;
 type DjfeedDjRequests = z.infer<typeof DjfeedDjRequestsSchema>;
 
@@ -389,7 +391,7 @@ declare const DjfeedDjSessionsSchema: z.ZodObject<{
     tippingEnabled: z.ZodOptional<z.ZodBoolean>;
     autoClosedAt: z.ZodOptional<z.ZodDate>;
     fairnessScoringEnabled: z.ZodOptional<z.ZodBoolean>;
-    durationMinutes: z.ZodOptional<z.ZodNumber>;
+    durationMinutes: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
     queueVisibleCount: z.ZodOptional<z.ZodNumber>;
     feedTemplateId: z.ZodOptional<z.ZodString>;
     feedAppliedAt: z.ZodOptional<z.ZodString>;
@@ -400,6 +402,7 @@ declare const DjfeedDjSessionsSchema: z.ZodObject<{
     migratedFrom: z.ZodOptional<z.ZodString>;
     shareTimeZone: z.ZodOptional<z.ZodString>;
     shareToken: z.ZodOptional<z.ZodString>;
+    extensions: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
 }, z.core.$strict>;
 type DjfeedDjSessions = z.infer<typeof DjfeedDjSessionsSchema>;
 
@@ -551,6 +554,7 @@ declare const DjfeedSessionReportsSchema: z.ZodObject<{
         totalTips: z.ZodNumber;
         requesterCount: z.ZodNumber;
         catalogTrackId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        lesson: z.ZodOptional<z.ZodNullable<z.ZodUnion<readonly [z.ZodString, z.ZodBoolean]>>>;
     }, z.core.$strict>>;
     sessionName: z.ZodString;
     startedAt: z.ZodDate;
@@ -701,8 +705,8 @@ declare const LdcoLessonsSchema: z.ZodObject<{
     notes: z.ZodString;
     difficulty: z.ZodString;
     venueid: z.ZodString;
-    verifiedAt: z.ZodNull;
-    verifiedBy: z.ZodNull;
+    verifiedAt: z.ZodNullable<z.ZodDate>;
+    verifiedBy: z.ZodNullable<z.ZodString>;
 }, z.core.$strict>;
 type LdcoLessons = z.infer<typeof LdcoLessonsSchema>;
 
@@ -880,8 +884,8 @@ declare const LdcoVenuesSchema: z.ZodObject<{
     phone: z.ZodString;
     website: z.ZodString;
     timeZone: z.ZodString;
-    verifiedAt: z.ZodNull;
-    verifiedBy: z.ZodNull;
+    verifiedAt: z.ZodNullable<z.ZodDate>;
+    verifiedBy: z.ZodNullable<z.ZodString>;
     city: z.ZodOptional<z.ZodString>;
     state: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
@@ -968,7 +972,7 @@ declare const LdcoLessonsEventTemplatesSchema: z.ZodObject<{
         time: z.ZodString;
         dance: z.ZodNullable<z.ZodString>;
         level: z.ZodNullable<z.ZodString>;
-        link: z.ZodNull;
+        link: z.ZodNullable<z.ZodString>;
     }, z.core.$strict>>;
     name: z.ZodString;
     updatedAt: z.ZodDate;
@@ -987,8 +991,8 @@ declare const LdcoLessonsEventTypesSchema: z.ZodObject<{
     title: z.ZodString;
     updatedAt: z.ZodDate;
     venueId: z.ZodString;
-    verifiedAt: z.ZodNull;
-    verifiedBy: z.ZodNull;
+    verifiedAt: z.ZodNullable<z.ZodDate>;
+    verifiedBy: z.ZodNullable<z.ZodString>;
 }, z.core.$strict>;
 type LdcoLessonsEventTypes = z.infer<typeof LdcoLessonsEventTypesSchema>;
 
@@ -998,7 +1002,7 @@ declare const LdcoLessonsEventsSchema: z.ZodObject<{
     createdAt: z.ZodDate;
     date: z.ZodString;
     endAt: z.ZodDate;
-    eventTypeId: z.ZodString;
+    eventTypeId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     isCancelled: z.ZodBoolean;
     lessons: z.ZodArray<z.ZodObject<{
         _id: z.ZodString;
@@ -1013,11 +1017,14 @@ declare const LdcoLessonsEventsSchema: z.ZodObject<{
     specialNote: z.ZodNullable<z.ZodString>;
     startAt: z.ZodDate;
     substitute: z.ZodNullable<z.ZodString>;
-    substituteInstructorId: z.ZodNull;
+    substituteInstructorId: z.ZodNullable<z.ZodString>;
     timeZone: z.ZodString;
     updatedAt: z.ZodDate;
-    verifiedAt: z.ZodNull;
-    verifiedBy: z.ZodNull;
+    verifiedAt: z.ZodNullable<z.ZodDate>;
+    verifiedBy: z.ZodNullable<z.ZodString>;
+    title: z.ZodOptional<z.ZodString>;
+    venueId: z.ZodOptional<z.ZodString>;
+    createdBy: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 type LdcoLessonsEvents = z.infer<typeof LdcoLessonsEventsSchema>;
 
@@ -1044,7 +1051,7 @@ declare const LdcoLessonsLessonsSchema: z.ZodObject<{
     date: z.ZodDate;
     eventId: z.ZodNullable<z.ZodString>;
     instructorId: z.ZodString;
-    lessonId: z.ZodNull;
+    lessonId: z.ZodNullable<z.ZodString>;
     venue: z.ZodString;
     venueId: z.ZodString;
     danceName: z.ZodOptional<z.ZodString>;
@@ -1348,10 +1355,11 @@ declare const collections: {
             }>;
             id: zod.ZodString;
             checkIntervalMinutes: zod.ZodNumber;
-            choreographer: zod.ZodString;
+            choreographer: zod.ZodOptional<zod.ZodString>;
             danceName: zod.ZodString;
             fuzzyThreshold: zod.ZodNumber;
             lastCheckedAt: zod.ZodString;
+            notifyWebhookUrl: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
     readonly "djfeed.attendee_notifications": {
@@ -1578,6 +1586,7 @@ declare const collections: {
             playLengthMs: zod.ZodOptional<zod.ZodNumber>;
             volumeDb: zod.ZodOptional<zod.ZodNumber>;
             migratedFrom: zod.ZodOptional<zod.ZodString>;
+            lessonPhase: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         }, zod_v4_core.$strict>;
     };
     readonly "djfeed.dj_sessions": {
@@ -1603,7 +1612,7 @@ declare const collections: {
             tippingEnabled: zod.ZodOptional<zod.ZodBoolean>;
             autoClosedAt: zod.ZodOptional<zod.ZodDate>;
             fairnessScoringEnabled: zod.ZodOptional<zod.ZodBoolean>;
-            durationMinutes: zod.ZodOptional<zod.ZodNumber>;
+            durationMinutes: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
             queueVisibleCount: zod.ZodOptional<zod.ZodNumber>;
             feedTemplateId: zod.ZodOptional<zod.ZodString>;
             feedAppliedAt: zod.ZodOptional<zod.ZodString>;
@@ -1614,6 +1623,7 @@ declare const collections: {
             migratedFrom: zod.ZodOptional<zod.ZodString>;
             shareTimeZone: zod.ZodOptional<zod.ZodString>;
             shareToken: zod.ZodOptional<zod.ZodString>;
+            extensions: zod.ZodOptional<zod.ZodArray<zod.ZodUnknown>>;
         }, zod_v4_core.$strict>;
     };
     readonly "djfeed.dj_wallet_locks": {
@@ -1783,6 +1793,7 @@ declare const collections: {
                 totalTips: zod.ZodNumber;
                 requesterCount: zod.ZodNumber;
                 catalogTrackId: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+                lesson: zod.ZodOptional<zod.ZodNullable<zod.ZodUnion<readonly [zod.ZodString, zod.ZodBoolean]>>>;
             }, zod_v4_core.$strict>>;
             sessionName: zod.ZodString;
             startedAt: zod.ZodDate;
@@ -1955,8 +1966,8 @@ declare const collections: {
             notes: zod.ZodString;
             difficulty: zod.ZodString;
             venueid: zod.ZodString;
-            verifiedAt: zod.ZodNull;
-            verifiedBy: zod.ZodNull;
+            verifiedAt: zod.ZodNullable<zod.ZodDate>;
+            verifiedBy: zod.ZodNullable<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco.login_events": {
@@ -2168,8 +2179,8 @@ declare const collections: {
             phone: zod.ZodString;
             website: zod.ZodString;
             timeZone: zod.ZodString;
-            verifiedAt: zod.ZodNull;
-            verifiedBy: zod.ZodNull;
+            verifiedAt: zod.ZodNullable<zod.ZodDate>;
+            verifiedBy: zod.ZodNullable<zod.ZodString>;
             city: zod.ZodOptional<zod.ZodString>;
             state: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
@@ -2266,7 +2277,7 @@ declare const collections: {
                 time: zod.ZodString;
                 dance: zod.ZodNullable<zod.ZodString>;
                 level: zod.ZodNullable<zod.ZodString>;
-                link: zod.ZodNull;
+                link: zod.ZodNullable<zod.ZodString>;
             }, zod_v4_core.$strict>>;
             name: zod.ZodString;
             updatedAt: zod.ZodDate;
@@ -2287,8 +2298,8 @@ declare const collections: {
             title: zod.ZodString;
             updatedAt: zod.ZodDate;
             venueId: zod.ZodString;
-            verifiedAt: zod.ZodNull;
-            verifiedBy: zod.ZodNull;
+            verifiedAt: zod.ZodNullable<zod.ZodDate>;
+            verifiedBy: zod.ZodNullable<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco-lessons.events": {
@@ -2300,7 +2311,7 @@ declare const collections: {
             createdAt: zod.ZodDate;
             date: zod.ZodString;
             endAt: zod.ZodDate;
-            eventTypeId: zod.ZodString;
+            eventTypeId: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
             isCancelled: zod.ZodBoolean;
             lessons: zod.ZodArray<zod.ZodObject<{
                 _id: zod.ZodString;
@@ -2315,11 +2326,14 @@ declare const collections: {
             specialNote: zod.ZodNullable<zod.ZodString>;
             startAt: zod.ZodDate;
             substitute: zod.ZodNullable<zod.ZodString>;
-            substituteInstructorId: zod.ZodNull;
+            substituteInstructorId: zod.ZodNullable<zod.ZodString>;
             timeZone: zod.ZodString;
             updatedAt: zod.ZodDate;
-            verifiedAt: zod.ZodNull;
-            verifiedBy: zod.ZodNull;
+            verifiedAt: zod.ZodNullable<zod.ZodDate>;
+            verifiedBy: zod.ZodNullable<zod.ZodString>;
+            title: zod.ZodOptional<zod.ZodString>;
+            venueId: zod.ZodOptional<zod.ZodString>;
+            createdBy: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco-lessons.frequencies": {
@@ -2350,7 +2364,7 @@ declare const collections: {
             date: zod.ZodDate;
             eventId: zod.ZodNullable<zod.ZodString>;
             instructorId: zod.ZodString;
-            lessonId: zod.ZodNull;
+            lessonId: zod.ZodNullable<zod.ZodString>;
             venue: zod.ZodString;
             venueId: zod.ZodString;
             danceName: zod.ZodOptional<zod.ZodString>;

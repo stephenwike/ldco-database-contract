@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { applyDeclaredFields } from "../src/contract/apply-declared";
 import { declaredFields } from "../src/contract/declared-fields";
 import { getDb } from "../src/server/mongo";
 
@@ -145,12 +146,10 @@ ${kept}`);
       : "z.looseObject({ _id: z.union([z.string(), objectId]) })";
     allMixed.push(...mixed);
 
-    // Fields declared ahead of data (decision 22): add any the documents didn't show, before the closing "})"
-    const declared = Object.entries(declaredFields[`${database}.${name}`] ?? {}).filter(([field]) => !shape.fields.has(field));
-    if (shape.count && declared.length) {
-      const lines = declared.map(([field, expr]) => `  ${field}: ${expr}, // declared in src/contract/declared-fields.ts`).join("\n");
-      body = body.replace(/\n\}\)$/, `\n${lines}\n})`);
-    }
+    // Hand-maintained fields (decision 22 and later widenings). Missing paths are inserted; paths the
+    // sample did show are replaced, so a null-only or too-narrow inference can't drop the declaration.
+    const declared = declaredFields[`${database}.${name}`];
+    if (shape.count && declared && Object.keys(declared).length) body = applyDeclaredFields(body, declared);
 
     const header = shape.count
       ? `// Inferred from ${shape.count} documents by scripts/infer-contract.ts; review before relying on it.`

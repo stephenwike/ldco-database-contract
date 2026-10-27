@@ -8,7 +8,7 @@ export const LdcoLessonsEventsSchema = z.strictObject({
   createdAt: bsonDate,
   date: z.string(),
   endAt: bsonDate,
-  eventTypeId: z.string(),
+  eventTypeId: z.string().nullable().optional(), // declared in src/contract/declared-fields.ts
   isCancelled: z.boolean(),
   lessons: z.array(z.strictObject({
     _id: z.string(),
@@ -23,11 +23,14 @@ export const LdcoLessonsEventsSchema = z.strictObject({
   specialNote: z.string().nullable(),
   startAt: bsonDate,
   substitute: z.string().nullable(),
-  substituteInstructorId: z.null(),
+  substituteInstructorId: z.string().nullable(), // declared in src/contract/declared-fields.ts
   timeZone: z.string(),
   updatedAt: bsonDate,
-  verifiedAt: z.null(),
-  verifiedBy: z.null(),
+  verifiedAt: bsonDate.nullable(), // declared in src/contract/declared-fields.ts
+  verifiedBy: z.string().nullable(), // declared in src/contract/declared-fields.ts
+  title: z.string().optional(), // declared in src/contract/declared-fields.ts
+  venueId: z.string().optional(), // declared in src/contract/declared-fields.ts
+  createdBy: z.string().optional(), // declared in src/contract/declared-fields.ts
 });
 
 export type LdcoLessonsEvents = z.infer<typeof LdcoLessonsEventsSchema>;
