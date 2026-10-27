@@ -11,7 +11,7 @@ export const LdcoLessonsEventTemplatesSchema = z.strictObject({
     time: z.string(),
     dance: z.string().nullable(),
     level: z.string().nullable(),
-    link: z.null(),
+    link: z.string().nullable(), // declared in src/contract/declared-fields.ts
   })),
   name: z.string(),
   updatedAt: bsonDate,

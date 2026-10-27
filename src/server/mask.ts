@@ -1,7 +1,7 @@
 // Fields whose values are never shown in the UI, at any depth.
-const PRIVATE_KEY = /password|passwd|secret|token|email|^ip$|ipaddress|user_?agent|google_?id|signature|phone/i;
+const PRIVATE_KEY = /password|passwd|secret|token|webhook|email|^ip$|ipaddress|user_?agent|google_?id|signature|phone/i;
 
-export const MASKED_FIELD_HINT = "password, secret, token, email, ip, userAgent, googleId, signature, phone";
+export const MASKED_FIELD_HINT = "password, secret, token, webhook, email, ip, userAgent, googleId, signature, phone";
 
 // Returns a JSON-safe copy with private values replaced by a placeholder; null/undefined stay visible.
 export function maskDocument(value: unknown, key = ""): unknown {

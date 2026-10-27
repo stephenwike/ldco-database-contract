@@ -8,7 +8,7 @@ export const LdcoLessonsLessonsSchema = z.strictObject({
   date: bsonDate,
   eventId: z.string().nullable(),
   instructorId: z.string(),
-  lessonId: z.null(),
+  lessonId: z.string().nullable(), // declared in src/contract/declared-fields.ts
   venue: z.string(),
   venueId: z.string(),
   danceName: z.string().optional(),

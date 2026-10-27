@@ -58,8 +58,8 @@ export const descriptions: Record<string, string> = {
   "ldco-events.event_registrations": "One registration for a ticketed event: attendee details, waiver, payment status and song requests.",
 
   // DJ feed
-  "djfeed.dj_sessions": "One DJ event: owner, status (draft, active, closed), timing and feature settings (tipping, fairness, partner dances).",
-  "djfeed.dj_requests": "One song request in a DJ session: the dance, song, requester, queue position and play status. Requests from before the app split carry migratedFrom: \"bld\".",
+  "djfeed.dj_sessions": "One DJ event: owner, status (draft, active, closed), timing and feature settings (tipping, fairness, partner dances). durationMinutes may be null. extensions is the list of session extensions copied onto the session report.",
+  "djfeed.dj_requests": "One song request in a DJ session: the dance, song, requester, queue position and play status. lessonPhase is set when the request is part of a lesson block. Requests from before the app split carry migratedFrom: \"bld\".",
   "djfeed.dj_messages": "A message the DJ shows on the feed during a session.",
   "djfeed.dj_direct_messages": "A private message from the DJ to one dancer.",
   "djfeed.dj_notifications": "A notification for a DJ, e.g. a tip received.",
@@ -67,7 +67,7 @@ export const descriptions: Record<string, string> = {
   "djfeed.dj_profiles": "A DJ's settings: Stripe account, payment links and feed display templates.",
   "djfeed.dj_requester_nicknames": "A nickname a DJ gave a requester, kept across sessions.",
   "djfeed.requester_history": "Everything one requester asked for in one session, kept after the session's requests are cleared.",
-  "djfeed.session_reports": "The summary of a finished DJ session: tracks played, duration and stats.",
+  "djfeed.session_reports": "The summary of a finished DJ session: tracks played (a played row may carry a lesson marker), duration and stats.",
   "djfeed.beat_balances": "A dancer's current beats balance (the DJ Feed's tipping currency).",
   "djfeed.beat_transactions": "One beats movement for a dancer: a purchase via Stripe or a tip spent on a request.",
   "djfeed.dj_wallet_transactions": "One entry in a DJ's wallet ledger: tips received, payments for sessions, withdrawals. Balances are the sum of these.",
@@ -86,8 +86,8 @@ export const descriptions: Record<string, string> = {
   "ldco.user_follows": "A user follows another user.",
 
   // Copperknob alerts
-  "copperknob_alert.watch_rules": "A rule for copperknob's new-dance feed (choreographer and/or dance name, fuzzy match) that sends Stephen a phone alert.",
-  "copperknob_alert.processed_items": "A feed item that matched a rule and was alerted, so it isn't alerted twice.",
+  "copperknob_alert.watch_rules": "A rule for copperknob's new-dance feed (dance name, and optionally a choreographer, fuzzy match). A match can be posted to notifyWebhookUrl.",
+  "copperknob_alert.processed_items": "A feed item that matched a rule and was alerted, so it isn't alerted twice. details.choreographer may be an empty string when the item named none.",
   "copperknob_alert.sync_metadata": "When the cron last copied new feed dances into ldco.dances, and how many.",
 
   // Review and moderation

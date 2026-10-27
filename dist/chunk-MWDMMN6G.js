@@ -3,7 +3,7 @@ import { createHash } from "crypto";
 import { z as z77 } from "zod";
 
 // contract.lock.json
-var hash = "1766f5bdb5d1944553722f4575b7eebb2f15e0727f00f5cde94a89d923c8f938";
+var hash = "65e7fd1c6e125c69e3d44aa40165a858e283cf757758139ca3b7d58755948e9c";
 var collections = {
   "bld.event_templates": "1df4e84dea2413051623a8d5118f26507f7dc8767233a154ade9d17b1ca093d9",
   "bld.event_types": "72df6b91d956eccc5eb094833bdd45135f175ac9697e3e878a7da9dd241d0cb2",
@@ -12,7 +12,7 @@ var collections = {
   "bld.lessons": "6f314ff8432dd5551f39f473c20413187668310f206ba5cdb55610a6ccaae3ce",
   "copperknob_alert.processed_items": "c1ea28aeff688c50d4e965e3eb5631a80c23d821ad0deb062ff84801cf2236d9",
   "copperknob_alert.sync_metadata": "cf3046a5ea3e61a870f7d0da53427849e065be5ae0cebc40bea7973258eaa712",
-  "copperknob_alert.watch_rules": "c77273c3837d604de8c47556115c9c61986b06418c73e71178b77fcc6103ed46",
+  "copperknob_alert.watch_rules": "c982202f0d34f0af519f27a7b5405b798d1c75a0c321632d0dbe35c8a3323501",
   "djfeed.attendee_notifications": "0e5ab647437b750b07e19e2c584e83b5fcce75dd845eb84318a52cc9348a2f6f",
   "djfeed.beat_balances": "2fc401d0a287f1b3bf38f2af6bebcccfdd52f9a3e27c42d7b3815e57a9924374",
   "djfeed.beat_transactions": "9e5f1d64f6cf9e7cae14c5ddc976b0f877ac24966f90daeec17d1ab9bb019029",
@@ -22,8 +22,8 @@ var collections = {
   "djfeed.dj_notifications": "0c6503899d147930e18ae806eef888fe9ff147a9603f57fc7f2b8b65bd2c1920",
   "djfeed.dj_profiles": "defe2e6528acd546e9df86850ac22dd71bfe8aa0733a55483a36faf68ed4ab5f",
   "djfeed.dj_requester_nicknames": "d030608dcdd9d459d3d5d41e949a1a35bc37fb87636f56ea3d4c3e53ac3e3325",
-  "djfeed.dj_requests": "f5c3a6ca774163ddc0f26a47ca02241bc23f2f993b3d2322288ef3237a3703d4",
-  "djfeed.dj_sessions": "ac6293c81cf3f1340367f297e470cad6e7bb9b5020d649b74fd674fbaaf74c1c",
+  "djfeed.dj_requests": "9985004fe37fef2dec14a53de30dd0cd0dda9da30880535b849be3d8f706f063",
+  "djfeed.dj_sessions": "0e50868519f103c4d40dcc37a7516774a2f7f72e79486bf3dfec2d68d2e14604",
   "djfeed.dj_wallet_locks": "4821dafb6bea19c33eb6c5ca3f7f775d7eb80ceb3e69e9c834b1e0676781f8fb",
   "djfeed.dj_wallet_transactions": "20693a807124448596dd4d65e6b4448dc48fcb761884056baf4081f86e59efa8",
   "djfeed.feed_lessons": "fd3f81ee314714e77a62656c152fac5eac3dec74641571a1ef2240bc002e47e9",
@@ -32,18 +32,18 @@ var collections = {
   "djfeed.lesson_checks": "a30485fdd2662ba54bda17c07b618e623fabd0446d505d7614b400d15672937b",
   "djfeed.requester_history": "268b11cd79c20bd567a124a14723ec6885665fe3bf98edadfc82f305de36a553",
   "djfeed.session_attendance": "efe769c9f9b9a8e2fe1b09c436cd7173a12f301f96e0ccccba283fff58ea716a",
-  "djfeed.session_reports": "fdc6625b335ddb78766c86d17e50705b87fe53c94fb5ff7b6796b40806e3003f",
+  "djfeed.session_reports": "0331e623f3705d65aca905fa43e43106e7f5d909d9b07fa8ffc993f7222e8a29",
   "djfeed.session_transactions": "dacf4f7565c4ebaf419112952955bd57ce9d5d61dca1b581696e10adc658cd9d",
   "djfeed.stripe_events": "931713a25924546920cd89698d1a840ba2e39ece9ccc26ab1a429641e3f0c061",
   "ldco-events.event_registrations": "9ada86c41c046b78f0a94be5383829f356674e8686650315df11cd11dade95c3",
   "ldco-events.events": "acc2c6ea398d385d7153c0760f3abb44a187c6a864434a2ec20dbfc1ea5e2cf5",
   "ldco-lessons.event_instructor_requests": "d6363771f4bb8324dad5e906d2526abf36977d274368ebad1962d6f5506714ed",
   "ldco-lessons.event_instructors": "c7e861de7b2f8e052c97bb902699b18f689f3dda1a65798fd48d7a20d66863a0",
-  "ldco-lessons.event_templates": "9de0adac86f736fd894cefe06072d140d931963bdff82fe37fc9882248d27f08",
-  "ldco-lessons.event_types": "db49cdbf82f901b12b321b6bd4737c1127d9b4ab5978b9aa5989add1d04ae6c3",
-  "ldco-lessons.events": "49a4c2f9aea9f96d6b3aec0f3e8c99ac98879606628b755189e1667b63cbdb26",
+  "ldco-lessons.event_templates": "7bef5133ab79c4239ca5818d458f78af3bc3983922fb71691eb20cc43526da37",
+  "ldco-lessons.event_types": "e0c586ad595062353e29eaf45837167fc926a884850017be5e0c2943250a0cdb",
+  "ldco-lessons.events": "b4d300d20ffa5f4caf2c4f73884018bc3e1adbe38c004fd44cadbbaf8154e142",
   "ldco-lessons.frequencies": "4945f9e6abe0cc3d4dade2eeb796d5dbde2bb1dd5458f07b28f8f18a700f5b30",
-  "ldco-lessons.lessons": "defc8d07b20093434f11eb40bfdc42ded4f1eab49a90a687feca89adee0e5546",
+  "ldco-lessons.lessons": "c5ee40a6d65460ef053471f61099865bc733a506d6aa7a8580c067f7838eea40",
   "ldco-reviews.choreographers": "d255092436491018b8d388e6f95c28dbd566cb53f7485b58dc6712be49386a36",
   "ldco-reviews.dances": "3fc12018ed54816edcccbe68b74dbdadf2f1015bd40c1b8f0ca382f07554ad40",
   "ldco-reviews.join_choreographer_appeals": "2d7e2d6b5e7ae7ae2711a78bf1184166025b019354e2a7d006611dc186fe7dac",
@@ -61,7 +61,7 @@ var collections = {
   "ldco.friend_requests": "3c44575c6c295a73d8ace89c24529975b13f0716b5676de2dda31fe5e0020f63",
   "ldco.instructor_venues": "ec684ffe975ca167804e53157f10c03042c72d5b9e2b9a930af89176010481a2",
   "ldco.instructors": "7d6963368134db795f7fe0a2211ea49e55c9d58e196706f031a4ec17fbc5b4a8",
-  "ldco.lessons": "e9c16365fea27a84b1bc1f8c4f829ae10e3c5b3351a0956b9d45098a72b8bfae",
+  "ldco.lessons": "077310d7b2505baed4a07a8a45e9b38df1140e738139f9fdade7451650bb241c",
   "ldco.login_events": "0b042cfdb867f5c2d1f7f5a1d4928fddd10cf4feb5f24fcf2c04f51032d7c8b8",
   "ldco.oauth_auth_codes": "3ee5d77ba237bb289c9fc95d36e513cc99dab113e82480928d05cf3d0781124a",
   "ldco.pending_dances": "0c6d91a61fa844c44ba7fd851e0085c102e35296ec0678c79c2b37c406dac7cd",
@@ -78,12 +78,12 @@ var collections = {
   "ldco.users": "eda148e9c709ba2ec6a407015c66bf44779160e789182071dd91177f6cdb4dae",
   "ldco.venue_checkins": "e01902219a9d81ea071530cdb453c2af739c872e7651460f429415828ff38ecf",
   "ldco.venue_users": "b365f003bb9f3a13ab89291b2b1906c28c28239d1bb547074fa1192065c83af6",
-  "ldco.venues": "f8e876005e0d9aa310600463a0feb7921da9f9b49e3312f233f990f0c532523a",
+  "ldco.venues": "1f5d0832a4c7eceb7b1c1cef310b564793553173644d1d879e606e1c10744423",
   "music_catalog.tracks": "108476379cc40c8264e23aba562c5151a8dc0c3af21498e7ed631a7a300d67fe"
 };
 
 // package.json
-var version = "0.16.0";
+var version = "0.17.0";
 
 // src/contract/collections/bld/event_templates.ts
 import { z as z2 } from "zod";
@@ -188,6 +188,7 @@ var CopperknobAlertProcessedItemsSchema = z7.strictObject({
     method: z7.string(),
     score: z7.number(),
     choreographer: z7.string()
+    // declared in src/contract/declared-fields.ts
   }),
   matchedRule: z7.string(),
   processedAt: bsonDate,
@@ -211,10 +212,13 @@ var CopperknobAlertWatchRulesSchema = z9.strictObject({
   _id: objectId,
   id: z9.string(),
   checkIntervalMinutes: z9.number(),
-  choreographer: z9.string(),
+  choreographer: z9.string().optional(),
+  // declared in src/contract/declared-fields.ts
   danceName: z9.string(),
   fuzzyThreshold: z9.number(),
-  lastCheckedAt: z9.string()
+  lastCheckedAt: z9.string(),
+  notifyWebhookUrl: z9.string().optional()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/djfeed/attendee_notifications.ts
@@ -394,7 +398,9 @@ var DjfeedDjRequestsSchema = z19.strictObject({
   tempo: z19.number().nullable().optional(),
   playLengthMs: z19.number().optional(),
   volumeDb: z19.number().optional(),
-  migratedFrom: z19.string().optional()
+  migratedFrom: z19.string().optional(),
+  lessonPhase: z19.string().nullable().optional()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/djfeed/dj_sessions.ts
@@ -415,7 +421,8 @@ var DjfeedDjSessionsSchema = z20.strictObject({
   tippingEnabled: z20.boolean().optional(),
   autoClosedAt: bsonDate.optional(),
   fairnessScoringEnabled: z20.boolean().optional(),
-  durationMinutes: z20.number().optional(),
+  durationMinutes: z20.number().nullable().optional(),
+  // declared in src/contract/declared-fields.ts
   queueVisibleCount: z20.number().optional(),
   feedTemplateId: z20.string().optional(),
   feedAppliedAt: z20.string().optional(),
@@ -425,7 +432,9 @@ var DjfeedDjSessionsSchema = z20.strictObject({
   addOns: z20.array(z20.unknown()).optional(),
   migratedFrom: z20.string().optional(),
   shareTimeZone: z20.string().optional(),
-  shareToken: z20.string().optional()
+  shareToken: z20.string().optional(),
+  extensions: z20.array(z20.unknown()).optional()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/djfeed/dj_wallet_locks.ts
@@ -559,7 +568,9 @@ var DjfeedSessionReportsSchema = z29.strictObject({
     })),
     totalTips: z29.number(),
     requesterCount: z29.number(),
-    catalogTrackId: z29.string().nullable().optional()
+    catalogTrackId: z29.string().nullable().optional(),
+    lesson: z29.union([z29.string(), z29.boolean()]).nullable().optional()
+    // declared in src/contract/declared-fields.ts
   })),
   sessionName: z29.string(),
   startedAt: bsonDate,
@@ -715,8 +726,10 @@ var LdcoLessonsSchema = z40.strictObject({
   notes: z40.string(),
   difficulty: z40.string(),
   venueid: z40.string(),
-  verifiedAt: z40.null(),
-  verifiedBy: z40.null()
+  verifiedAt: bsonDate.nullable(),
+  // declared in src/contract/declared-fields.ts
+  verifiedBy: z40.string().nullable()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/ldco/login_events.ts
@@ -901,8 +914,10 @@ var LdcoVenuesSchema = z57.strictObject({
   phone: z57.string(),
   website: z57.string(),
   timeZone: z57.string(),
-  verifiedAt: z57.null(),
-  verifiedBy: z57.null(),
+  verifiedAt: bsonDate.nullable(),
+  // declared in src/contract/declared-fields.ts
+  verifiedBy: z57.string().nullable(),
+  // declared in src/contract/declared-fields.ts
   city: z57.string().optional(),
   state: z57.string().optional()
 });
@@ -980,7 +995,8 @@ var LdcoLessonsEventTemplatesSchema = z62.strictObject({
     time: z62.string(),
     dance: z62.string().nullable(),
     level: z62.string().nullable(),
-    link: z62.null()
+    link: z62.string().nullable()
+    // declared in src/contract/declared-fields.ts
   })),
   name: z62.string(),
   updatedAt: bsonDate
@@ -1000,8 +1016,10 @@ var LdcoLessonsEventTypesSchema = z63.strictObject({
   title: z63.string(),
   updatedAt: bsonDate,
   venueId: z63.string(),
-  verifiedAt: z63.null(),
-  verifiedBy: z63.null()
+  verifiedAt: bsonDate.nullable(),
+  // declared in src/contract/declared-fields.ts
+  verifiedBy: z63.string().nullable()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/ldco-lessons/events.ts
@@ -1012,7 +1030,8 @@ var LdcoLessonsEventsSchema = z64.strictObject({
   createdAt: bsonDate,
   date: z64.string(),
   endAt: bsonDate,
-  eventTypeId: z64.string(),
+  eventTypeId: z64.string().nullable().optional(),
+  // declared in src/contract/declared-fields.ts
   isCancelled: z64.boolean(),
   lessons: z64.array(z64.strictObject({
     _id: z64.string(),
@@ -1027,11 +1046,20 @@ var LdcoLessonsEventsSchema = z64.strictObject({
   specialNote: z64.string().nullable(),
   startAt: bsonDate,
   substitute: z64.string().nullable(),
-  substituteInstructorId: z64.null(),
+  substituteInstructorId: z64.string().nullable(),
+  // declared in src/contract/declared-fields.ts
   timeZone: z64.string(),
   updatedAt: bsonDate,
-  verifiedAt: z64.null(),
-  verifiedBy: z64.null()
+  verifiedAt: bsonDate.nullable(),
+  // declared in src/contract/declared-fields.ts
+  verifiedBy: z64.string().nullable(),
+  // declared in src/contract/declared-fields.ts
+  title: z64.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  venueId: z64.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  createdBy: z64.string().optional()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/ldco-lessons/frequencies.ts
@@ -1060,7 +1088,8 @@ var LdcoLessonsLessonsSchema = z66.strictObject({
   date: bsonDate,
   eventId: z66.string().nullable(),
   instructorId: z66.string(),
-  lessonId: z66.null(),
+  lessonId: z66.string().nullable(),
+  // declared in src/contract/declared-fields.ts
   venue: z66.string(),
   venueId: z66.string(),
   danceName: z66.string().optional()

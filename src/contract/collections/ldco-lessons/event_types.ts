@@ -14,8 +14,8 @@ export const LdcoLessonsEventTypesSchema = z.strictObject({
   title: z.string(),
   updatedAt: bsonDate,
   venueId: z.string(),
-  verifiedAt: z.null(),
-  verifiedBy: z.null(),
+  verifiedAt: bsonDate.nullable(), // declared in src/contract/declared-fields.ts
+  verifiedBy: z.string().nullable(), // declared in src/contract/declared-fields.ts
 });
 
 export type LdcoLessonsEventTypes = z.infer<typeof LdcoLessonsEventTypesSchema>;

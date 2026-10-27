@@ -18,7 +18,7 @@ export const DjfeedDjSessionsSchema = z.strictObject({
   tippingEnabled: z.boolean().optional(),
   autoClosedAt: bsonDate.optional(),
   fairnessScoringEnabled: z.boolean().optional(),
-  durationMinutes: z.number().optional(),
+  durationMinutes: z.number().nullable().optional(), // declared in src/contract/declared-fields.ts
   queueVisibleCount: z.number().optional(),
   feedTemplateId: z.string().optional(),
   feedAppliedAt: z.string().optional(),
@@ -29,6 +29,7 @@ export const DjfeedDjSessionsSchema = z.strictObject({
   migratedFrom: z.string().optional(),
   shareTimeZone: z.string().optional(),
   shareToken: z.string().optional(),
+  extensions: z.array(z.unknown()).optional(), // declared in src/contract/declared-fields.ts
 });
 
 export type DjfeedDjSessions = z.infer<typeof DjfeedDjSessionsSchema>;

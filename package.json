@@ -1,6 +1,6 @@
 {
   "name": "@ldco/database",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "private": false,
   "type": "module",
   "description": "Single source of truth for the shared LDCO MongoDB contract, plus the API that publishes the latest version.",
@@ -35,7 +35,8 @@
     "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
     "db:migrate:live": "tsx --env-file-if-exists=.env.local scripts/migrate.ts --live",
     "contract:infer": "tsx --env-file-if-exists=.env.local scripts/infer-contract.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/contract/declared-fields.test.ts"
   },
   "dependencies": {
     "mongodb": "^7.7.0",
