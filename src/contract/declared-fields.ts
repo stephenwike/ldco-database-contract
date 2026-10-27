@@ -14,6 +14,11 @@ export const declaredFields: Record<string, Record<string, string>> = {
     publishedAt: "bsonDate.optional()",
     published: String.raw`z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/).optional()`,
     publishedSource: 'z.enum(["feed", "feed-archive", "sync-time", "id-estimate"]).optional()',
+    // Separate from the publish-date fields. line-dance-manager-admin writes these when an admin
+    // reviews a dance (decision 23). Optional, so a dance that has never been reviewed stays valid.
+    reviewed: "z.boolean().optional()",
+    reviewedAt: "bsonDate.optional()",
+    reviewedBy: "z.string().optional()",
   },
 
   // Decision 17: not-validated is a null Date / user id, and a confirmation writes a real Date and id.

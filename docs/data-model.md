@@ -12,6 +12,11 @@ Database `ldco`, collection `dances`.
 | `songArtists` | Optional `[{ song, artist }]`. Scraped song info from copperknob, set by the bulk import in `line-dance-manager-admin`. See decision 7. |
 | `stepsheet` / `stepsheetUrls` | Optional. `stepsheetUrls` is an array of source URLs; `stepsheet` is unique-indexed. |
 | `primaryTrack` / `tracks` | Track ids in `tracks`. |
+| `reviewed` | Optional boolean. An admin has reviewed this dance. Separate from `published` (decision 22) and from venue/lesson `verifiedAt` (decision 17). Written by `line-dance-manager-admin`. Absent until someone reviews it. |
+| `reviewedAt` | Optional BSON Date. When it was reviewed. Not an ISO string. |
+| `reviewedBy` | Optional string. User id of who reviewed it. |
+
+**Contract 0.18, declared ahead of the next infer.** `reviewed`, `reviewedAt` and `reviewedBy` are optional and widening only (`src/contract/declared-fields.ts`). A dance with none of them still validates. `null` is not accepted for these three. The legacy boolean `published: true` is still rejected.
 
 **Observed, to confirm:** all 796 dances with `songArtists` have a `primaryTrack`, but it is a 24-character id (Spotify ids are 22). They share 772 distinct tracks, and every one of those tracks is a placeholder (empty `uri`). This suggests the import creates a stub track per dance rather than leaving `primaryTrack` empty. The future matching process would replace those stubs with real Spotify tracks. 785 of the 2,186 tracks have an empty `uri`.
 

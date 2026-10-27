@@ -83,7 +83,7 @@ import {
   inScope,
   scopeFromPackageJson,
   unmatchedEntries
-} from "./chunk-MWDMMN6G.js";
+} from "./chunk-2P4ZXCJX.js";
 export {
   BldEventTemplatesSchema,
   BldEventTypesSchema,
