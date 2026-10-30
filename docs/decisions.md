@@ -253,7 +253,7 @@ The step-by-step checklist is [rollout.md](rollout.md). Release order matters ev
 
 ### DJ Feed attendance and lessons (decision 20)
 - Done 2026-10-24: backup `backups/2026-10-24T20-01-33-902Z`; contract 0.14.0 published (`b3b3158`); `0015` applied on live (181 attendance and 30 host-dancer rows copied, indexes created); line-dance-dj-feed (`b1c0531`) and line-dance-manager (`d2d71c9`) pushed to `main` right after; 21 old lessons back-filled into `djfeed.feed_lessons` (`scripts/backfill-feed-lessons.js`; 22 markers with no catalog dance skipped). Rerun `0015` if any attendance landed in `ldco` before the DJ Feed deploy finished.
-- After both apps are live on `djfeed`: a migration that drops `ldco.session_attendance` and `ldco.host_dancers` once every row is in `djfeed`.
+- Done 2026-10-30: migration `0018` dropped `ldco.session_attendance` (181 rows) and `ldco.host_dancers` (30 rows) on live, after checking every row was in `djfeed` (backup `backups/2026-10-30T21-04-55-947Z`).
 - Re-run `contract:infer` for `djfeed.feed_lessons` once it has documents.
 
 ### Retire `beyondlinedance-companion`
