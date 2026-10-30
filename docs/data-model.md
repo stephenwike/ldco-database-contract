@@ -55,7 +55,9 @@ Decision 20. Written by line-dance-dj-feed; moved from `ldco` (`session_attendan
 | `feed_lessons` | A dance a host ran as a lesson block at an event | `sessionId`, `hostId`, `danceId`, `startedAt`; unique (`sessionId`, `danceId`) |
 | `lesson_checks` | A dancer's answer about a wishlisted dance they were taught | `userId`, `feedLessonId`, `answer` (`known` / `refresh` / `not_taken`), `answeredAt`; unique (`userId`, `feedLessonId`) |
 
-`hostId` is the host's user id: the same id as `ldco.instructors.userId` when the host is an instructor. Ids are strings (`new ObjectId().toString()`) and times UTC Dates.
+`hostId` is the host's user id: the same id as `ldco.instructors.userId` when the host is an instructor.
+
+**What an event is associated with** (decision 23): `dj_sessions.linkedTo = { kind: "event" | "eventType" | "venue", id }`, the most specific of a scheduled event (`ldco-lessons.events`), an event type (`ldco-lessons.event_types`) or a venue (`ldco.venues`). The rest comes from the schedule: an event has an `eventTypeId` (or, for a special event, a `venueId`), and an event type a `venueId`. No `linkedTo` means just the host (`ownerId`); `privateEvent: true` means nothing at all. Ids are strings (`new ObjectId().toString()`) and times UTC Dates.
 
 **Contract 0.17, declared ahead of the next infer.** The DJ Feed writes these and the last inference didn't see them: `dj_requests.lessonPhase` (string or null, and older requests omit it); `session_reports.playedTracks[].lesson` (a string or a boolean, or null; not every played row is a lesson); `dj_sessions.extensions` (optional array, same as the report's `extensions`, whose items are still unknown); `dj_sessions.durationMinutes` may be null.
 

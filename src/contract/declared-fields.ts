@@ -57,9 +57,13 @@ export const declaredFields: Record<string, Record<string, string>> = {
   "djfeed.dj_requests": {
     lessonPhase: "z.string().nullable().optional()",
   },
+  // privateEvent: not one of the host's regular events (no dancer links, no Line Dance Manager features).
+  // linkedTo: what the event is associated with, instead of just its host (decision 23).
   "djfeed.dj_sessions": {
     durationMinutes: "z.number().nullable().optional()",
     extensions: "z.array(z.unknown()).optional()",
+    privateEvent: "z.boolean().optional()",
+    linkedTo: 'z.strictObject({ kind: z.enum(["event", "eventType", "venue"]), id: z.string() }).optional()',
   },
   "djfeed.session_reports": {
     "playedTracks[].lesson": "z.union([z.string(), z.boolean()]).nullable().optional()",

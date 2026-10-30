@@ -1,6 +1,6 @@
 {
   "name": "@ldco/database",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "private": false,
   "type": "module",
   "description": "Single source of truth for the shared LDCO MongoDB contract, plus the API that publishes the latest version.",

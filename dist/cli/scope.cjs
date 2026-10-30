@@ -29,7 +29,7 @@ var collections = {
   "djfeed.dj_profiles": "defe2e6528acd546e9df86850ac22dd71bfe8aa0733a55483a36faf68ed4ab5f",
   "djfeed.dj_requester_nicknames": "d030608dcdd9d459d3d5d41e949a1a35bc37fb87636f56ea3d4c3e53ac3e3325",
   "djfeed.dj_requests": "9985004fe37fef2dec14a53de30dd0cd0dda9da30880535b849be3d8f706f063",
-  "djfeed.dj_sessions": "2842f1b9f842b50ceba6e5a303439af6f8aa67b30d43d9b20be7bba0ac3aec92",
+  "djfeed.dj_sessions": "a3e3a314e9417f10a0d1f97fc417ae90a6c584991b7cf33e9f560afffd5ca120",
   "djfeed.dj_wallet_locks": "4821dafb6bea19c33eb6c5ca3f7f775d7eb80ceb3e69e9c834b1e0676781f8fb",
   "djfeed.dj_wallet_transactions": "20693a807124448596dd4d65e6b4448dc48fcb761884056baf4081f86e59efa8",
   "djfeed.feed_lessons": "fd3f81ee314714e77a62656c152fac5eac3dec74641571a1ef2240bc002e47e9",
@@ -437,6 +437,7 @@ var DjfeedDjSessionsSchema = import_zod20.z.strictObject({
   shareTimeZone: import_zod20.z.string().optional(),
   shareToken: import_zod20.z.string().optional(),
   privateEvent: import_zod20.z.boolean().optional(),
+  linkedTo: import_zod20.z.strictObject({ kind: import_zod20.z.enum(["event", "eventType", "venue"]), id: import_zod20.z.string() }).optional(),
   extensions: import_zod20.z.array(import_zod20.z.unknown()).optional()
   // declared in src/contract/declared-fields.ts
 });

@@ -149,6 +149,15 @@ Rule: when `publishedAt` is set, `published` is its UTC day and the source is `"
 - **Not a publish date.** The month in a choreographer credit ("… - October 2026") is when the dance was *choreographed*.
 - **Fields declared ahead of data.** `src/contract/declared-fields.ts` lists fields the generator must include even before any document has them.
 
+## 23. A DJ Feed event links to one schedule record: `dj_sessions.linkedTo`
+Decided 2026-10-30. Field notes: [data-model.md](data-model.md#dj-feed-attendance-and-lessons-djfeed).
+
+- **What it is.** `linkedTo: { kind, id }` on `djfeed.dj_sessions`, the most specific thing the event belongs to: `event` (`ldco-lessons.events`, one scheduled occurrence), `eventType` (`ldco-lessons.event_types`, the recurring class) or `venue` (`ldco.venues`). Absent means the event is associated with its host only (`ownerId`), as before.
+- **One reference, everything else derived.** An event brings its event type and venue, and an event type its venue, through the schedule; they aren't copied onto the session. Dancers stay one `session_attendance` row per dancer per event, so "dancers at Charlie's" or "dancers at Charlies Country" is attendance → session → `linkedTo` → the schedule, with no extra rows per association. `host_dancers` (and the `hostId` copied onto attendance and feed lessons) are the only derived copies left; they can be retired later in favour of the same join.
+- **Private events** (`privateEvent: true`) have no associations at all: the DJ Feed clears `linkedTo` when an event is made private, and setting a link makes it a regular event again.
+- **Who writes it.** line-dance-dj-feed: picked when an event is created or in the controller's Settings (the host's scheduled events near the event's date, their event types, or any venue), and validated against the schedule. A script back-fills past events by rules (`scripts/link-past-sessions.js`, dry run first).
+- **Past associations are kept.** Nothing is deleted: existing attendance and host-dancer rows stay, and a past event without a link is still associated with its host.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?
