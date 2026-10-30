@@ -402,6 +402,7 @@ declare const DjfeedDjSessionsSchema: z.ZodObject<{
     migratedFrom: z.ZodOptional<z.ZodString>;
     shareTimeZone: z.ZodOptional<z.ZodString>;
     shareToken: z.ZodOptional<z.ZodString>;
+    privateEvent: z.ZodOptional<z.ZodBoolean>;
     extensions: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
 }, z.core.$strict>;
 type DjfeedDjSessions = z.infer<typeof DjfeedDjSessionsSchema>;
@@ -1623,6 +1624,7 @@ declare const collections: {
             migratedFrom: zod.ZodOptional<zod.ZodString>;
             shareTimeZone: zod.ZodOptional<zod.ZodString>;
             shareToken: zod.ZodOptional<zod.ZodString>;
+            privateEvent: zod.ZodOptional<zod.ZodBoolean>;
             extensions: zod.ZodOptional<zod.ZodArray<zod.ZodUnknown>>;
         }, zod_v4_core.$strict>;
     };
