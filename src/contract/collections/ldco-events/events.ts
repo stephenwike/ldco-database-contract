@@ -7,14 +7,10 @@ export const LdcoEventsEventsSchema = z.strictObject({
   slug: z.string(),
   active: z.boolean(),
   createdAt: bsonDate,
-  date: z.string(),
-  dateShort: z.string(),
   shortTitle: z.string(),
-  time: z.string(),
   title: z.string(),
-  venueAddress: z.string(),
-  venueName: z.string(),
-  lessonEventId: z.string().optional(), // declared in src/contract/declared-fields.ts
+  // When and where are this special event's (decision 24); the old date / time / venue text was removed by 0019.
+  lessonEventId: z.string(), // declared in src/contract/declared-fields.ts
 });
 
 export type LdcoEventsEvents = z.infer<typeof LdcoEventsEventsSchema>;

@@ -2,7 +2,7 @@
 import {
   COLLECTION_HASHES,
   scopeFromPackageJson
-} from "../chunk-QBWJMBZI.js";
+} from "../chunk-FHEPMITK.js";
 
 // src/cli/scope.ts
 import { readdirSync, readFileSync, statSync, writeFileSync } from "fs";

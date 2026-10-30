@@ -74,9 +74,10 @@ export const declaredFields: Record<string, Record<string, string>> = {
     "playedTracks[].lesson": "z.union([z.string(), z.boolean()]).nullable().optional()",
   },
 
-  // A ticketed event points at the schedule's event it sells tickets for (decision 24).
+  // A ticketed event points at the schedule's event it sells tickets for (decision 24); since phase 3 that's
+  // where its date, time and venue are, so every ticketed event has one.
   "ldco-events.events": {
-    lessonEventId: "z.string().optional()",
+    lessonEventId: "z.string()",
   },
 
   // copperknob-alert. A rule can watch a dance name with no choreographer. notifyWebhookUrl is where a

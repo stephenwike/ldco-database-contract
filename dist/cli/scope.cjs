@@ -42,7 +42,7 @@ var collections = {
   "djfeed.session_transactions": "dacf4f7565c4ebaf419112952955bd57ce9d5d61dca1b581696e10adc658cd9d",
   "djfeed.stripe_events": "931713a25924546920cd89698d1a840ba2e39ece9ccc26ab1a429641e3f0c061",
   "ldco-events.event_registrations": "9ada86c41c046b78f0a94be5383829f356674e8686650315df11cd11dade95c3",
-  "ldco-events.events": "da881637a6c28a7e7aa503fe4ee017856268f73a2a267d39a9029b62a33f2439",
+  "ldco-events.events": "9c9659b13669eb75f9d2e2c4845bacb81ae70d93a66d34edfdcb4da567b871da",
   "ldco-lessons.event_instructor_requests": "d6363771f4bb8324dad5e906d2526abf36977d274368ebad1962d6f5506714ed",
   "ldco-lessons.event_instructors": "45081600a6e8384f7079161a4d1e29e599c5ce05d59c122d9a371ce750064d52",
   "ldco-lessons.event_templates": "7bef5133ab79c4239ca5818d458f78af3bc3983922fb71691eb20cc43526da37",
@@ -966,14 +966,10 @@ var LdcoEventsEventsSchema = import_zod59.z.strictObject({
   slug: import_zod59.z.string(),
   active: import_zod59.z.boolean(),
   createdAt: bsonDate,
-  date: import_zod59.z.string(),
-  dateShort: import_zod59.z.string(),
   shortTitle: import_zod59.z.string(),
-  time: import_zod59.z.string(),
   title: import_zod59.z.string(),
-  venueAddress: import_zod59.z.string(),
-  venueName: import_zod59.z.string(),
-  lessonEventId: import_zod59.z.string().optional()
+  // When and where are this special event's (decision 24); the old date / time / venue text was removed by 0019.
+  lessonEventId: import_zod59.z.string()
   // declared in src/contract/declared-fields.ts
 });
 

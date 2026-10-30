@@ -944,14 +944,9 @@ declare const LdcoEventsEventsSchema: z.ZodObject<{
     slug: z.ZodString;
     active: z.ZodBoolean;
     createdAt: z.ZodDate;
-    date: z.ZodString;
-    dateShort: z.ZodString;
     shortTitle: z.ZodString;
-    time: z.ZodString;
     title: z.ZodString;
-    venueAddress: z.ZodString;
-    venueName: z.ZodString;
-    lessonEventId: z.ZodOptional<z.ZodString>;
+    lessonEventId: z.ZodString;
 }, z.core.$strict>;
 type LdcoEventsEvents = z.infer<typeof LdcoEventsEventsSchema>;
 
@@ -2254,14 +2249,9 @@ declare const collections: {
             slug: zod.ZodString;
             active: zod.ZodBoolean;
             createdAt: zod.ZodDate;
-            date: zod.ZodString;
-            dateShort: zod.ZodString;
             shortTitle: zod.ZodString;
-            time: zod.ZodString;
             title: zod.ZodString;
-            venueAddress: zod.ZodString;
-            venueName: zod.ZodString;
-            lessonEventId: zod.ZodOptional<zod.ZodString>;
+            lessonEventId: zod.ZodString;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco-lessons.event_instructor_requests": {
