@@ -5,7 +5,8 @@ import { bsonDate } from "../../bson";
 export const LdcoLessonsEventInstructorsSchema = z.strictObject({
   _id: z.string(),
   instructorId: z.string(),
-  eventTypeId: z.string(),
+  eventTypeId: z.string().optional(), // declared in src/contract/declared-fields.ts
+  eventId: z.string().optional(), // declared in src/contract/declared-fields.ts
   createdAt: bsonDate,
   role: z.string(),
 });

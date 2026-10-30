@@ -80,7 +80,7 @@ Decision 18. Any instructor's schedule, in its own database. Migration `0013` cr
 
 **A lesson's state** is `committed` (taught), `skipped`, or neither (planned). "Changed" is editing a planned lesson before marking it taught.
 
-**Special events** are `events` with no `eventTypeId`; they carry `venueId`, `title` and `createdBy`, and their instructors are `event_instructors` rows with an `eventId`. An event that runs several days just has a later `endAt`.
+**Special events** are `events` with no `eventTypeId`; they carry `venueId`, `title` and `createdBy`, and their instructors are `event_instructors` rows with an `eventId`. A ticketed event in `ldco-events.events` points at its special event with `lessonEventId` (decision 24). An event that runs several days just has a later `endAt`.
 
 **Finding an instructor's schedule:** their `event_instructors` rows → those `event_types` (and special `events`) → the types' `frequencies` and stored `events`. Projected dates come from running frequencies (decision 15's rule), matched to stored events on `eventTypeId` + `date`. Venue and instructor names come from `ldco` in a separate query (no `$lookup` across databases). The personal site does the same for Stephen's instructor id.
 

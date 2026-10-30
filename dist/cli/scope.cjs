@@ -42,9 +42,9 @@ var collections = {
   "djfeed.session_transactions": "dacf4f7565c4ebaf419112952955bd57ce9d5d61dca1b581696e10adc658cd9d",
   "djfeed.stripe_events": "931713a25924546920cd89698d1a840ba2e39ece9ccc26ab1a429641e3f0c061",
   "ldco-events.event_registrations": "9ada86c41c046b78f0a94be5383829f356674e8686650315df11cd11dade95c3",
-  "ldco-events.events": "acc2c6ea398d385d7153c0760f3abb44a187c6a864434a2ec20dbfc1ea5e2cf5",
+  "ldco-events.events": "da881637a6c28a7e7aa503fe4ee017856268f73a2a267d39a9029b62a33f2439",
   "ldco-lessons.event_instructor_requests": "d6363771f4bb8324dad5e906d2526abf36977d274368ebad1962d6f5506714ed",
-  "ldco-lessons.event_instructors": "c7e861de7b2f8e052c97bb902699b18f689f3dda1a65798fd48d7a20d66863a0",
+  "ldco-lessons.event_instructors": "45081600a6e8384f7079161a4d1e29e599c5ce05d59c122d9a371ce750064d52",
   "ldco-lessons.event_templates": "7bef5133ab79c4239ca5818d458f78af3bc3983922fb71691eb20cc43526da37",
   "ldco-lessons.event_types": "e0c586ad595062353e29eaf45837167fc926a884850017be5e0c2943250a0cdb",
   "ldco-lessons.events": "b4d300d20ffa5f4caf2c4f73884018bc3e1adbe38c004fd44cadbbaf8154e142",
@@ -972,7 +972,9 @@ var LdcoEventsEventsSchema = import_zod59.z.strictObject({
   time: import_zod59.z.string(),
   title: import_zod59.z.string(),
   venueAddress: import_zod59.z.string(),
-  venueName: import_zod59.z.string()
+  venueName: import_zod59.z.string(),
+  lessonEventId: import_zod59.z.string().optional()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/ldco-lessons/event_instructor_requests.ts
@@ -984,7 +986,10 @@ var import_zod61 = require("zod");
 var LdcoLessonsEventInstructorsSchema = import_zod61.z.strictObject({
   _id: import_zod61.z.string(),
   instructorId: import_zod61.z.string(),
-  eventTypeId: import_zod61.z.string(),
+  eventTypeId: import_zod61.z.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  eventId: import_zod61.z.string().optional(),
+  // declared in src/contract/declared-fields.ts
   createdAt: bsonDate,
   role: import_zod61.z.string()
 });

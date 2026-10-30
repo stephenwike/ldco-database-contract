@@ -158,6 +158,14 @@ Decided 2026-10-30. Field notes: [data-model.md](data-model.md#dj-feed-attendanc
 - **Who writes it.** line-dance-dj-feed: picked when an event is created or in the controller's Settings (the host's scheduled events near the event's date, their event types, or any venue), and validated against the schedule. A script back-fills past events by rules (`scripts/link-past-sessions.js`, dry run first).
 - **Past associations are kept.** Nothing is deleted: existing attendance and host-dancer rows stay, and a past event without a link is still associated with its host.
 
+## 24. Special events live in the schedule; a ticketed event points at one
+Decided 2026-10-30. Field notes: [data-model.md](data-model.md#instructor-schedule-ldco-lessons).
+
+- **The event itself** (when, where, who teaches) is an `ldco-lessons.events` document with no `eventTypeId`: `title`, `venueId`, `createdBy`, `date`, `startAt` / `endAt`, `timeZone`, as decision 18 designed, plus an `event_instructors` row with `eventId` (that collection now allows `eventId` or `eventTypeId`). It sits next to the event types, so venue, schedule and DJ Feed links (decision 23) treat it like any other scheduled event.
+- **The ticketing** (page slug, short title, registrations, `active`) stays in `ldco-events`. `ldco-events.events.lessonEventId` points at the schedule's event, so the date and venue aren't kept twice. Registrations keep pointing at their ticketed event by `slug`.
+- **Phases.** (1) Migration `0017` makes the special events for the existing ticketed events and links them; the admin keeps writing the old text fields meanwhile. (2) The admin's Registrations pages read date, time and venue from the schedule, and creating a ticketed event creates or picks its special event. (3) A migration drops `date`, `dateShort`, `time`, `venueName` and `venueAddress` from `ldco-events.events`.
+- **Migration `0017`** (2026-10-30 data): Sept 19, 2026 was stored as an Alternative Line Dance occurrence carrying the social's note, with no lessons or history; it becomes the special event in place (same id). Nov 21, 2026 had nothing stored; a special event is created. Midnight Toad wasn't a venue; it's added (not validated, no coordinates). Both are Stephen's (`createdBy` and a `creator` row in `event_instructors`).
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?

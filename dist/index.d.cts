@@ -951,6 +951,7 @@ declare const LdcoEventsEventsSchema: z.ZodObject<{
     title: z.ZodString;
     venueAddress: z.ZodString;
     venueName: z.ZodString;
+    lessonEventId: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 type LdcoEventsEvents = z.infer<typeof LdcoEventsEventsSchema>;
 
@@ -966,7 +967,8 @@ type LdcoLessonsEventInstructorRequests = z.infer<typeof LdcoLessonsEventInstruc
 declare const LdcoLessonsEventInstructorsSchema: z.ZodObject<{
     _id: z.ZodString;
     instructorId: z.ZodString;
-    eventTypeId: z.ZodString;
+    eventTypeId: z.ZodOptional<z.ZodString>;
+    eventId: z.ZodOptional<z.ZodString>;
     createdAt: z.ZodDate;
     role: z.ZodString;
 }, z.core.$strict>;
@@ -2259,6 +2261,7 @@ declare const collections: {
             title: zod.ZodString;
             venueAddress: zod.ZodString;
             venueName: zod.ZodString;
+            lessonEventId: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco-lessons.event_instructor_requests": {
@@ -2278,7 +2281,8 @@ declare const collections: {
         readonly schema: zod.ZodObject<{
             _id: zod.ZodString;
             instructorId: zod.ZodString;
-            eventTypeId: zod.ZodString;
+            eventTypeId: zod.ZodOptional<zod.ZodString>;
+            eventId: zod.ZodOptional<zod.ZodString>;
             createdAt: zod.ZodDate;
             role: zod.ZodString;
         }, zod_v4_core.$strict>;

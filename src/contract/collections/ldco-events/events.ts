@@ -14,6 +14,7 @@ export const LdcoEventsEventsSchema = z.strictObject({
   title: z.string(),
   venueAddress: z.string(),
   venueName: z.string(),
+  lessonEventId: z.string().optional(), // declared in src/contract/declared-fields.ts
 });
 
 export type LdcoEventsEvents = z.infer<typeof LdcoEventsEventsSchema>;

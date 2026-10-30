@@ -40,6 +40,11 @@ export const declaredFields: Record<string, Record<string, string>> = {
     venueId: "z.string().optional()",
     createdBy: "z.string().optional()",
   },
+  // Who teaches what: an event type, or (for a special event, decision 24) one event. Exactly one is set.
+  "ldco-lessons.event_instructors": {
+    eventTypeId: "z.string().optional()",
+    eventId: "z.string().optional()",
+  },
   "ldco-lessons.event_types": {
     verifiedAt: "bsonDate.nullable()",
     verifiedBy: "z.string().nullable()",
@@ -67,6 +72,11 @@ export const declaredFields: Record<string, Record<string, string>> = {
   },
   "djfeed.session_reports": {
     "playedTracks[].lesson": "z.union([z.string(), z.boolean()]).nullable().optional()",
+  },
+
+  // A ticketed event points at the schedule's event it sells tickets for (decision 24).
+  "ldco-events.events": {
+    lessonEventId: "z.string().optional()",
   },
 
   // copperknob-alert. A rule can watch a dance name with no choreographer. notifyWebhookUrl is where a
