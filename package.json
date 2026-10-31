@@ -31,6 +31,7 @@
     "contract:lock": "tsx scripts/contract-lock.ts --write",
     "contract:verify": "tsx scripts/contract-lock.ts --verify",
     "db:sync-local": "tsx --env-file-if-exists=.env.local scripts/sync-from-live.ts",
+    "db:sync-sandbox": "tsx --env-file-if-exists=.env.local scripts/sync-to-sandbox.ts",
     "db:backup-live": "tsx --env-file-if-exists=.env.local scripts/backup-live.ts",
     "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
     "db:migrate:live": "tsx --env-file-if-exists=.env.local scripts/migrate.ts --live",
