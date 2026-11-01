@@ -3,7 +3,7 @@ import { createHash } from "crypto";
 import { z as z79 } from "zod";
 
 // contract.lock.json
-var hash = "066fea0e7070ecc23fe0518fb0a2b39a26f657da3dc612f525c9f3fc90e127d8";
+var hash = "1869cb6c48fe9fa3a600a986a94ced65b8037eab8ff38b19660f86d7f047f255";
 var collections = {
   "bld.event_templates": "1df4e84dea2413051623a8d5118f26507f7dc8767233a154ade9d17b1ca093d9",
   "bld.event_types": "72df6b91d956eccc5eb094833bdd45135f175ac9697e3e878a7da9dd241d0cb2",
@@ -22,8 +22,8 @@ var collections = {
   "djfeed.dj_notifications": "0c6503899d147930e18ae806eef888fe9ff147a9603f57fc7f2b8b65bd2c1920",
   "djfeed.dj_profiles": "defe2e6528acd546e9df86850ac22dd71bfe8aa0733a55483a36faf68ed4ab5f",
   "djfeed.dj_requester_nicknames": "d030608dcdd9d459d3d5d41e949a1a35bc37fb87636f56ea3d4c3e53ac3e3325",
-  "djfeed.dj_requests": "9985004fe37fef2dec14a53de30dd0cd0dda9da30880535b849be3d8f706f063",
-  "djfeed.dj_sessions": "a3e3a314e9417f10a0d1f97fc417ae90a6c584991b7cf33e9f560afffd5ca120",
+  "djfeed.dj_requests": "b86608cb532ae50037df0896f038ac97921f390a7cc638ce19335fe50db8cead",
+  "djfeed.dj_sessions": "026dd6a307dec73f82b57e523ad83914c4bfa0512aa57f83952f14e4b01cf0c6",
   "djfeed.dj_wallet_locks": "4821dafb6bea19c33eb6c5ca3f7f775d7eb80ceb3e69e9c834b1e0676781f8fb",
   "djfeed.dj_wallet_transactions": "20693a807124448596dd4d65e6b4448dc48fcb761884056baf4081f86e59efa8",
   "djfeed.feed_lessons": "fd3f81ee314714e77a62656c152fac5eac3dec74641571a1ef2240bc002e47e9",
@@ -85,7 +85,7 @@ var collections = {
 };
 
 // package.json
-var version = "0.20.0";
+var version = "0.21.0";
 
 // src/contract/collections/bld/event_templates.ts
 import { z as z2 } from "zod";
@@ -401,7 +401,9 @@ var DjfeedDjRequestsSchema = z19.strictObject({
   playLengthMs: z19.number().optional(),
   volumeDb: z19.number().optional(),
   migratedFrom: z19.string().optional(),
-  lessonPhase: z19.string().nullable().optional()
+  lessonPhase: z19.string().nullable().optional(),
+  // declared in src/contract/declared-fields.ts
+  copyOf: z19.string().optional()
   // declared in src/contract/declared-fields.ts
 });
 
@@ -438,6 +440,8 @@ var DjfeedDjSessionsSchema = z20.strictObject({
   privateEvent: z20.boolean().optional(),
   // declared in src/contract/declared-fields.ts
   linkedTo: z20.strictObject({ kind: z20.enum(["event", "eventType", "venue"]), id: z20.string() }).optional(),
+  // declared in src/contract/declared-fields.ts
+  allowDuplicates: z20.boolean().optional(),
   // declared in src/contract/declared-fields.ts
   extensions: z20.array(z20.unknown()).optional()
   // declared in src/contract/declared-fields.ts

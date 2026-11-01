@@ -62,11 +62,11 @@ test("inserting into an array element keeps the closing brace's indent", () => {
   assert.equal(applyDeclaredFields(next, { "playedTracks[].lesson": "z.string().optional()" }), next);
 });
 
-test("contract version is 0.20.0 and matches the lock", () => {
-  assert.equal(CONTRACT_VERSION, "0.20.0");
+test("contract version is 0.21.0 and matches the lock", () => {
+  assert.equal(CONTRACT_VERSION, "0.21.0");
   assert.equal(computeContractHash(), CONTRACT_HASH);
   const lock = JSON.parse(readFileSync("contract.lock.json", "utf8")) as { version: string };
-  assert.equal(lock.version, "0.20.0");
+  assert.equal(lock.version, "0.21.0");
 });
 
 test("dj_requests.lessonPhase is an optional string or null", () => {
@@ -94,6 +94,9 @@ test("dj_requests.lessonPhase is an optional string or null", () => {
   accept(DjfeedDjRequestsSchema, { ...base, lessonPhase: null });
   reject(DjfeedDjRequestsSchema, { ...base, lessonPhase: 1 });
   reject(DjfeedDjRequestsSchema, { ...base, notAField: true });
+  // Allow Duplicates: the queued request a pending one was queued with.
+  accept(DjfeedDjRequestsSchema, { ...base, copyOf: "6a1b2c3d4e5f60718293a4b5" });
+  reject(DjfeedDjRequestsSchema, { ...base, copyOf: null });
 });
 
 test("dj_sessions.durationMinutes is nullable and extensions is an optional array", () => {
@@ -112,6 +115,8 @@ test("dj_sessions.durationMinutes is nullable and extensions is an optional arra
   accept(DjfeedDjSessionsSchema, { ...base, extensions: [{ minutes: 15 }] });
   reject(DjfeedDjSessionsSchema, { ...base, durationMinutes: "90" });
   reject(DjfeedDjSessionsSchema, { ...base, extensions: null });
+  accept(DjfeedDjSessionsSchema, { ...base, allowDuplicates: true });
+  reject(DjfeedDjSessionsSchema, { ...base, allowDuplicates: "yes" });
 });
 
 test("session report played rows may carry a lesson marker", () => {

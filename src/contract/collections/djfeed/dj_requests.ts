@@ -40,6 +40,7 @@ export const DjfeedDjRequestsSchema = z.strictObject({
   volumeDb: z.number().optional(),
   migratedFrom: z.string().optional(),
   lessonPhase: z.string().nullable().optional(), // declared in src/contract/declared-fields.ts
+  copyOf: z.string().optional(), // declared in src/contract/declared-fields.ts
 });
 
 export type DjfeedDjRequests = z.infer<typeof DjfeedDjRequestsSchema>;

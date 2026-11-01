@@ -368,6 +368,7 @@ declare const DjfeedDjRequestsSchema: z.ZodObject<{
     volumeDb: z.ZodOptional<z.ZodNumber>;
     migratedFrom: z.ZodOptional<z.ZodString>;
     lessonPhase: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    copyOf: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 type DjfeedDjRequests = z.infer<typeof DjfeedDjRequestsSchema>;
 
@@ -411,6 +412,7 @@ declare const DjfeedDjSessionsSchema: z.ZodObject<{
         }>;
         id: z.ZodString;
     }, z.core.$strict>>;
+    allowDuplicates: z.ZodOptional<z.ZodBoolean>;
     extensions: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
 }, z.core.$strict>;
 type DjfeedDjSessions = z.infer<typeof DjfeedDjSessionsSchema>;
@@ -1627,6 +1629,7 @@ declare const collections: {
             volumeDb: zod.ZodOptional<zod.ZodNumber>;
             migratedFrom: zod.ZodOptional<zod.ZodString>;
             lessonPhase: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+            copyOf: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
     readonly "djfeed.dj_sessions": {
@@ -1672,6 +1675,7 @@ declare const collections: {
                 }>;
                 id: zod.ZodString;
             }, zod_v4_core.$strict>>;
+            allowDuplicates: zod.ZodOptional<zod.ZodBoolean>;
             extensions: zod.ZodOptional<zod.ZodArray<zod.ZodUnknown>>;
         }, zod_v4_core.$strict>;
     };

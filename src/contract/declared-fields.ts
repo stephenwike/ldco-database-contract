@@ -64,16 +64,20 @@ export const declaredFields: Record<string, Record<string, string>> = {
   // DJ Feed fields written after the last inference. lessonPhase is the lesson-block phase on a request.
   // A played row copies a lesson marker (a phase or id string, or a boolean flag). extensions matches the
   // array on session_reports, whose items have never been observed. durationMinutes is null on some sessions.
+  // copyOf: with Allow Duplicates on, the queued request (copy of a dance) a pending request was queued with.
   "djfeed.dj_requests": {
     lessonPhase: "z.string().nullable().optional()",
+    copyOf: "z.string().optional()",
   },
   // privateEvent: not one of the host's regular events (no dancer links, no Line Dance Manager features).
   // linkedTo: what the event is associated with, instead of just its host (decision 23).
+  // allowDuplicates: the DJ lets a dance be requested again after it's played and queued more than once.
   "djfeed.dj_sessions": {
     durationMinutes: "z.number().nullable().optional()",
     extensions: "z.array(z.unknown()).optional()",
     privateEvent: "z.boolean().optional()",
     linkedTo: 'z.strictObject({ kind: z.enum(["event", "eventType", "venue"]), id: z.string() }).optional()',
+    allowDuplicates: "z.boolean().optional()",
   },
   "djfeed.session_reports": {
     "playedTracks[].lesson": "z.union([z.string(), z.boolean()]).nullable().optional()",
