@@ -7,10 +7,10 @@ var import_node_path = require("path");
 
 // src/contract/index.ts
 var import_node_crypto = require("crypto");
-var import_zod77 = require("zod");
+var import_zod79 = require("zod");
 
 // contract.lock.json
-var hash = "3fd6f39cde577749e9bad8cdda367d9802c50b437f29637ea232b48d74efd2cb";
+var hash = "066fea0e7070ecc23fe0518fb0a2b39a26f657da3dc612f525c9f3fc90e127d8";
 var collections = {
   "bld.event_templates": "1df4e84dea2413051623a8d5118f26507f7dc8767233a154ade9d17b1ca093d9",
   "bld.event_types": "72df6b91d956eccc5eb094833bdd45135f175ac9697e3e878a7da9dd241d0cb2",
@@ -53,13 +53,15 @@ var collections = {
   "ldco-lessons.lessons": "c5ee40a6d65460ef053471f61099865bc733a506d6aa7a8580c067f7838eea40",
   "ldco-reviews.choreographers": "d255092436491018b8d388e6f95c28dbd566cb53f7485b58dc6712be49386a36",
   "ldco-reviews.dances": "3fc12018ed54816edcccbe68b74dbdadf2f1015bd40c1b8f0ca382f07554ad40",
+  "ldco-reviews.instructor_venues": "892bea61c07a150d9b787c5d110de5e55a386800fc9ae7aa1aa9f58086008c3e",
+  "ldco-reviews.instructors": "8876ab9d4adaeacc36436ae657c887ba598e2ea7466b6741ae0fb53d1c6c302c",
   "ldco-reviews.join_choreographer_appeals": "2d7e2d6b5e7ae7ae2711a78bf1184166025b019354e2a7d006611dc186fe7dac",
   "ldco-reviews.lessons": "0514026cd1e3d2b588e2809006bb20830db148b4d495a330919d7df32256ac1f",
   "ldco-reviews.reports": "6ef33c1413eaad5e7eb8991042cdd8e8f3c8a4bcc3dc8c94f4c7dfc39d3e8097",
   "ldco-reviews.tracks": "b5bfc5cd42a3b4491df4449d93bcb387a017c0744bdc6fa8afa97c660239741c",
   "ldco-reviews.venue_users": "5218786352621d2bc3667de8f9ad216a19f5e22358f86ca4206eb40145ea14c2",
-  "ldco-reviews.venues": "634b383ef897b04ec162216bf69e5c9836a71f95a64facf4657673d50fcd4dcf",
-  "ldco-reviews.verify_user_instructor": "aed3857dbd1e8bd61c07c6f147f4250c6fa631f8f712826a40857fb51c5be816",
+  "ldco-reviews.venues": "8cbdfc8b7c83f70ce60d35dd9c79a34c510817949a161c1f19fc915a71e9eedb",
+  "ldco-reviews.verify_user_instructor": "52310d3cfb3dcfdbcf398c14fea2ed3dbb491799a3d07e67aa79f9ce130ff644",
   "ldco.choreographers": "3704f8f6e16f9af8b612405ff62bd207f0981d4d403326f36526da1cc2e47d08",
   "ldco.dance_collections": "ef290b6abf788b8a58f430be110a74f03846d9497b40418664bef45f8dae4b27",
   "ldco.dance_tracks": "12fe8ff9b34e4b93dad33cf51109aa9b3edcaf118fe6b64aa258912f0218c923",
@@ -67,7 +69,7 @@ var collections = {
   "ldco.events": "b53ee78587109ccd2ac3a19a09b1ec3bcb31748cc46041cb9faf8b37a29da85c",
   "ldco.friend_requests": "3c44575c6c295a73d8ace89c24529975b13f0716b5676de2dda31fe5e0020f63",
   "ldco.instructor_venues": "ec684ffe975ca167804e53157f10c03042c72d5b9e2b9a930af89176010481a2",
-  "ldco.instructors": "7d6963368134db795f7fe0a2211ea49e55c9d58e196706f031a4ec17fbc5b4a8",
+  "ldco.instructors": "080fbeedfd14d3f24c02ac0d0d8b6a71b7a23f6e6b49601b2aef07ff0662fa14",
   "ldco.lessons": "077310d7b2505baed4a07a8a45e9b38df1140e738139f9fdade7451650bb241c",
   "ldco.login_events": "0b042cfdb867f5c2d1f7f5a1d4928fddd10cf4feb5f24fcf2c04f51032d7c8b8",
   "ldco.oauth_auth_codes": "3ee5d77ba237bb289c9fc95d36e513cc99dab113e82480928d05cf3d0781124a",
@@ -90,7 +92,7 @@ var collections = {
 };
 
 // package.json
-var version = "0.19.0";
+var version = "0.20.0";
 
 // src/contract/collections/bld/event_templates.ts
 var import_zod2 = require("zod");
@@ -441,7 +443,9 @@ var DjfeedDjSessionsSchema = import_zod20.z.strictObject({
   shareTimeZone: import_zod20.z.string().optional(),
   shareToken: import_zod20.z.string().optional(),
   privateEvent: import_zod20.z.boolean().optional(),
+  // declared in src/contract/declared-fields.ts
   linkedTo: import_zod20.z.strictObject({ kind: import_zod20.z.enum(["event", "eventType", "venue"]), id: import_zod20.z.string() }).optional(),
+  // declared in src/contract/declared-fields.ts
   extensions: import_zod20.z.array(import_zod20.z.unknown()).optional()
   // declared in src/contract/declared-fields.ts
 });
@@ -720,7 +724,14 @@ var LdcoInstructorsSchema = import_zod39.z.strictObject({
   name: import_zod39.z.string(),
   associatedUserId: import_zod39.z.string().optional(),
   userId: import_zod39.z.string().optional(),
-  bio: import_zod39.z.string().optional()
+  bio: import_zod39.z.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  image: import_zod39.z.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  createdAt: bsonDate.optional(),
+  // declared in src/contract/declared-fields.ts
+  updatedAt: bsonDate.optional()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/ldco/lessons.ts
@@ -1113,93 +1124,141 @@ var LdcoReviewsChoreographersSchema = import_zod67.z.looseObject({ _id: import_z
 var import_zod68 = require("zod");
 var LdcoReviewsDancesSchema = import_zod68.z.looseObject({ _id: import_zod68.z.union([import_zod68.z.string(), objectId]) });
 
-// src/contract/collections/ldco-reviews/join_choreographer_appeals.ts
+// src/contract/collections/ldco-reviews/instructor_venues.ts
 var import_zod69 = require("zod");
-var LdcoReviewsJoinChoreographerAppealsSchema = import_zod69.z.looseObject({ _id: import_zod69.z.union([import_zod69.z.string(), objectId]) });
+var LdcoReviewsInstructorVenuesSchema = import_zod69.z.strictObject({
+  _id: import_zod69.z.string(),
+  // declared in src/contract/declared-fields.ts
+  instructorId: import_zod69.z.string(),
+  // declared in src/contract/declared-fields.ts
+  venueId: import_zod69.z.string(),
+  // declared in src/contract/declared-fields.ts
+  createdAt: bsonDate,
+  // declared in src/contract/declared-fields.ts
+  updatedAt: bsonDate
+  // declared in src/contract/declared-fields.ts
+});
+
+// src/contract/collections/ldco-reviews/instructors.ts
+var import_zod70 = require("zod");
+var LdcoReviewsInstructorsSchema = import_zod70.z.strictObject({
+  _id: import_zod70.z.string(),
+  // declared in src/contract/declared-fields.ts
+  name: import_zod70.z.string(),
+  // declared in src/contract/declared-fields.ts
+  bio: import_zod70.z.string(),
+  // declared in src/contract/declared-fields.ts
+  image: import_zod70.z.string(),
+  // declared in src/contract/declared-fields.ts
+  userId: import_zod70.z.string(),
+  // declared in src/contract/declared-fields.ts
+  createdAt: bsonDate,
+  // declared in src/contract/declared-fields.ts
+  updatedAt: bsonDate
+  // declared in src/contract/declared-fields.ts
+});
+
+// src/contract/collections/ldco-reviews/join_choreographer_appeals.ts
+var import_zod71 = require("zod");
+var LdcoReviewsJoinChoreographerAppealsSchema = import_zod71.z.looseObject({ _id: import_zod71.z.union([import_zod71.z.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/lessons.ts
-var import_zod70 = require("zod");
-var LdcoReviewsLessonsSchema = import_zod70.z.strictObject({
+var import_zod72 = require("zod");
+var LdcoReviewsLessonsSchema = import_zod72.z.strictObject({
   _id: objectId,
-  lessonday: import_zod70.z.string(),
-  lessonstart: import_zod70.z.string(),
-  instructors: import_zod70.z.array(import_zod70.z.string()),
-  duration: import_zod70.z.string(),
-  lessoncost: import_zod70.z.string(),
-  notes: import_zod70.z.string(),
-  difficulty: import_zod70.z.string(),
-  venueid: import_zod70.z.string()
+  lessonday: import_zod72.z.string(),
+  lessonstart: import_zod72.z.string(),
+  instructors: import_zod72.z.array(import_zod72.z.string()),
+  duration: import_zod72.z.string(),
+  lessoncost: import_zod72.z.string(),
+  notes: import_zod72.z.string(),
+  difficulty: import_zod72.z.string(),
+  venueid: import_zod72.z.string()
 });
 
 // src/contract/collections/ldco-reviews/reports.ts
-var import_zod71 = require("zod");
-var LdcoReviewsReportsSchema = import_zod71.z.looseObject({ _id: import_zod71.z.union([import_zod71.z.string(), objectId]) });
+var import_zod73 = require("zod");
+var LdcoReviewsReportsSchema = import_zod73.z.looseObject({ _id: import_zod73.z.union([import_zod73.z.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/tracks.ts
-var import_zod72 = require("zod");
-var LdcoReviewsTracksSchema = import_zod72.z.looseObject({ _id: import_zod72.z.union([import_zod72.z.string(), objectId]) });
+var import_zod74 = require("zod");
+var LdcoReviewsTracksSchema = import_zod74.z.looseObject({ _id: import_zod74.z.union([import_zod74.z.string(), objectId]) });
 
 // src/contract/collections/ldco-reviews/venue_users.ts
-var import_zod73 = require("zod");
-var LdcoReviewsVenueUsersSchema = import_zod73.z.strictObject({
-  _id: import_zod73.z.string(),
-  userId: import_zod73.z.string(),
-  venueId: import_zod73.z.string(),
+var import_zod75 = require("zod");
+var LdcoReviewsVenueUsersSchema = import_zod75.z.strictObject({
+  _id: import_zod75.z.string(),
+  userId: import_zod75.z.string(),
+  venueId: import_zod75.z.string(),
   createdAt: bsonDate,
-  requestedBy: import_zod73.z.string()
+  requestedBy: import_zod75.z.string()
 });
 
 // src/contract/collections/ldco-reviews/venues.ts
-var import_zod74 = require("zod");
-var LdcoReviewsVenuesSchema = import_zod74.z.strictObject({
-  _id: import_zod74.z.string(),
-  venuename: import_zod74.z.string(),
-  venueaddress: import_zod74.z.string(),
-  geolocation: import_zod74.z.array(import_zod74.z.number()),
-  phone: import_zod74.z.string(),
-  website: import_zod74.z.string(),
-  contactName: import_zod74.z.string(),
-  contactEmail: import_zod74.z.string(),
-  contactPhone: import_zod74.z.string(),
+var import_zod76 = require("zod");
+var LdcoReviewsVenuesSchema = import_zod76.z.strictObject({
+  _id: import_zod76.z.string(),
+  venuename: import_zod76.z.string(),
+  venueaddress: import_zod76.z.string(),
+  geolocation: import_zod76.z.array(import_zod76.z.number()),
+  phone: import_zod76.z.string(),
+  website: import_zod76.z.string(),
+  contactName: import_zod76.z.string(),
+  contactEmail: import_zod76.z.string(),
+  contactPhone: import_zod76.z.string(),
   createdAt: bsonDate,
-  timeZone: import_zod74.z.string(),
-  verifiedAt: import_zod74.z.null(),
-  verifiedBy: import_zod74.z.null()
+  timeZone: import_zod76.z.string(),
+  verifiedAt: import_zod76.z.null(),
+  verifiedBy: import_zod76.z.null(),
+  submittedBy: import_zod76.z.string().optional()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/ldco-reviews/verify_user_instructor.ts
-var import_zod75 = require("zod");
-var LdcoReviewsVerifyUserInstructorSchema = import_zod75.z.strictObject({
-  _id: objectId,
-  userId: import_zod75.z.string(),
-  instructorId: import_zod75.z.string(),
+var import_zod77 = require("zod");
+var LdcoReviewsVerifyUserInstructorSchema = import_zod77.z.strictObject({
+  _id: import_zod77.z.union([import_zod77.z.string(), objectId]),
+  // declared in src/contract/declared-fields.ts
+  userId: import_zod77.z.string(),
+  instructorId: import_zod77.z.string(),
   createdAt: bsonDate,
-  resolved: import_zod75.z.boolean(),
-  resolution: import_zod75.z.string(),
-  resolvedAt: bsonDate,
-  resolvedBy: import_zod75.z.string()
+  resolved: import_zod77.z.boolean(),
+  resolution: import_zod77.z.enum(["approve", "deny"]).optional(),
+  // declared in src/contract/declared-fields.ts
+  resolvedAt: bsonDate.optional(),
+  // declared in src/contract/declared-fields.ts
+  resolvedBy: import_zod77.z.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  kind: import_zod77.z.enum(["claim", "new-profile"]).optional(),
+  // declared in src/contract/declared-fields.ts
+  provisionalInstructorId: import_zod77.z.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  requestedName: import_zod77.z.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  note: import_zod77.z.string().optional()
+  // declared in src/contract/declared-fields.ts
 });
 
 // src/contract/collections/music_catalog/tracks.ts
-var import_zod76 = require("zod");
-var MusicCatalogTracksSchema = import_zod76.z.strictObject({
-  _id: import_zod76.z.string(),
-  artist: import_zod76.z.string(),
+var import_zod78 = require("zod");
+var MusicCatalogTracksSchema = import_zod78.z.strictObject({
+  _id: import_zod78.z.string(),
+  artist: import_zod78.z.string(),
   createdAt: bsonDate,
-  disambiguation: import_zod76.z.string(),
-  durationMs: import_zod76.z.number().nullable(),
-  isrcs: import_zod76.z.array(import_zod76.z.string()),
-  nArtist: import_zod76.z.string(),
-  nTitle: import_zod76.z.string(),
-  rank: import_zod76.z.number(),
+  disambiguation: import_zod78.z.string(),
+  durationMs: import_zod78.z.number().nullable(),
+  isrcs: import_zod78.z.array(import_zod78.z.string()),
+  nArtist: import_zod78.z.string(),
+  nTitle: import_zod78.z.string(),
+  rank: import_zod78.z.number(),
   rankedAt: bsonDate.optional(),
-  source: import_zod76.z.string(),
-  sourceId: import_zod76.z.string(),
-  title: import_zod76.z.string(),
+  source: import_zod78.z.string(),
+  sourceId: import_zod78.z.string(),
+  title: import_zod78.z.string(),
   updatedAt: bsonDate,
-  variantKey: import_zod76.z.string(),
-  words: import_zod76.z.array(import_zod76.z.string()),
-  year: import_zod76.z.number().nullable()
+  variantKey: import_zod78.z.string(),
+  words: import_zod78.z.array(import_zod78.z.string()),
+  year: import_zod78.z.number().nullable()
 });
 
 // src/contract/scope.ts

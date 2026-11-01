@@ -138,6 +138,8 @@ export const purposes: Purpose[] = [
       "ldco-reviews.lessons",
       "ldco-reviews.venue_users",
       "ldco-reviews.verify_user_instructor",
+      "ldco-reviews.instructors",
+      "ldco-reviews.instructor_venues",
       "ldco-reviews.join_choreographer_appeals",
       "ldco-reviews.reports",
     ],

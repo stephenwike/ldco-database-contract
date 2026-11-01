@@ -16,6 +16,7 @@ export const LdcoReviewsVenuesSchema = z.strictObject({
   timeZone: z.string(),
   verifiedAt: z.null(),
   verifiedBy: z.null(),
+  submittedBy: z.string().optional(), // declared in src/contract/declared-fields.ts
 });
 
 export type LdcoReviewsVenues = z.infer<typeof LdcoReviewsVenuesSchema>;

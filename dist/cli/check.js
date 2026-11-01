@@ -6,7 +6,7 @@ import {
   inScope,
   scopeFromPackageJson,
   unmatchedEntries
-} from "../chunk-FHEPMITK.js";
+} from "../chunk-YMA6PKSW.js";
 
 // src/cli/check.ts
 import { readFileSync } from "fs";

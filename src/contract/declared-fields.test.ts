@@ -15,9 +15,15 @@ import {
   LdcoLessonsEventsSchema,
   LdcoLessonsLessonsSchema,
   LdcoLessonsSchema,
+  LdcoInstructorsSchema,
+  LdcoReviewsInstructorVenuesSchema,
+  LdcoReviewsInstructorsSchema,
+  LdcoReviewsVenuesSchema,
+  LdcoReviewsVerifyUserInstructorSchema,
   LdcoVenuesSchema,
+  collections,
 } from "./collections";
-import { declaredFields } from "./declared-fields";
+import { declaredCollections, declaredFields } from "./declared-fields";
 import { CONTRACT_HASH, CONTRACT_VERSION, computeContractHash } from "./index";
 import { maskDocument } from "../server/mask";
 
@@ -36,7 +42,8 @@ test("declared fields are already applied to the collection modules", () => {
   for (const [key, fields] of Object.entries(declaredFields)) {
     const dot = key.indexOf(".");
     const path = `src/contract/collections/${key.slice(0, dot)}/${key.slice(dot + 1)}.ts`;
-    const source = readFileSync(path, "utf8");
+    // A Windows checkout (core.autocrlf) has CRLF; the generator writes LF.
+    const source = readFileSync(path, "utf8").replace(/\r\n/g, "\n");
     assert.equal(applyDeclaredToModule(source, fields), source, key);
   }
 });
@@ -55,11 +62,11 @@ test("inserting into an array element keeps the closing brace's indent", () => {
   assert.equal(applyDeclaredFields(next, { "playedTracks[].lesson": "z.string().optional()" }), next);
 });
 
-test("contract version is 0.17.0 and matches the lock", () => {
-  assert.equal(CONTRACT_VERSION, "0.17.0");
+test("contract version is 0.20.0 and matches the lock", () => {
+  assert.equal(CONTRACT_VERSION, "0.20.0");
   assert.equal(computeContractHash(), CONTRACT_HASH);
   const lock = JSON.parse(readFileSync("contract.lock.json", "utf8")) as { version: string };
-  assert.equal(lock.version, "0.17.0");
+  assert.equal(lock.version, "0.20.0");
 });
 
 test("dj_requests.lessonPhase is an optional string or null", () => {
@@ -329,4 +336,68 @@ test("notifyWebhookUrl is masked in the dashboard", () => {
   };
   assert.equal(masked.notifyWebhookUrl, "[masked string]");
   assert.equal(masked.danceName, "Dance");
+});
+
+test("every declared collection is declared in full and registered", () => {
+  for (const key of declaredCollections) {
+    assert.ok(declaredFields[key]?._id, `${key} declares _id`);
+    assert.ok(key in collections, `${key} is in the contract`);
+  }
+});
+
+test("provisional instructor profiles and venue links", () => {
+  const profile = { _id: "p1", name: "Ada", bio: "", image: "", userId: "u1", createdAt: at, updatedAt: at };
+  accept(LdcoReviewsInstructorsSchema, profile);
+  reject(LdcoReviewsInstructorsSchema, { ...profile, userId: undefined });
+  // Approval copies the profile whole into ldco.instructors
+  accept(LdcoInstructorsSchema, profile);
+  accept(LdcoInstructorsSchema, { _id: "i1", name: "Ada" });
+  accept(LdcoReviewsInstructorVenuesSchema, { _id: "l1", instructorId: "p1", venueId: "v1", createdAt: at, updatedAt: at });
+});
+
+test("review venues may record who submitted them", () => {
+  const venue = {
+    _id: "v1",
+    venuename: "Hall",
+    venueaddress: "1 Main St",
+    geolocation: [0, 0],
+    phone: "",
+    website: "",
+    contactName: "",
+    contactEmail: "",
+    contactPhone: "",
+    createdAt: at,
+    timeZone: "America/Denver",
+    verifiedAt: null,
+    verifiedBy: null,
+  };
+  accept(LdcoReviewsVenuesSchema, venue);
+  accept(LdcoReviewsVenuesSchema, { ...venue, submittedBy: "u1" });
+});
+
+test("instructor requests: older resolved claims, pending claims and new profiles", () => {
+  accept(LdcoReviewsVerifyUserInstructorSchema, {
+    _id: new ObjectId(),
+    userId: "u1",
+    instructorId: "i1",
+    createdAt: at,
+    resolved: true,
+    resolution: "approve",
+    resolvedAt: at,
+    resolvedBy: "admin",
+  });
+  const pending = {
+    _id: new ObjectId().toHexString(),
+    userId: "u1",
+    kind: "new-profile",
+    instructorId: "p1",
+    provisionalInstructorId: "p1",
+    requestedName: "Ada",
+    createdAt: at,
+    resolved: false,
+  };
+  accept(LdcoReviewsVerifyUserInstructorSchema, pending);
+  accept(LdcoReviewsVerifyUserInstructorSchema, { ...pending, kind: "claim", instructorId: "i1", note: "Not the other Ada" });
+  reject(LdcoReviewsVerifyUserInstructorSchema, { ...pending, kind: "transfer" });
+  reject(LdcoReviewsVerifyUserInstructorSchema, { ...pending, resolution: "maybe" });
 });

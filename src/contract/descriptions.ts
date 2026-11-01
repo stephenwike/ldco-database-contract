@@ -97,7 +97,9 @@ export const descriptions: Record<string, string> = {
   "ldco-reviews.venues": "Venues waiting for review.",
   "ldco-reviews.lessons": "Lessons waiting for review before they become ldco.lessons entries.",
   "ldco-reviews.venue_users": "A user's claim to manage a venue, waiting for admin approval.",
-  "ldco-reviews.verify_user_instructor": "A user asking to be verified as an instructor, with the admin's resolution.",
+  "ldco-reviews.verify_user_instructor": "A user claiming an instructor profile or starting a new one (kind), waiting for an admin, with the admin's resolution.",
+  "ldco-reviews.instructors": "Provisional instructor profiles: a user works in one while their verify_user_instructor request is reviewed. Approval moves it to ldco.instructors (same id).",
+  "ldco-reviews.instructor_venues": "A provisional instructor's venue links, kept out of ldco.instructor_venues until approval moves them there.",
   "ldco-reviews.join_choreographer_appeals": "A user asking to be recognised as a choreographer (linked to a choreographer record), waiting for an admin.",
   "ldco-reviews.reports": "A user report about a venue, lesson, instructor or event (issue type, description, suggested fix), waiting for an admin.",
 };

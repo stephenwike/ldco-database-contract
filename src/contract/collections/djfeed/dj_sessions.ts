@@ -29,8 +29,8 @@ export const DjfeedDjSessionsSchema = z.strictObject({
   migratedFrom: z.string().optional(),
   shareTimeZone: z.string().optional(),
   shareToken: z.string().optional(),
-  privateEvent: z.boolean().optional(),
-  linkedTo: z.strictObject({ kind: z.enum(["event", "eventType", "venue"]), id: z.string() }).optional(),
+  privateEvent: z.boolean().optional(), // declared in src/contract/declared-fields.ts
+  linkedTo: z.strictObject({ kind: z.enum(["event", "eventType", "venue"]), id: z.string() }).optional(), // declared in src/contract/declared-fields.ts
   extensions: z.array(z.unknown()).optional(), // declared in src/contract/declared-fields.ts
 });
 

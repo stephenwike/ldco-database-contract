@@ -55,6 +55,8 @@ import {
   LdcoPendingDancesSchema,
   LdcoReviewsChoreographersSchema,
   LdcoReviewsDancesSchema,
+  LdcoReviewsInstructorVenuesSchema,
+  LdcoReviewsInstructorsSchema,
   LdcoReviewsJoinChoreographerAppealsSchema,
   LdcoReviewsLessonsSchema,
   LdcoReviewsReportsSchema,
@@ -83,7 +85,7 @@ import {
   inScope,
   scopeFromPackageJson,
   unmatchedEntries
-} from "./chunk-FHEPMITK.js";
+} from "./chunk-YMA6PKSW.js";
 export {
   BldEventTemplatesSchema,
   BldEventTypesSchema,
@@ -141,6 +143,8 @@ export {
   LdcoPendingDancesSchema,
   LdcoReviewsChoreographersSchema,
   LdcoReviewsDancesSchema,
+  LdcoReviewsInstructorVenuesSchema,
+  LdcoReviewsInstructorsSchema,
   LdcoReviewsJoinChoreographerAppealsSchema,
   LdcoReviewsLessonsSchema,
   LdcoReviewsReportsSchema,

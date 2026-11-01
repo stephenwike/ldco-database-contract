@@ -3,6 +3,11 @@
 // a missing path is inserted, and a path it did see is replaced with this expression.
 // Values are zod source text; objectId and bsonDate from ../bson are available.
 // Paths use dots, and `[]` for an array element (`playedTracks[].lesson`).
+//
+// A collection listed in declaredCollections is declared in full (every field, `_id` included): while it has
+// no documents, or doesn't exist yet, its schema is built from these declarations alone.
+
+export const declaredCollections = ["ldco-reviews.instructors", "ldco-reviews.instructor_venues"];
 
 export const declaredFields: Record<string, Record<string, string>> = {
   // Publish dates at the precision the evidence supports (decision 22, amended). publishedAt is an exact
@@ -78,6 +83,52 @@ export const declaredFields: Record<string, Record<string, string>> = {
   // where its date, time and venue are, so every ticketed event has one.
   "ldco-events.events": {
     lessonEventId: "z.string()",
+  },
+
+  // Provisional instructors (decision 25). A user who starts or claims an instructor profile works in a
+  // provisional one in ldco-reviews until an admin approves it; approval moves the profile (same _id) and its
+  // venue links into ldco. Both review collections are in declaredCollections, so they exist in the contract
+  // before they have documents.
+  "ldco-reviews.instructors": {
+    _id: "z.string()",
+    name: "z.string()",
+    bio: "z.string()",
+    image: "z.string()",
+    userId: "z.string()",
+    createdAt: "bsonDate",
+    updatedAt: "bsonDate",
+  },
+  // Same shape as ldco.instructor_venues; kept apart so readers of the public links never see provisional ones.
+  "ldco-reviews.instructor_venues": {
+    _id: "z.string()",
+    instructorId: "z.string()",
+    venueId: "z.string()",
+    createdAt: "bsonDate",
+    updatedAt: "bsonDate",
+  },
+  // An approved new profile is copied whole, and edits set updatedAt (and may set image).
+  "ldco.instructors": {
+    bio: "z.string().optional()",
+    image: "z.string().optional()",
+    createdAt: "bsonDate.optional()",
+    updatedAt: "bsonDate.optional()",
+  },
+  // The user who submitted the venue (older venues don't say).
+  "ldco-reviews.venues": {
+    submittedBy: "z.string().optional()",
+  },
+  // One queue for claims and new profiles. instructorId is the profile under review (the claimed one, or the
+  // new provisional one). Requests from before provisional profiles have no kind. The resolution fields are
+  // set when an admin resolves it. Newer requests have string ids; the one older request has an ObjectId.
+  "ldco-reviews.verify_user_instructor": {
+    _id: "z.union([z.string(), objectId])",
+    kind: 'z.enum(["claim", "new-profile"]).optional()',
+    provisionalInstructorId: "z.string().optional()",
+    requestedName: "z.string().optional()",
+    note: "z.string().optional()",
+    resolution: 'z.enum(["approve", "deny"]).optional()',
+    resolvedAt: "bsonDate.optional()",
+    resolvedBy: "z.string().optional()",
   },
 
   // copperknob-alert. A rule can watch a dance name with no choreographer. notifyWebhookUrl is where a

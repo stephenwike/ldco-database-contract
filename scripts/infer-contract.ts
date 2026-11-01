@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { applyDeclaredFields } from "../src/contract/apply-declared";
-import { declaredFields } from "../src/contract/declared-fields";
+import { declaredCollections, declaredFields } from "../src/contract/declared-fields";
 import { getDb } from "../src/server/mongo";
 
 // Infers Zod schemas from live documents and writes src/contract/collections/<db>/<name>.ts.
@@ -86,10 +86,15 @@ const pascal = (s: string) => s.split(/[^A-Za-z0-9]+/).filter(Boolean).map((p) =
 
 const root = new URL("../src/contract/collections/", import.meta.url);
 const admin = (await getDb("admin")).admin();
-const databases = (await admin.listDatabases()).databases
-  .map((d) => d.name)
-  .filter((n) => !["admin", "config", "local"].includes(n))
-  .sort();
+// A collection in declaredCollections is generated from its declared fields while it has no documents, even
+// before it exists, so the contract can describe it ahead of any app writing it.
+const fullyDeclared = (key: string) => declaredCollections.includes(key);
+const databases = [
+  ...new Set([
+    ...(await admin.listDatabases()).databases.map((d) => d.name).filter((n) => !["admin", "config", "local"].includes(n)),
+    ...declaredCollections.map((k) => k.slice(0, k.indexOf("."))),
+  ]),
+].sort();
 
 // Remember existing schemas before regenerating: an empty collection keeps its last real schema
 // instead of falling back to a placeholder (e.g. ldco.events after its test documents were deleted).
@@ -114,10 +119,14 @@ const allMixed: string[] = [];
 for (const database of databases) {
   const db = await getDb(database);
   mkdirSync(new URL(`${database}/`, root), { recursive: true });
-  const names = (await db.listCollections().toArray())
-    .filter((c) => c.type !== "view" && !c.name.startsWith("_") && !c.name.startsWith("system."))
-    .map((c) => c.name)
-    .sort();
+  const names = [
+    ...new Set([
+      ...(await db.listCollections().toArray())
+        .filter((c) => c.type !== "view" && !c.name.startsWith("_") && !c.name.startsWith("system."))
+        .map((c) => c.name),
+      ...declaredCollections.filter((k) => k.startsWith(`${database}.`)).map((k) => k.slice(database.length + 1)),
+    ]),
+  ].sort();
 
   for (const name of names) {
     const shape = newShape();
@@ -132,7 +141,8 @@ for (const database of databases) {
     }
 
     const id = `${pascal(database)}${pascal(name)}`;
-    const kept = !shape.count ? previous.get(`${database}.${name}`) : undefined;
+    const declaredOnly = !shape.count && fullyDeclared(`${database}.${name}`);
+    const kept = !shape.count && !declaredOnly ? previous.get(`${database}.${name}`) : undefined;
     if (kept) {
       const note = "// Kept from an earlier inference: the collection is currently empty.";
       writeFileSync(new URL(`${database}/${name}.ts`, root), kept.startsWith(note) ? kept : `${note}
@@ -143,17 +153,21 @@ ${kept}`);
     const mixed: string[] = [];
     let body = shape.count
       ? gen(shape, `${database}.${name}`, mixed, "")
-      : "z.looseObject({ _id: z.union([z.string(), objectId]) })";
+      : declaredOnly
+        ? "z.strictObject({\n})"
+        : "z.looseObject({ _id: z.union([z.string(), objectId]) })";
     allMixed.push(...mixed);
 
     // Hand-maintained fields (decision 22 and later widenings). Missing paths are inserted; paths the
     // sample did show are replaced, so a null-only or too-narrow inference can't drop the declaration.
     const declared = declaredFields[`${database}.${name}`];
-    if (shape.count && declared && Object.keys(declared).length) body = applyDeclaredFields(body, declared);
+    if ((shape.count || declaredOnly) && declared && Object.keys(declared).length) body = applyDeclaredFields(body, declared);
 
     const header = shape.count
       ? `// Inferred from ${shape.count} documents by scripts/infer-contract.ts; review before relying on it.`
-      : "// No documents were available to infer from; placeholder until the shape is known.";
+      : declaredOnly
+        ? "// No documents yet; generated from src/contract/declared-fields.ts by scripts/infer-contract.ts."
+        : "// No documents were available to infer from; placeholder until the shape is known.";
     const imports = ['import { z } from "zod";'];
     const used = [body.includes("bsonDate") && "bsonDate", body.includes("objectId") && "objectId"].filter(Boolean);
     if (used.length) imports.push(`import { ${used.join(", ")} } from "../../bson";`);

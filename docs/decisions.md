@@ -168,6 +168,15 @@ Decided 2026-10-30. Field notes: [data-model.md](data-model.md#instructor-schedu
 - **Phase 3 rolled out 2026-10-30:** backup `backups/2026-10-30T22-22-54-142Z`; contract 0.19.0 published (`eaddd79`); the admin deployed reading and writing the schedule only (`06a43f6`); `0019` applied on live (both ticketed events); dance-folly-website updated to 0.19.0.
 - **Migration `0017`** (2026-10-30 data): Sept 19, 2026 was stored as an Alternative Line Dance occurrence carrying the social's note, with no lessons or history; it becomes the special event in place (same id). Nov 21, 2026 had nothing stored; a special event is created. Midnight Toad wasn't a venue; it's added (not validated, no coordinates). Both are Stephen's (`createdBy` and a `creator` row in `event_instructors`).
 
+## 25. Provisional instructors work in `ldco-reviews` until approved
+Decided 2026-10-31. Spec: line-dance-manager `docs/specs/instructor-dashboard.md`, "Provisional instructors". Field notes: [data-model.md](data-model.md#provisional-instructors-ldco-reviews).
+
+- **The profile.** A user who starts an instructor profile, or claims an existing one, gets a provisional profile in `ldco-reviews.instructors` (one per user) and works in it straight away. Its venue links go to `ldco-reviews.instructor_venues` (same shape as `ldco.instructor_venues`), so readers of the public links never see them. Its schedule lives in `ldco-lessons` like everyone's, and venues it submits stay in `ldco-reviews.venues` with `submittedBy`.
+- **The request.** `ldco-reviews.verify_user_instructor` is one queue for both: `kind` is `"claim"` or `"new-profile"`, `instructorId` is the profile under review (the claimed one, or the new one), `provisionalInstructorId` the profile the user works in. Requests from before this have no `kind` and keep the old behaviour.
+- **Approval** of a new profile moves the provisional profile into `ldco.instructors` with the same `_id`, so everything pointing at it keeps working; approving a claim links the user to the claimed profile and re-points the provisional profile's work to it. Both move the venue links. **Deny** removes the provisional profile and whatever only it created. The admin does this (`line-dance-manager-admin` `lib/provisionalInstructors.ts`).
+- **Contract 0.20.0.** All new or optional, so no migration. `ldco.instructors` gains optional `image`, `createdAt` and `updatedAt`, because an approved profile is copied whole and edits set `updatedAt`. `verify_user_instructor._id` is a string or an ObjectId: newer requests have string ids and the one older request an ObjectId.
+- **Collections declared ahead of data.** The two new collections are listed in `declaredCollections` (`src/contract/declared-fields.ts`), so `contract:infer` builds them from their declared fields while they're empty, or missing, as they are on live until the first provisional instructor.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?

@@ -66,6 +66,8 @@ import { LdcoLessonsFrequenciesSchema } from "./ldco-lessons/frequencies";
 import { LdcoLessonsLessonsSchema } from "./ldco-lessons/lessons";
 import { LdcoReviewsChoreographersSchema } from "./ldco-reviews/choreographers";
 import { LdcoReviewsDancesSchema } from "./ldco-reviews/dances";
+import { LdcoReviewsInstructorVenuesSchema } from "./ldco-reviews/instructor_venues";
+import { LdcoReviewsInstructorsSchema } from "./ldco-reviews/instructors";
 import { LdcoReviewsJoinChoreographerAppealsSchema } from "./ldco-reviews/join_choreographer_appeals";
 import { LdcoReviewsLessonsSchema } from "./ldco-reviews/lessons";
 import { LdcoReviewsReportsSchema } from "./ldco-reviews/reports";
@@ -142,6 +144,8 @@ export * from "./ldco-lessons/frequencies";
 export * from "./ldco-lessons/lessons";
 export * from "./ldco-reviews/choreographers";
 export * from "./ldco-reviews/dances";
+export * from "./ldco-reviews/instructor_venues";
+export * from "./ldco-reviews/instructors";
 export * from "./ldco-reviews/join_choreographer_appeals";
 export * from "./ldco-reviews/lessons";
 export * from "./ldco-reviews/reports";
@@ -220,6 +224,8 @@ export const collections = {
   "ldco-lessons.lessons": { database: "ldco-lessons", name: "lessons", schema: LdcoLessonsLessonsSchema },
   "ldco-reviews.choreographers": { database: "ldco-reviews", name: "choreographers", schema: LdcoReviewsChoreographersSchema },
   "ldco-reviews.dances": { database: "ldco-reviews", name: "dances", schema: LdcoReviewsDancesSchema },
+  "ldco-reviews.instructor_venues": { database: "ldco-reviews", name: "instructor_venues", schema: LdcoReviewsInstructorVenuesSchema },
+  "ldco-reviews.instructors": { database: "ldco-reviews", name: "instructors", schema: LdcoReviewsInstructorsSchema },
   "ldco-reviews.join_choreographer_appeals": { database: "ldco-reviews", name: "join_choreographer_appeals", schema: LdcoReviewsJoinChoreographerAppealsSchema },
   "ldco-reviews.lessons": { database: "ldco-reviews", name: "lessons", schema: LdcoReviewsLessonsSchema },
   "ldco-reviews.reports": { database: "ldco-reviews", name: "reports", schema: LdcoReviewsReportsSchema },

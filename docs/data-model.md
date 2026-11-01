@@ -98,6 +98,13 @@ Decision 18. Any instructor's schedule, in its own database. Migration `0013` cr
 - `event_instructors` rows with `eventId` instead of `eventTypeId`.
 - `event_instructor_requests` documents (the collection is empty).
 
+## Provisional instructors (`ldco-reviews`)
+Decision 25.
+- `instructors`: `_id` (string, kept on approval), `name`, `bio`, `image` (`""` until set), `userId` (one profile per user), `createdAt`, `updatedAt`. All required: line-dance-manager writes every field when it creates one.
+- `instructor_venues`: `_id`, `instructorId` (the provisional profile), `venueId`, `createdAt`, `updatedAt`; same shape as `ldco.instructor_venues`.
+- `venues.submittedBy`: the user id of whoever submitted the venue. Older venues don't have it. A provisional instructor's submitted venues are found by it, and removed on deny if nothing else uses them.
+- `verify_user_instructor`: `userId`, `instructorId`, `createdAt`, `resolved`, plus optional `kind` (`"claim"` | `"new-profile"`), `provisionalInstructorId`, `requestedName` (the name the user asked for), `note` ("that's not me" when a new profile shares a name with an existing one, up to 500 characters). The admin sets `resolution` (`"approve"` | `"deny"`), `resolvedAt` and `resolvedBy` when it resolves one.
+
 ## Copperknob alerts (`copperknob_alert`)
 
 A watch rule matches the new-dance feed on a dance name, and optionally a choreographer (`choreographer` may be omitted). `notifyWebhookUrl` is where a match is posted; rules created before that field omit it. `processed_items.details.choreographer` is a string and may be empty when the feed item named no choreographer.
