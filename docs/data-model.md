@@ -10,7 +10,7 @@ Database `ldco`, collection `dances`.
 |---|---|
 | `_id` | String (hex). Converted from ObjectId by migration `0001`. |
 | `songArtists` | Optional `[{ song, artist }]`. Scraped song info from copperknob, set by the bulk import in `line-dance-manager-admin`. See decision 7. |
-| `stepsheet` / `stepsheetUrls` | Optional. `stepsheetUrls` is an array of source URLs; `stepsheet` is unique-indexed. |
+| `stepsheet` / `stepsheetUrls` | Optional. `stepsheetUrls` is an array of source URLs. `stepsheet` is unique among non-empty values (index `stepsheet_unique_nonempty`, migration `0020`): missing or `""` (no stepsheet assigned yet) can repeat, a URL can't. |
 | `primaryTrack` / `tracks` | Track ids in `tracks`. |
 
 **Observed, to confirm:** all 796 dances with `songArtists` have a `primaryTrack`, but it is a 24-character id (Spotify ids are 22). They share 772 distinct tracks, and every one of those tracks is a placeholder (empty `uri`). This suggests the import creates a stub track per dance rather than leaving `primaryTrack` empty. The future matching process would replace those stubs with real Spotify tracks. 785 of the 2,186 tracks have an empty `uri`.
