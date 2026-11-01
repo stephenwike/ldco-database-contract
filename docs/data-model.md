@@ -63,6 +63,8 @@ Decision 20. Written by line-dance-dj-feed; moved from `ldco` (`session_attendan
 
 **Allow Duplicates** (contract 0.21): `dj_sessions.allowDuplicates` (optional boolean, absent = off) lets a dance be requested again after it is played and queued more than once. Each queued copy carries the pending requests it was queued with: `dj_requests.copyOf` is the queued request's `_id` (string). Playing a copy marks only its own requests played; a pending request with no `copyOf` is waiting for another copy. Declared in `declared-fields.ts` ahead of data.
 
+**Tips** (contract 0.22): `dj_sessions.tippingEnabled` is Beat tipping on requests; `directTipsEnabled` (optional boolean, absent = on) is card tips straight to the DJ. They are separate, so turning off Beat tipping keeps direct tips.
+
 **A feed lesson isn't a taught lesson.** `ldco-lessons.lessons` is the source of truth for what was taught. To find the dancers at a taught lesson: its `instructorId` → `ldco.instructors.userId` (= `hostId`), the same `danceId`, and the same local date (the lesson event's `timeZone`) → the feed lesson's `sessionId` → `session_attendance` rows for that session. `$lookup` can't cross databases, so the join runs in app code.
 
 ## Instructor schedule (`ldco-lessons`)

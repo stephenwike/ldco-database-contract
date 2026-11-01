@@ -72,12 +72,14 @@ export const declaredFields: Record<string, Record<string, string>> = {
   // privateEvent: not one of the host's regular events (no dancer links, no Line Dance Manager features).
   // linkedTo: what the event is associated with, instead of just its host (decision 23).
   // allowDuplicates: the DJ lets a dance be requested again after it's played and queued more than once.
+  // directTipsEnabled: card tips straight to the DJ, separate from Beat tipping (tippingEnabled). Absent = on.
   "djfeed.dj_sessions": {
     durationMinutes: "z.number().nullable().optional()",
     extensions: "z.array(z.unknown()).optional()",
     privateEvent: "z.boolean().optional()",
     linkedTo: 'z.strictObject({ kind: z.enum(["event", "eventType", "venue"]), id: z.string() }).optional()',
     allowDuplicates: "z.boolean().optional()",
+    directTipsEnabled: "z.boolean().optional()",
   },
   "djfeed.session_reports": {
     "playedTracks[].lesson": "z.union([z.string(), z.boolean()]).nullable().optional()",

@@ -413,6 +413,7 @@ declare const DjfeedDjSessionsSchema: z.ZodObject<{
         id: z.ZodString;
     }, z.core.$strict>>;
     allowDuplicates: z.ZodOptional<z.ZodBoolean>;
+    directTipsEnabled: z.ZodOptional<z.ZodBoolean>;
     extensions: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
 }, z.core.$strict>;
 type DjfeedDjSessions = z.infer<typeof DjfeedDjSessionsSchema>;
@@ -1676,6 +1677,7 @@ declare const collections: {
                 id: zod.ZodString;
             }, zod_v4_core.$strict>>;
             allowDuplicates: zod.ZodOptional<zod.ZodBoolean>;
+            directTipsEnabled: zod.ZodOptional<zod.ZodBoolean>;
             extensions: zod.ZodOptional<zod.ZodArray<zod.ZodUnknown>>;
         }, zod_v4_core.$strict>;
     };

@@ -62,11 +62,11 @@ test("inserting into an array element keeps the closing brace's indent", () => {
   assert.equal(applyDeclaredFields(next, { "playedTracks[].lesson": "z.string().optional()" }), next);
 });
 
-test("contract version is 0.21.0 and matches the lock", () => {
-  assert.equal(CONTRACT_VERSION, "0.21.0");
+test("contract version is 0.22.0 and matches the lock", () => {
+  assert.equal(CONTRACT_VERSION, "0.22.0");
   assert.equal(computeContractHash(), CONTRACT_HASH);
   const lock = JSON.parse(readFileSync("contract.lock.json", "utf8")) as { version: string };
-  assert.equal(lock.version, "0.21.0");
+  assert.equal(lock.version, "0.22.0");
 });
 
 test("dj_requests.lessonPhase is an optional string or null", () => {
@@ -117,6 +117,8 @@ test("dj_sessions.durationMinutes is nullable and extensions is an optional arra
   reject(DjfeedDjSessionsSchema, { ...base, extensions: null });
   accept(DjfeedDjSessionsSchema, { ...base, allowDuplicates: true });
   reject(DjfeedDjSessionsSchema, { ...base, allowDuplicates: "yes" });
+  accept(DjfeedDjSessionsSchema, { ...base, tippingEnabled: false, directTipsEnabled: true });
+  reject(DjfeedDjSessionsSchema, { ...base, directTipsEnabled: 1 });
 });
 
 test("session report played rows may carry a lesson marker", () => {
