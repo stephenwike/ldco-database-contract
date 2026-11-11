@@ -91,7 +91,8 @@ export const descriptions: Record<string, string> = {
   "copperknob_alert.sync_metadata": "When the cron last copied new feed dances into ldco.dances, and how many.",
 
   // Review and moderation
-  "ldco-reviews.dances": "Dances waiting for review, plus contract-violating dances quarantined from ldco.dances.",
+  "ldco-reviews.dances":
+    "Dances not in ldco.dances yet: unpublished dances (reviewKind \"unpublished\", decision 26), dances users submitted, and contract-violating dances quarantined from ldco.dances. Publishing keeps the _id.",
   "ldco-reviews.tracks": "Tracks waiting for review (line-dance-manager's add-track writes here first).",
   "ldco-reviews.choreographers": "Choreographers waiting for review.",
   "ldco-reviews.venues": "Venues waiting for review.",

@@ -109,6 +109,19 @@ Decision 25.
 - `venues.submittedBy`: the user id of whoever submitted the venue. Older venues don't have it. A provisional instructor's submitted venues are found by it, and removed on deny if nothing else uses them.
 - `verify_user_instructor`: `userId`, `instructorId`, `createdAt`, `resolved`, plus optional `kind` (`"claim"` | `"new-profile"`), `provisionalInstructorId`, `requestedName` (the name the user asked for), `note` ("that's not me" when a new profile shares a name with an existing one, up to 500 characters). The admin sets `resolution` (`"approve"` | `"deny"`), `resolvedAt` and `resolvedBy` when it resolves one.
 
+## Unpublished dances (`ldco-reviews.dances`)
+Decision 26. The collection holds three kinds of document, all in `ldco.dances`' shape (`danceName`, `choreographers`, `difficulty`, `primaryTrack`, `tracks`, optional `stepsheet`, `stepsheetUrls`, `songArtists`):
+- **Unpublished** (`reviewKind: "unpublished"`): a dance taught before its stepsheet is published. Always has `sourceEvent` (for example `"VDE 2026"`), `createdBy` and `createdAt`; `stepsheet` is `""`, `primaryTrack` is `""` and `tracks` is `[]`; `songArtists` when the song is known. The contract can't make those fields required for this kind only, so writers must set them.
+- **Submitted** (no `reviewKind`): a dance a user added in `line-dance-manager` (`add-dance`), waiting for review.
+- **Quarantined** (no `reviewKind`, and a row in `ldco-reviews._quarantine`): moved unchanged from `ldco.dances` because it violated the contract (decision 10).
+
+| Field | Notes |
+|---|---|
+| `_id` | String. Permanent: publishing inserts the document into `ldco.dances` with the same `_id` and deletes it here, so collections, user tracking, lessons and DJ Feed references keep working. |
+| `choreographers` | `ldco.choreographers` ids, for choreographers already in the catalogue. May be empty. |
+| `unresolvedChoreographers` | Names the source gave for choreographers not in `ldco.choreographers` yet. The reviewer checks them and adds them to `ldco.choreographers` when the dance is published. No confidence is recorded: sources often get choreographers wrong or leave some out, so every unpublished dance's choreographers are checked at review. |
+| `difficulty` | The source's level spelled out the way `ldco.dances` spells levels (VDE's `IMP` → `Improver`, `LI` → `Low Intermediate`, `HB` → `High Beginner`), because apps match level words. Copperknob's level replaces it on publishing. |
+
 ## Copperknob alerts (`copperknob_alert`)
 
 A watch rule matches the new-dance feed on a dance name, and optionally a choreographer (`choreographer` may be omitted). `notifyWebhookUrl` is where a match is posted; rules created before that field omit it. `processed_items.details.choreographer` is a string and may be empty when the feed item named no choreographer.

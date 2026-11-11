@@ -51,7 +51,7 @@ var collections = {
   "ldco-lessons.frequencies": "4945f9e6abe0cc3d4dade2eeb796d5dbde2bb1dd5458f07b28f8f18a700f5b30",
   "ldco-lessons.lessons": "c5ee40a6d65460ef053471f61099865bc733a506d6aa7a8580c067f7838eea40",
   "ldco-reviews.choreographers": "d255092436491018b8d388e6f95c28dbd566cb53f7485b58dc6712be49386a36",
-  "ldco-reviews.dances": "3fc12018ed54816edcccbe68b74dbdadf2f1015bd40c1b8f0ca382f07554ad40",
+  "ldco-reviews.dances": "07399d77c9700b53707156a69901895f57372384773c4ea40aeff3f515777e0c",
   "ldco-reviews.instructor_venues": "892bea61c07a150d9b787c5d110de5e55a386800fc9ae7aa1aa9f58086008c3e",
   "ldco-reviews.instructors": "8876ab9d4adaeacc36436ae657c887ba598e2ea7466b6741ae0fb53d1c6c302c",
   "ldco-reviews.join_choreographer_appeals": "2d7e2d6b5e7ae7ae2711a78bf1184166025b019354e2a7d006611dc186fe7dac",
@@ -1124,7 +1124,36 @@ var LdcoReviewsChoreographersSchema = import_zod67.z.looseObject({ _id: import_z
 
 // src/contract/collections/ldco-reviews/dances.ts
 var import_zod68 = require("zod");
-var LdcoReviewsDancesSchema = import_zod68.z.looseObject({ _id: import_zod68.z.union([import_zod68.z.string(), objectId]) });
+var LdcoReviewsDancesSchema = import_zod68.z.strictObject({
+  _id: import_zod68.z.string(),
+  // declared in src/contract/declared-fields.ts
+  danceName: import_zod68.z.string(),
+  // declared in src/contract/declared-fields.ts
+  choreographers: import_zod68.z.array(import_zod68.z.string()),
+  // declared in src/contract/declared-fields.ts
+  difficulty: import_zod68.z.string(),
+  // declared in src/contract/declared-fields.ts
+  stepsheet: import_zod68.z.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  stepsheetUrls: import_zod68.z.array(import_zod68.z.string()).optional(),
+  // declared in src/contract/declared-fields.ts
+  primaryTrack: import_zod68.z.string(),
+  // declared in src/contract/declared-fields.ts
+  tracks: import_zod68.z.array(import_zod68.z.string()),
+  // declared in src/contract/declared-fields.ts
+  songArtists: import_zod68.z.array(import_zod68.z.strictObject({ song: import_zod68.z.string(), artist: import_zod68.z.string() })).optional(),
+  // declared in src/contract/declared-fields.ts
+  reviewKind: import_zod68.z.enum(["unpublished"]).optional(),
+  // declared in src/contract/declared-fields.ts
+  unresolvedChoreographers: import_zod68.z.array(import_zod68.z.string()).optional(),
+  // declared in src/contract/declared-fields.ts
+  sourceEvent: import_zod68.z.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  createdBy: import_zod68.z.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  createdAt: bsonDate.optional()
+  // declared in src/contract/declared-fields.ts
+});
 
 // src/contract/collections/ldco-reviews/instructor_venues.ts
 var import_zod69 = require("zod");

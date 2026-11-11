@@ -1080,12 +1080,26 @@ declare const LdcoReviewsChoreographersSchema: z.ZodObject<{
 type LdcoReviewsChoreographers = z.infer<typeof LdcoReviewsChoreographersSchema>;
 
 declare const LdcoReviewsDancesSchema: z.ZodObject<{
-    _id: z.ZodUnion<readonly [z.ZodString, z.ZodCustom<{
-        toHexString(): string;
-    }, {
-        toHexString(): string;
-    }>]>;
-}, z.core.$loose>;
+    _id: z.ZodString;
+    danceName: z.ZodString;
+    choreographers: z.ZodArray<z.ZodString>;
+    difficulty: z.ZodString;
+    stepsheet: z.ZodOptional<z.ZodString>;
+    stepsheetUrls: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    primaryTrack: z.ZodString;
+    tracks: z.ZodArray<z.ZodString>;
+    songArtists: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        song: z.ZodString;
+        artist: z.ZodString;
+    }, z.core.$strict>>>;
+    reviewKind: z.ZodOptional<z.ZodEnum<{
+        unpublished: "unpublished";
+    }>>;
+    unresolvedChoreographers: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    sourceEvent: z.ZodOptional<z.ZodString>;
+    createdBy: z.ZodOptional<z.ZodString>;
+    createdAt: z.ZodOptional<z.ZodDate>;
+}, z.core.$strict>;
 type LdcoReviewsDances = z.infer<typeof LdcoReviewsDancesSchema>;
 
 declare const LdcoReviewsInstructorVenuesSchema: z.ZodObject<{
@@ -2440,12 +2454,26 @@ declare const collections: {
         readonly database: "ldco-reviews";
         readonly name: "dances";
         readonly schema: zod.ZodObject<{
-            _id: zod.ZodUnion<readonly [zod.ZodString, zod.ZodCustom<{
-                toHexString(): string;
-            }, {
-                toHexString(): string;
-            }>]>;
-        }, zod_v4_core.$loose>;
+            _id: zod.ZodString;
+            danceName: zod.ZodString;
+            choreographers: zod.ZodArray<zod.ZodString>;
+            difficulty: zod.ZodString;
+            stepsheet: zod.ZodOptional<zod.ZodString>;
+            stepsheetUrls: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            primaryTrack: zod.ZodString;
+            tracks: zod.ZodArray<zod.ZodString>;
+            songArtists: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
+                song: zod.ZodString;
+                artist: zod.ZodString;
+            }, zod_v4_core.$strict>>>;
+            reviewKind: zod.ZodOptional<zod.ZodEnum<{
+                unpublished: "unpublished";
+            }>>;
+            unresolvedChoreographers: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            sourceEvent: zod.ZodOptional<zod.ZodString>;
+            createdBy: zod.ZodOptional<zod.ZodString>;
+            createdAt: zod.ZodOptional<zod.ZodDate>;
+        }, zod_v4_core.$strict>;
     };
     readonly "ldco-reviews.instructor_venues": {
         readonly database: "ldco-reviews";

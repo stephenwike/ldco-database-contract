@@ -7,7 +7,7 @@
 // A collection listed in declaredCollections is declared in full (every field, `_id` included): while it has
 // no documents, or doesn't exist yet, its schema is built from these declarations alone.
 
-export const declaredCollections = ["ldco-reviews.instructors", "ldco-reviews.instructor_venues"];
+export const declaredCollections = ["ldco-reviews.instructors", "ldco-reviews.instructor_venues", "ldco-reviews.dances"];
 
 export const declaredFields: Record<string, Record<string, string>> = {
   // Publish dates at the precision the evidence supports (decision 22, amended). publishedAt is an exact
@@ -135,6 +135,29 @@ export const declaredFields: Record<string, Record<string, string>> = {
     resolution: 'z.enum(["approve", "deny"]).optional()',
     resolvedAt: "bsonDate.optional()",
     resolvedBy: "z.string().optional()",
+  },
+
+  // Dances not in ldco.dances yet (decision 26). The shared fields are ldco.dances' own, so readers that merge
+  // the two lists need nothing new. Three kinds live here: unpublished dances (reviewKind "unpublished", e.g. taught
+  // at an event before their stepsheet is published), dances users submit in line-dance-manager (no reviewKind),
+  // and dances quarantined from ldco.dances (decision 10; moved unchanged, so they may violate this on purpose).
+  // Publishing moves a document into ldco.dances with the same _id. choreographers are ldco.choreographers ids;
+  // unresolvedChoreographers are names not in ldco.choreographers yet, checked and added by the reviewer.
+  "ldco-reviews.dances": {
+    _id: "z.string()",
+    danceName: "z.string()",
+    choreographers: "z.array(z.string())",
+    difficulty: "z.string()",
+    stepsheet: "z.string().optional()",
+    stepsheetUrls: "z.array(z.string()).optional()",
+    primaryTrack: "z.string()",
+    tracks: "z.array(z.string())",
+    songArtists: "z.array(z.strictObject({ song: z.string(), artist: z.string() })).optional()",
+    reviewKind: 'z.enum(["unpublished"]).optional()',
+    unresolvedChoreographers: "z.array(z.string()).optional()",
+    sourceEvent: "z.string().optional()",
+    createdBy: "z.string().optional()",
+    createdAt: "bsonDate.optional()",
   },
 
   // copperknob-alert. A rule can watch a dance name with no choreographer. notifyWebhookUrl is where a
