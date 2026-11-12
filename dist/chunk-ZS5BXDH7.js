@@ -3,7 +3,7 @@ import { createHash } from "crypto";
 import { z as z79 } from "zod";
 
 // contract.lock.json
-var hash = "eaa3302e70c5e901badfa4ec5a135807f934f20c4f34b1183b916038a4bd6cdd";
+var hash = "0f2d7e5ff33e269d5cbd0e5af486c98624b27d73d7e78097221d9408616d7220";
 var collections = {
   "bld.event_templates": "1df4e84dea2413051623a8d5118f26507f7dc8767233a154ade9d17b1ca093d9",
   "bld.event_types": "72df6b91d956eccc5eb094833bdd45135f175ac9697e3e878a7da9dd241d0cb2",
@@ -36,7 +36,7 @@ var collections = {
   "djfeed.session_transactions": "dacf4f7565c4ebaf419112952955bd57ce9d5d61dca1b581696e10adc658cd9d",
   "djfeed.stripe_events": "931713a25924546920cd89698d1a840ba2e39ece9ccc26ab1a429641e3f0c061",
   "ldco-events.event_registrations": "9ada86c41c046b78f0a94be5383829f356674e8686650315df11cd11dade95c3",
-  "ldco-events.events": "9c9659b13669eb75f9d2e2c4845bacb81ae70d93a66d34edfdcb4da567b871da",
+  "ldco-events.events": "a48198e6c3fbd7e99ecdf21799b009af7bd68e1a40891b28bac0443bc4d3c879",
   "ldco-lessons.event_instructor_requests": "d6363771f4bb8324dad5e906d2526abf36977d274368ebad1962d6f5506714ed",
   "ldco-lessons.event_instructors": "45081600a6e8384f7079161a4d1e29e599c5ce05d59c122d9a371ce750064d52",
   "ldco-lessons.event_templates": "7bef5133ab79c4239ca5818d458f78af3bc3983922fb71691eb20cc43526da37",
@@ -85,7 +85,7 @@ var collections = {
 };
 
 // package.json
-var version = "0.23.0";
+var version = "0.24.0";
 
 // src/contract/collections/bld/event_templates.ts
 import { z as z2 } from "zod";
@@ -983,7 +983,11 @@ var LdcoEventsEventsSchema = z59.strictObject({
   shortTitle: z59.string(),
   title: z59.string(),
   // When and where are this special event's (decision 24); the old date / time / venue text was removed by 0019.
-  lessonEventId: z59.string()
+  lessonEventId: z59.string(),
+  // declared in src/contract/declared-fields.ts
+  guaranteedList: z59.array(z59.strictObject({ key: z59.string(), danceId: z59.string().nullable(), displayName: z59.string(), count: z59.number(), requestors: z59.array(z59.string()), difficulty: z59.string().nullable(), songName: z59.string().nullable(), songArtist: z59.string().nullable(), durationMs: z59.number().nullable(), weightedScore: z59.number().optional() })).nullable().optional(),
+  // declared in src/contract/declared-fields.ts
+  playlistFinalized: z59.boolean().optional()
   // declared in src/contract/declared-fields.ts
 });
 

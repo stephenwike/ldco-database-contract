@@ -953,6 +953,19 @@ declare const LdcoEventsEventsSchema: z.ZodObject<{
     shortTitle: z.ZodString;
     title: z.ZodString;
     lessonEventId: z.ZodString;
+    guaranteedList: z.ZodOptional<z.ZodNullable<z.ZodArray<z.ZodObject<{
+        key: z.ZodString;
+        danceId: z.ZodNullable<z.ZodString>;
+        displayName: z.ZodString;
+        count: z.ZodNumber;
+        requestors: z.ZodArray<z.ZodString>;
+        difficulty: z.ZodNullable<z.ZodString>;
+        songName: z.ZodNullable<z.ZodString>;
+        songArtist: z.ZodNullable<z.ZodString>;
+        durationMs: z.ZodNullable<z.ZodNumber>;
+        weightedScore: z.ZodOptional<z.ZodNumber>;
+    }, z.core.$strict>>>>;
+    playlistFinalized: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>;
 type LdcoEventsEvents = z.infer<typeof LdcoEventsEventsSchema>;
 
@@ -2309,6 +2322,19 @@ declare const collections: {
             shortTitle: zod.ZodString;
             title: zod.ZodString;
             lessonEventId: zod.ZodString;
+            guaranteedList: zod.ZodOptional<zod.ZodNullable<zod.ZodArray<zod.ZodObject<{
+                key: zod.ZodString;
+                danceId: zod.ZodNullable<zod.ZodString>;
+                displayName: zod.ZodString;
+                count: zod.ZodNumber;
+                requestors: zod.ZodArray<zod.ZodString>;
+                difficulty: zod.ZodNullable<zod.ZodString>;
+                songName: zod.ZodNullable<zod.ZodString>;
+                songArtist: zod.ZodNullable<zod.ZodString>;
+                durationMs: zod.ZodNullable<zod.ZodNumber>;
+                weightedScore: zod.ZodOptional<zod.ZodNumber>;
+            }, zod_v4_core.$strict>>>>;
+            playlistFinalized: zod.ZodOptional<zod.ZodBoolean>;
         }, zod_v4_core.$strict>;
     };
     readonly "ldco-lessons.event_instructor_requests": {

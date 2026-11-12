@@ -89,6 +89,11 @@ export const declaredFields: Record<string, Record<string, string>> = {
   // where its date, time and venue are, so every ticketed event has one.
   "ldco-events.events": {
     lessonEventId: "z.string()",
+    // The guaranteed playlist built from attendees' requests in the admin (decision 27). Finalizing it closes
+    // requests: the personal site refuses request changes while playlistFinalized is true.
+    guaranteedList:
+      "z.array(z.strictObject({ key: z.string(), danceId: z.string().nullable(), displayName: z.string(), count: z.number(), requestors: z.array(z.string()), difficulty: z.string().nullable(), songName: z.string().nullable(), songArtist: z.string().nullable(), durationMs: z.number().nullable(), weightedScore: z.number().optional() })).nullable().optional()",
+    playlistFinalized: "z.boolean().optional()",
   },
 
   // Provisional instructors (decision 25). A user who starts or claims an instructor profile works in a

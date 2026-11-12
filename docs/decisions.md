@@ -197,6 +197,14 @@ Decided 2026-11-10. First use: the VDE 2026 workshop dances (about 100 dances ta
 - **Order.** (1) This decision and contract 0.23.0. (2) copperknob-alert's check deployed. (3) Re-run the match against `ldco.dances` (some VDE dances may be published by then), then add the unpublished dances and put their ids in the collection's `danceIds`. (4) The admin's dance merge.
 - **Follow-ups.** `line-dance-manager` shows `unresolvedChoreographers` names wherever it shows a dance's choreographers. The 11 VDE dances that were put in `ldco.pending_dances` on 2026-11-10 are published copperknob dances that weren't in `ldco` yet. They move into `ldco.dances` with their existing ids, and the collection's `pendingDanceIds` become `danceIds`. That also avoids a separate bug: approving a pending dance today leaves its id in collections' `pendingDanceIds`, where it no longer resolves.
 
+## 27. A finalized guaranteed playlist closes requests
+Decided 2026-11-12. First use: the 2026-11-21 Intermediate Line Dance Social.
+
+- **Why.** The admin builds the night's guaranteed playlist from attendees' requests and finalizes it. After that, a changed request can't make it into the playlist, so the personal site must stop accepting changes instead of silently ignoring them.
+- **Where.** On the ticketed event in `ldco-events.events`: `guaranteedList` (the saved playlist, one entry per dance: `key`, `danceId`, `displayName`, `count`, `requestors`, `difficulty`, song fields, `durationMs`, optional `weightedScore`; `null` when cleared) and `playlistFinalized` (boolean). Both were already written by the admin before 0.24.0 declared them.
+- **The lock.** `playlistFinalized: true` means requests are closed. The personal site's request APIs check it before writing (signed-in and `?rt=` guest links alike) and refuse the change; the requests page shows requests as closed. Unfinalizing in the admin reopens them, because both read the same flag. Nothing is copied to the registrations.
+- **Contract 0.24.0.** Declares both fields on `ldco-events.events`. Apps whose scope includes it: `line-dance-manager-admin` and `dance-folly-website` (`ldco-events.*`).
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?

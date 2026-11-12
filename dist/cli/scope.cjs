@@ -42,7 +42,7 @@ var collections = {
   "djfeed.session_transactions": "dacf4f7565c4ebaf419112952955bd57ce9d5d61dca1b581696e10adc658cd9d",
   "djfeed.stripe_events": "931713a25924546920cd89698d1a840ba2e39ece9ccc26ab1a429641e3f0c061",
   "ldco-events.event_registrations": "9ada86c41c046b78f0a94be5383829f356674e8686650315df11cd11dade95c3",
-  "ldco-events.events": "9c9659b13669eb75f9d2e2c4845bacb81ae70d93a66d34edfdcb4da567b871da",
+  "ldco-events.events": "a48198e6c3fbd7e99ecdf21799b009af7bd68e1a40891b28bac0443bc4d3c879",
   "ldco-lessons.event_instructor_requests": "d6363771f4bb8324dad5e906d2526abf36977d274368ebad1962d6f5506714ed",
   "ldco-lessons.event_instructors": "45081600a6e8384f7079161a4d1e29e599c5ce05d59c122d9a371ce750064d52",
   "ldco-lessons.event_templates": "7bef5133ab79c4239ca5818d458f78af3bc3983922fb71691eb20cc43526da37",
@@ -986,7 +986,11 @@ var LdcoEventsEventsSchema = import_zod59.z.strictObject({
   shortTitle: import_zod59.z.string(),
   title: import_zod59.z.string(),
   // When and where are this special event's (decision 24); the old date / time / venue text was removed by 0019.
-  lessonEventId: import_zod59.z.string()
+  lessonEventId: import_zod59.z.string(),
+  // declared in src/contract/declared-fields.ts
+  guaranteedList: import_zod59.z.array(import_zod59.z.strictObject({ key: import_zod59.z.string(), danceId: import_zod59.z.string().nullable(), displayName: import_zod59.z.string(), count: import_zod59.z.number(), requestors: import_zod59.z.array(import_zod59.z.string()), difficulty: import_zod59.z.string().nullable(), songName: import_zod59.z.string().nullable(), songArtist: import_zod59.z.string().nullable(), durationMs: import_zod59.z.number().nullable(), weightedScore: import_zod59.z.number().optional() })).nullable().optional(),
+  // declared in src/contract/declared-fields.ts
+  playlistFinalized: import_zod59.z.boolean().optional()
   // declared in src/contract/declared-fields.ts
 });
 
