@@ -1232,6 +1232,261 @@ declare const LdcoReviewsVerifyUserInstructorSchema: z.ZodObject<{
 }, z.core.$strict>;
 type LdcoReviewsVerifyUserInstructor = z.infer<typeof LdcoReviewsVerifyUserInstructorSchema>;
 
+declare const LinedanceChoreographerPairReviewsSchema: z.ZodObject<{
+    _id: z.ZodUnion<readonly [z.ZodString, z.ZodCustom<{
+        toHexString(): string;
+    }, {
+        toHexString(): string;
+    }>]>;
+}, z.core.$loose>;
+type LinedanceChoreographerPairReviews = z.infer<typeof LinedanceChoreographerPairReviewsSchema>;
+
+declare const LinedanceChoreographersSchema: z.ZodObject<{
+    _id: z.ZodString;
+    name: z.ZodString;
+    nameKey: z.ZodString;
+    aliases: z.ZodArray<z.ZodString>;
+    countries: z.ZodArray<z.ZodString>;
+    nameWords: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    ldcoIds: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    mergedAt: z.ZodOptional<z.ZodDate>;
+    mergedInto: z.ZodOptional<z.ZodString>;
+    splitInto: z.ZodOptional<z.ZodArray<z.ZodString>>;
+}, z.core.$strict>;
+type LinedanceChoreographers = z.infer<typeof LinedanceChoreographersSchema>;
+
+declare const LinedanceDanceMergeUndosSchema: z.ZodObject<{
+    _id: z.ZodUnion<readonly [z.ZodString, z.ZodCustom<{
+        toHexString(): string;
+    }, {
+        toHexString(): string;
+    }>]>;
+}, z.core.$loose>;
+type LinedanceDanceMergeUndos = z.infer<typeof LinedanceDanceMergeUndosSchema>;
+
+declare const LinedanceDanceMergesSchema: z.ZodObject<{
+    _id: z.ZodString;
+    into: z.ZodString;
+    rule: z.ZodString;
+    doc: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+    at: z.ZodDate;
+    by: z.ZodOptional<z.ZodString>;
+    candidateId: z.ZodOptional<z.ZodString>;
+    gained: z.ZodOptional<z.ZodObject<{
+        stepsheets: z.ZodArray<z.ZodString>;
+        ids: z.ZodArray<z.ZodString>;
+        filled: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+        before: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+    }, z.core.$strict>>;
+}, z.core.$strict>;
+type LinedanceDanceMerges = z.infer<typeof LinedanceDanceMergesSchema>;
+
+declare const LinedanceDancesSchema: z.ZodObject<{
+    _id: z.ZodString;
+    danceName: z.ZodString;
+    nameKey: z.ZodString;
+    count: z.ZodNullable<z.ZodNumber>;
+    wall: z.ZodNullable<z.ZodNumber>;
+    levels: z.ZodArray<z.ZodString>;
+    levelQualifier: z.ZodNullable<z.ZodEnum<{
+        easy: "easy";
+        high: "high";
+        low: "low";
+    }>>;
+    phrased: z.ZodBoolean;
+    danceType: z.ZodEnum<{
+        line: "line";
+        partner: "partner";
+        contra: "contra";
+        circle: "circle";
+        chair: "chair";
+    }>;
+    levelRaw: z.ZodNullable<z.ZodString>;
+    choreographerIds: z.ZodArray<z.ZodString>;
+    credit: z.ZodNullable<z.ZodString>;
+    songArtists: z.ZodArray<z.ZodObject<{
+        song: z.ZodString;
+        artist: z.ZodString;
+    }, z.core.$strict>>;
+    musicRaw: z.ZodNullable<z.ZodString>;
+    bpm: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    introCounts: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    hasTags: z.ZodOptional<z.ZodNullable<z.ZodBoolean>>;
+    hasRestarts: z.ZodOptional<z.ZodNullable<z.ZodBoolean>>;
+    hasBridge: z.ZodOptional<z.ZodNullable<z.ZodBoolean>>;
+    choreographedIn: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    published: z.ZodNullable<z.ZodString>;
+    publishedSource: z.ZodNullable<z.ZodEnum<{
+        feed: "feed";
+        "feed-archive": "feed-archive";
+        "sync-time": "sync-time";
+        "id-estimate": "id-estimate";
+        "id-neighbours": "id-neighbours";
+    }>>;
+    stepsheets: z.ZodArray<z.ZodObject<{
+        url: z.ZodString;
+        lang: z.ZodNullable<z.ZodString>;
+        title: z.ZodOptional<z.ZodString>;
+    }, z.core.$strict>>;
+    tracks: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        trackId: z.ZodString;
+        versionNote: z.ZodOptional<z.ZodString>;
+        recordingId: z.ZodOptional<z.ZodString>;
+    }, z.core.$strict>>>;
+    notStated: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    publishedBy: z.ZodOptional<z.ZodString>;
+    rank: z.ZodOptional<z.ZodNumber>;
+    rankSignals: z.ZodOptional<z.ZodObject<{
+        usage: z.ZodNumber;
+        views: z.ZodNumber;
+        languages: z.ZodNumber;
+        recency: z.ZodNumber;
+        gaps: z.ZodNumber;
+    }, z.core.$strict>>;
+    nameWords: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    dateKey: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    year: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    yearFrom: z.ZodOptional<z.ZodNullable<z.ZodEnum<{
+        published: "published";
+        choreographed: "choreographed";
+    }>>>;
+    editedAt: z.ZodOptional<z.ZodDate>;
+    editedBy: z.ZodOptional<z.ZodString>;
+    editedFields: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    mergedFrom: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    ldcoIds: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    unpublished: z.ZodOptional<z.ZodBoolean>;
+    unpublishedSource: z.ZodOptional<z.ZodObject<{
+        event: z.ZodString;
+        createdBy: z.ZodString;
+        createdAt: z.ZodDate;
+    }, z.core.$strict>>;
+    addedFrom: z.ZodOptional<z.ZodObject<{
+        pendingDanceId: z.ZodString;
+        submittedByUserId: z.ZodString;
+        submittedAt: z.ZodDate;
+    }, z.core.$strict>>;
+    createdAt: z.ZodOptional<z.ZodDate>;
+}, z.core.$strict>;
+type LinedanceDances = z.infer<typeof LinedanceDancesSchema>;
+
+declare const LinedanceLevelsSchema: z.ZodObject<{
+    _id: z.ZodString;
+    name: z.ZodString;
+    rank: z.ZodNumber;
+    aliases: z.ZodArray<z.ZodString>;
+}, z.core.$strict>;
+type LinedanceLevels = z.infer<typeof LinedanceLevelsSchema>;
+
+declare const LinedanceMergeCandidatesSchema: z.ZodObject<{
+    _id: z.ZodString;
+    danceIds: z.ZodArray<z.ZodString>;
+    reason: z.ZodString;
+    confidence: z.ZodNull;
+    status: z.ZodString;
+    resolvedAt: z.ZodOptional<z.ZodDate>;
+    resolvedBy: z.ZodOptional<z.ZodString>;
+}, z.core.$strict>;
+type LinedanceMergeCandidates = z.infer<typeof LinedanceMergeCandidatesSchema>;
+
+declare const LinedanceRecordingsSchema: z.ZodObject<{
+    _id: z.ZodString;
+    artist: z.ZodString;
+    createdAt: z.ZodDate;
+    disambiguation: z.ZodString;
+    durationMs: z.ZodNullable<z.ZodNumber>;
+    fetchedAt: z.ZodDate;
+    isrcs: z.ZodArray<z.ZodString>;
+    releaseCount: z.ZodNumber;
+    source: z.ZodString;
+    sourceId: z.ZodString;
+    title: z.ZodString;
+    version: z.ZodString;
+    year: z.ZodNullable<z.ZodNumber>;
+}, z.core.$strict>;
+type LinedanceRecordings = z.infer<typeof LinedanceRecordingsSchema>;
+
+declare const LinedanceTrackAliasesSchema: z.ZodObject<{
+    _id: z.ZodString;
+    createdAt: z.ZodDate;
+    source: z.ZodString;
+    trackId: z.ZodString;
+}, z.core.$strict>;
+type LinedanceTrackAliases = z.infer<typeof LinedanceTrackAliasesSchema>;
+
+declare const LinedanceTrackLinksSchema: z.ZodObject<{
+    _id: z.ZodString;
+    checkedAt: z.ZodNullable<z.ZodDate>;
+    confidence: z.ZodEnum<{
+        high: "high";
+        probable: "probable";
+    }>;
+    createdAt: z.ZodDate;
+    matchedBy: z.ZodString;
+    provider: z.ZodEnum<{
+        spotify: "spotify";
+        apple: "apple";
+    }>;
+    providerId: z.ZodString;
+    recordingId: z.ZodNullable<z.ZodString>;
+    source: z.ZodString;
+    trackId: z.ZodString;
+    updatedAt: z.ZodDate;
+    url: z.ZodString;
+    confirmedBy: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    kind: z.ZodOptional<z.ZodString>;
+    rank: z.ZodOptional<z.ZodNumber>;
+    movedFrom: z.ZodOptional<z.ZodString>;
+}, z.core.$strict>;
+type LinedanceTrackLinks = z.infer<typeof LinedanceTrackLinksSchema>;
+
+declare const LinedanceTrackMergeCandidatesSchema: z.ZodObject<{
+    _id: z.ZodString;
+    createdAt: z.ZodDate;
+    reason: z.ZodString;
+    status: z.ZodString;
+    trackIds: z.ZodArray<z.ZodString>;
+    updatedAt: z.ZodDate;
+}, z.core.$strict>;
+type LinedanceTrackMergeCandidates = z.infer<typeof LinedanceTrackMergeCandidatesSchema>;
+
+declare const LinedanceTrackMergeUndosSchema: z.ZodObject<{
+    _id: z.ZodUnion<readonly [z.ZodString, z.ZodCustom<{
+        toHexString(): string;
+    }, {
+        toHexString(): string;
+    }>]>;
+}, z.core.$loose>;
+type LinedanceTrackMergeUndos = z.infer<typeof LinedanceTrackMergeUndosSchema>;
+
+declare const LinedanceTrackMergesSchema: z.ZodObject<{
+    _id: z.ZodString;
+    at: z.ZodDate;
+    into: z.ZodString;
+    key: z.ZodNullable<z.ZodString>;
+    reason: z.ZodString;
+    by: z.ZodOptional<z.ZodString>;
+    movedDances: z.ZodOptional<z.ZodArray<z.ZodString>>;
+}, z.core.$strict>;
+type LinedanceTrackMerges = z.infer<typeof LinedanceTrackMergesSchema>;
+
+declare const LinedanceTracksSchema: z.ZodObject<{
+    _id: z.ZodString;
+    artist: z.ZodString;
+    createdAt: z.ZodDate;
+    danceCount: z.ZodOptional<z.ZodNumber>;
+    key: z.ZodString;
+    matchStatus: z.ZodOptional<z.ZodString>;
+    recordingConfidence: z.ZodOptional<z.ZodString>;
+    recordingId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    songMatch: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    title: z.ZodString;
+    updatedAt: z.ZodDate;
+    versions: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    mergedInto: z.ZodOptional<z.ZodString>;
+}, z.core.$strict>;
+type LinedanceTracks = z.infer<typeof LinedanceTracksSchema>;
+
 declare const MusicCatalogTracksSchema: z.ZodObject<{
     _id: z.ZodString;
     artist: z.ZodString;
@@ -2636,6 +2891,289 @@ declare const collections: {
             note: zod.ZodOptional<zod.ZodString>;
         }, zod_v4_core.$strict>;
     };
+    readonly "linedance.choreographer_pair_reviews": {
+        readonly database: "linedance";
+        readonly name: "choreographer_pair_reviews";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodUnion<readonly [zod.ZodString, zod.ZodCustom<{
+                toHexString(): string;
+            }, {
+                toHexString(): string;
+            }>]>;
+        }, zod_v4_core.$loose>;
+    };
+    readonly "linedance.choreographers": {
+        readonly database: "linedance";
+        readonly name: "choreographers";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            name: zod.ZodString;
+            nameKey: zod.ZodString;
+            aliases: zod.ZodArray<zod.ZodString>;
+            countries: zod.ZodArray<zod.ZodString>;
+            nameWords: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            ldcoIds: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            mergedAt: zod.ZodOptional<zod.ZodDate>;
+            mergedInto: zod.ZodOptional<zod.ZodString>;
+            splitInto: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "linedance.dance_merge_undos": {
+        readonly database: "linedance";
+        readonly name: "dance_merge_undos";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodUnion<readonly [zod.ZodString, zod.ZodCustom<{
+                toHexString(): string;
+            }, {
+                toHexString(): string;
+            }>]>;
+        }, zod_v4_core.$loose>;
+    };
+    readonly "linedance.dance_merges": {
+        readonly database: "linedance";
+        readonly name: "dance_merges";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            into: zod.ZodString;
+            rule: zod.ZodString;
+            doc: zod.ZodRecord<zod.ZodString, zod.ZodUnknown>;
+            at: zod.ZodDate;
+            by: zod.ZodOptional<zod.ZodString>;
+            candidateId: zod.ZodOptional<zod.ZodString>;
+            gained: zod.ZodOptional<zod.ZodObject<{
+                stepsheets: zod.ZodArray<zod.ZodString>;
+                ids: zod.ZodArray<zod.ZodString>;
+                filled: zod.ZodRecord<zod.ZodString, zod.ZodUnknown>;
+                before: zod.ZodRecord<zod.ZodString, zod.ZodUnknown>;
+            }, zod_v4_core.$strict>>;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "linedance.dances": {
+        readonly database: "linedance";
+        readonly name: "dances";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            danceName: zod.ZodString;
+            nameKey: zod.ZodString;
+            count: zod.ZodNullable<zod.ZodNumber>;
+            wall: zod.ZodNullable<zod.ZodNumber>;
+            levels: zod.ZodArray<zod.ZodString>;
+            levelQualifier: zod.ZodNullable<zod.ZodEnum<{
+                easy: "easy";
+                high: "high";
+                low: "low";
+            }>>;
+            phrased: zod.ZodBoolean;
+            danceType: zod.ZodEnum<{
+                line: "line";
+                partner: "partner";
+                contra: "contra";
+                circle: "circle";
+                chair: "chair";
+            }>;
+            levelRaw: zod.ZodNullable<zod.ZodString>;
+            choreographerIds: zod.ZodArray<zod.ZodString>;
+            credit: zod.ZodNullable<zod.ZodString>;
+            songArtists: zod.ZodArray<zod.ZodObject<{
+                song: zod.ZodString;
+                artist: zod.ZodString;
+            }, zod_v4_core.$strict>>;
+            musicRaw: zod.ZodNullable<zod.ZodString>;
+            bpm: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+            introCounts: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+            hasTags: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
+            hasRestarts: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
+            hasBridge: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
+            choreographedIn: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+            published: zod.ZodNullable<zod.ZodString>;
+            publishedSource: zod.ZodNullable<zod.ZodEnum<{
+                feed: "feed";
+                "feed-archive": "feed-archive";
+                "sync-time": "sync-time";
+                "id-estimate": "id-estimate";
+                "id-neighbours": "id-neighbours";
+            }>>;
+            stepsheets: zod.ZodArray<zod.ZodObject<{
+                url: zod.ZodString;
+                lang: zod.ZodNullable<zod.ZodString>;
+                title: zod.ZodOptional<zod.ZodString>;
+            }, zod_v4_core.$strict>>;
+            tracks: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
+                trackId: zod.ZodString;
+                versionNote: zod.ZodOptional<zod.ZodString>;
+                recordingId: zod.ZodOptional<zod.ZodString>;
+            }, zod_v4_core.$strict>>>;
+            notStated: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            publishedBy: zod.ZodOptional<zod.ZodString>;
+            rank: zod.ZodOptional<zod.ZodNumber>;
+            rankSignals: zod.ZodOptional<zod.ZodObject<{
+                usage: zod.ZodNumber;
+                views: zod.ZodNumber;
+                languages: zod.ZodNumber;
+                recency: zod.ZodNumber;
+                gaps: zod.ZodNumber;
+            }, zod_v4_core.$strict>>;
+            nameWords: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            dateKey: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+            year: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+            yearFrom: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+                published: "published";
+                choreographed: "choreographed";
+            }>>>;
+            editedAt: zod.ZodOptional<zod.ZodDate>;
+            editedBy: zod.ZodOptional<zod.ZodString>;
+            editedFields: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            mergedFrom: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            ldcoIds: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            unpublished: zod.ZodOptional<zod.ZodBoolean>;
+            unpublishedSource: zod.ZodOptional<zod.ZodObject<{
+                event: zod.ZodString;
+                createdBy: zod.ZodString;
+                createdAt: zod.ZodDate;
+            }, zod_v4_core.$strict>>;
+            addedFrom: zod.ZodOptional<zod.ZodObject<{
+                pendingDanceId: zod.ZodString;
+                submittedByUserId: zod.ZodString;
+                submittedAt: zod.ZodDate;
+            }, zod_v4_core.$strict>>;
+            createdAt: zod.ZodOptional<zod.ZodDate>;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "linedance.levels": {
+        readonly database: "linedance";
+        readonly name: "levels";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            name: zod.ZodString;
+            rank: zod.ZodNumber;
+            aliases: zod.ZodArray<zod.ZodString>;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "linedance.merge_candidates": {
+        readonly database: "linedance";
+        readonly name: "merge_candidates";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            danceIds: zod.ZodArray<zod.ZodString>;
+            reason: zod.ZodString;
+            confidence: zod.ZodNull;
+            status: zod.ZodString;
+            resolvedAt: zod.ZodOptional<zod.ZodDate>;
+            resolvedBy: zod.ZodOptional<zod.ZodString>;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "linedance.recordings": {
+        readonly database: "linedance";
+        readonly name: "recordings";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            artist: zod.ZodString;
+            createdAt: zod.ZodDate;
+            disambiguation: zod.ZodString;
+            durationMs: zod.ZodNullable<zod.ZodNumber>;
+            fetchedAt: zod.ZodDate;
+            isrcs: zod.ZodArray<zod.ZodString>;
+            releaseCount: zod.ZodNumber;
+            source: zod.ZodString;
+            sourceId: zod.ZodString;
+            title: zod.ZodString;
+            version: zod.ZodString;
+            year: zod.ZodNullable<zod.ZodNumber>;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "linedance.track_aliases": {
+        readonly database: "linedance";
+        readonly name: "track_aliases";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            createdAt: zod.ZodDate;
+            source: zod.ZodString;
+            trackId: zod.ZodString;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "linedance.track_links": {
+        readonly database: "linedance";
+        readonly name: "track_links";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            checkedAt: zod.ZodNullable<zod.ZodDate>;
+            confidence: zod.ZodEnum<{
+                high: "high";
+                probable: "probable";
+            }>;
+            createdAt: zod.ZodDate;
+            matchedBy: zod.ZodString;
+            provider: zod.ZodEnum<{
+                spotify: "spotify";
+                apple: "apple";
+            }>;
+            providerId: zod.ZodString;
+            recordingId: zod.ZodNullable<zod.ZodString>;
+            source: zod.ZodString;
+            trackId: zod.ZodString;
+            updatedAt: zod.ZodDate;
+            url: zod.ZodString;
+            confirmedBy: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            kind: zod.ZodOptional<zod.ZodString>;
+            rank: zod.ZodOptional<zod.ZodNumber>;
+            movedFrom: zod.ZodOptional<zod.ZodString>;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "linedance.track_merge_candidates": {
+        readonly database: "linedance";
+        readonly name: "track_merge_candidates";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            createdAt: zod.ZodDate;
+            reason: zod.ZodString;
+            status: zod.ZodString;
+            trackIds: zod.ZodArray<zod.ZodString>;
+            updatedAt: zod.ZodDate;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "linedance.track_merge_undos": {
+        readonly database: "linedance";
+        readonly name: "track_merge_undos";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodUnion<readonly [zod.ZodString, zod.ZodCustom<{
+                toHexString(): string;
+            }, {
+                toHexString(): string;
+            }>]>;
+        }, zod_v4_core.$loose>;
+    };
+    readonly "linedance.track_merges": {
+        readonly database: "linedance";
+        readonly name: "track_merges";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            at: zod.ZodDate;
+            into: zod.ZodString;
+            key: zod.ZodNullable<zod.ZodString>;
+            reason: zod.ZodString;
+            by: zod.ZodOptional<zod.ZodString>;
+            movedDances: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+        }, zod_v4_core.$strict>;
+    };
+    readonly "linedance.tracks": {
+        readonly database: "linedance";
+        readonly name: "tracks";
+        readonly schema: zod.ZodObject<{
+            _id: zod.ZodString;
+            artist: zod.ZodString;
+            createdAt: zod.ZodDate;
+            danceCount: zod.ZodOptional<zod.ZodNumber>;
+            key: zod.ZodString;
+            matchStatus: zod.ZodOptional<zod.ZodString>;
+            recordingConfidence: zod.ZodOptional<zod.ZodString>;
+            recordingId: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+            songMatch: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+            title: zod.ZodString;
+            updatedAt: zod.ZodDate;
+            versions: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+            mergedInto: zod.ZodOptional<zod.ZodString>;
+        }, zod_v4_core.$strict>;
+    };
     readonly "music_catalog.tracks": {
         readonly database: "music_catalog";
         readonly name: "tracks";
@@ -2668,6 +3206,117 @@ declare function unmatchedEntries(scope: Scope, keys: string[]): string[];
 /** Reads "ldco.uses" from a parsed package.json; undefined when the app declares no scope. */
 declare function scopeFromPackageJson(pkg: unknown): Scope | undefined;
 
+type SortSpec = Record<string, 1 | -1>;
+interface CursorLike<T = any> {
+    sort(sort: SortSpec): CursorLike<T>;
+    skip(n: number): CursorLike<T>;
+    limit(n: number): CursorLike<T>;
+    hint(hint: SortSpec): CursorLike<T>;
+    toArray(): Promise<T[]>;
+}
+interface CollectionLike {
+    find(filter: object, options?: {
+        projection?: Record<string, number>;
+    }): CursorLike;
+    countDocuments(filter: object): Promise<number>;
+}
+/** A connection to the `linedance` database (client.db("linedance")). */
+interface DbLike {
+    collection(name: string): CollectionLike;
+}
+
+/** Lower case, accents and punctuation gone, "&" as "and", single spaces: "Boot Scootin' Boogie" → "boot scootin boogie". */
+declare const keyOf: (s: unknown) => string;
+/** A dance's nameKey: keyOf its name, leaving out a bracketed part in another script ("Ali (阿里)" → "ali"). */
+declare function nameKeyOf(name: string): string;
+/** The distinct words of a nameKey, stored as nameWords for the indexed word search. */
+declare const nameWordsOf: (nameKey: string) => string[];
+
+type Doc = {
+    _id: string;
+    ldcoIds?: string[];
+    mergedInto?: string;
+    [field: string]: any;
+};
+/** The filter that finds the records behind any of these ids (all indexed: _id and ldcoIds). */
+declare const byAnyId: (ids: string[]) => {
+    $or: ({
+        _id: {
+            $in: string[];
+        };
+        ldcoIds?: undefined;
+    } | {
+        ldcoIds: {
+            $in: string[];
+        };
+        _id?: undefined;
+    })[];
+};
+/** Each requested id with the record it means now, or null when it's gone. Prefers a record's own _id. */
+declare function matchIds<T extends Doc>(ids: string[], docs: T[]): Map<string, T | null>;
+/**
+ * The dances behind these ids (from lists, collections, lessons…), each id mapped to the dance it means now, or
+ * null when it doesn't lead to any dance. projection: the fields to read (ldcoIds is always read).
+ */
+declare function resolveDances<T extends Doc = Doc>(db: DbLike, ids: string[], projection?: Record<string, 1>): Promise<Map<string, T | null>>;
+/** The choreographers behind these ids, following merges (mergedInto) to the person kept. */
+declare function resolveChoreographers<T extends Doc = Doc>(db: DbLike, ids: string[], projection?: Record<string, 1>): Promise<Map<string, T | null>>;
+
+declare const SEARCH_PAGE_SIZE = 50;
+type MatchKind = "id" | "name" | "start" | "word" | "choreographer" | "song";
+declare const MATCH_POINTS: Record<MatchKind, number>;
+/** Dances apps list by default: not unpublished (an event's dance waiting for its stepsheet). */
+declare const LISTED_DANCES: {
+    unpublished: {
+        $ne: boolean;
+    };
+};
+type Dance = {
+    _id: string;
+    rank?: number;
+    [field: string]: any;
+};
+/** One query a search made (for measuring its cost, as the data desk's metrics do). */
+interface SearchQuery {
+    label: string;
+    collection: string;
+    kind: "find" | "count";
+    filter: object;
+    sort?: SortSpec;
+    limit?: number;
+    skip?: number;
+    projection?: Record<string, 1>;
+    hint?: SortSpec;
+}
+interface SearchOptions {
+    /** What the user typed. Empty lists every dance matching `filter` by rank. */
+    q?: string;
+    /** Narrows every query, e.g. LISTED_DANCES, or { levels: "beginner" }. */
+    filter?: object;
+    /** 0-based. */
+    page?: number;
+    pageSize?: number;
+    /** Fields to return for each dance on the page (default: all). */
+    projection?: Record<string, 1>;
+    /** Collects every query made, if given. */
+    trace?: SearchQuery[];
+}
+interface SearchResult<T> {
+    /** How many dances matched (for text searches, those found within each kind's limit). */
+    total: number;
+    /** True when some kind of match hit its limit, so total is a floor. */
+    more: boolean;
+    page: number;
+    pageSize: number;
+    /** The page's dances in order, each with how it matched (null without search text). */
+    dances: (T & {
+        match: MatchKind | null;
+    })[];
+    /** Names of the page's choreographers, by id. */
+    choreographers: Record<string, string>;
+}
+declare function searchDances<T extends Dance = Dance>(db: DbLike, options?: SearchOptions): Promise<SearchResult<T>>;
+
 declare const CONTRACT_VERSION: string;
 declare function computeContractHash(): string;
 declare function computeCollectionHashes(): Record<string, string>;
@@ -2675,4 +3324,4 @@ declare const CONTRACT_HASH: string;
 /** Locked hash of each collection, keyed "<database>.<collection>". */
 declare const COLLECTION_HASHES: Record<string, string>;
 
-export { type BldEventTemplates, BldEventTemplatesSchema, type BldEventTypes, BldEventTypesSchema, type BldEvents, BldEventsSchema, type BldFrequencies, BldFrequenciesSchema, type BldLessons, BldLessonsSchema, COLLECTION_HASHES, CONTRACT_HASH, CONTRACT_VERSION, type CopperknobAlertProcessedItems, CopperknobAlertProcessedItemsSchema, type CopperknobAlertSyncMetadata, CopperknobAlertSyncMetadataSchema, type CopperknobAlertWatchRules, CopperknobAlertWatchRulesSchema, type DjfeedAttendeeNotifications, DjfeedAttendeeNotificationsSchema, type DjfeedBeatBalances, DjfeedBeatBalancesSchema, type DjfeedBeatTransactions, DjfeedBeatTransactionsSchema, type DjfeedDancerFavoriteSongs, DjfeedDancerFavoriteSongsSchema, type DjfeedDjDirectMessages, DjfeedDjDirectMessagesSchema, type DjfeedDjMessages, DjfeedDjMessagesSchema, type DjfeedDjNotifications, DjfeedDjNotificationsSchema, type DjfeedDjProfiles, DjfeedDjProfilesSchema, type DjfeedDjRequesterNicknames, DjfeedDjRequesterNicknamesSchema, type DjfeedDjRequests, DjfeedDjRequestsSchema, type DjfeedDjSessions, DjfeedDjSessionsSchema, type DjfeedDjWalletLocks, DjfeedDjWalletLocksSchema, type DjfeedDjWalletTransactions, DjfeedDjWalletTransactionsSchema, type DjfeedFeedLessons, DjfeedFeedLessonsSchema, type DjfeedFreeAccess, DjfeedFreeAccessSchema, type DjfeedHostDancers, DjfeedHostDancersSchema, type DjfeedLessonChecks, DjfeedLessonChecksSchema, type DjfeedRequesterHistory, DjfeedRequesterHistorySchema, type DjfeedSessionAttendance, DjfeedSessionAttendanceSchema, type DjfeedSessionReports, DjfeedSessionReportsSchema, type DjfeedSessionTransactions, DjfeedSessionTransactionsSchema, type DjfeedStripeEvents, DjfeedStripeEventsSchema, type LdcoChoreographers, LdcoChoreographersSchema, type LdcoDanceCollections, LdcoDanceCollectionsSchema, type LdcoDanceTracks, LdcoDanceTracksSchema, type LdcoDances, LdcoDancesSchema, type LdcoEvents, type LdcoEventsEventRegistrations, LdcoEventsEventRegistrationsSchema, type LdcoEventsEvents, LdcoEventsEventsSchema, LdcoEventsSchema, type LdcoFriendRequests, LdcoFriendRequestsSchema, type LdcoInstructorVenues, LdcoInstructorVenuesSchema, type LdcoInstructors, LdcoInstructorsSchema, type LdcoLessons, type LdcoLessonsEventInstructorRequests, LdcoLessonsEventInstructorRequestsSchema, type LdcoLessonsEventInstructors, LdcoLessonsEventInstructorsSchema, type LdcoLessonsEventTemplates, LdcoLessonsEventTemplatesSchema, type LdcoLessonsEventTypes, LdcoLessonsEventTypesSchema, type LdcoLessonsEvents, LdcoLessonsEventsSchema, type LdcoLessonsFrequencies, LdcoLessonsFrequenciesSchema, type LdcoLessonsLessons, LdcoLessonsLessonsSchema, LdcoLessonsSchema, type LdcoLoginEvents, LdcoLoginEventsSchema, type LdcoOauthAuthCodes, LdcoOauthAuthCodesSchema, type LdcoPendingDances, LdcoPendingDancesSchema, type LdcoReviewsChoreographers, LdcoReviewsChoreographersSchema, type LdcoReviewsDances, LdcoReviewsDancesSchema, type LdcoReviewsInstructorVenues, LdcoReviewsInstructorVenuesSchema, type LdcoReviewsInstructors, LdcoReviewsInstructorsSchema, type LdcoReviewsJoinChoreographerAppeals, LdcoReviewsJoinChoreographerAppealsSchema, type LdcoReviewsLessons, LdcoReviewsLessonsSchema, type LdcoReviewsReports, LdcoReviewsReportsSchema, type LdcoReviewsTracks, LdcoReviewsTracksSchema, type LdcoReviewsVenueUsers, LdcoReviewsVenueUsersSchema, type LdcoReviewsVenues, LdcoReviewsVenuesSchema, type LdcoReviewsVerifyUserInstructor, LdcoReviewsVerifyUserInstructorSchema, type LdcoTracks, LdcoTracksSchema, type LdcoUserFavoriteDances, LdcoUserFavoriteDancesSchema, type LdcoUserFlaggedDances, LdcoUserFlaggedDancesSchema, type LdcoUserFollowCollections, LdcoUserFollowCollectionsSchema, type LdcoUserFollows, LdcoUserFollowsSchema, type LdcoUserFriends, LdcoUserFriendsSchema, type LdcoUserKnownDances, LdcoUserKnownDancesSchema, type LdcoUserLessons, LdcoUserLessonsSchema, type LdcoUserRefreshDances, LdcoUserRefreshDancesSchema, type LdcoUserVenues, LdcoUserVenuesSchema, type LdcoUsers, LdcoUsersSchema, type LdcoVenueCheckins, LdcoVenueCheckinsSchema, type LdcoVenueUsers, LdcoVenueUsersSchema, type LdcoVenues, LdcoVenuesSchema, type MusicCatalogTracks, MusicCatalogTracksSchema, type Scope, collections, computeCollectionHashes, computeContractHash, inScope, scopeFromPackageJson, unmatchedEntries };
+export { type BldEventTemplates, BldEventTemplatesSchema, type BldEventTypes, BldEventTypesSchema, type BldEvents, BldEventsSchema, type BldFrequencies, BldFrequenciesSchema, type BldLessons, BldLessonsSchema, COLLECTION_HASHES, CONTRACT_HASH, CONTRACT_VERSION, type CollectionLike, type CopperknobAlertProcessedItems, CopperknobAlertProcessedItemsSchema, type CopperknobAlertSyncMetadata, CopperknobAlertSyncMetadataSchema, type CopperknobAlertWatchRules, CopperknobAlertWatchRulesSchema, type CursorLike, type DbLike, type DjfeedAttendeeNotifications, DjfeedAttendeeNotificationsSchema, type DjfeedBeatBalances, DjfeedBeatBalancesSchema, type DjfeedBeatTransactions, DjfeedBeatTransactionsSchema, type DjfeedDancerFavoriteSongs, DjfeedDancerFavoriteSongsSchema, type DjfeedDjDirectMessages, DjfeedDjDirectMessagesSchema, type DjfeedDjMessages, DjfeedDjMessagesSchema, type DjfeedDjNotifications, DjfeedDjNotificationsSchema, type DjfeedDjProfiles, DjfeedDjProfilesSchema, type DjfeedDjRequesterNicknames, DjfeedDjRequesterNicknamesSchema, type DjfeedDjRequests, DjfeedDjRequestsSchema, type DjfeedDjSessions, DjfeedDjSessionsSchema, type DjfeedDjWalletLocks, DjfeedDjWalletLocksSchema, type DjfeedDjWalletTransactions, DjfeedDjWalletTransactionsSchema, type DjfeedFeedLessons, DjfeedFeedLessonsSchema, type DjfeedFreeAccess, DjfeedFreeAccessSchema, type DjfeedHostDancers, DjfeedHostDancersSchema, type DjfeedLessonChecks, DjfeedLessonChecksSchema, type DjfeedRequesterHistory, DjfeedRequesterHistorySchema, type DjfeedSessionAttendance, DjfeedSessionAttendanceSchema, type DjfeedSessionReports, DjfeedSessionReportsSchema, type DjfeedSessionTransactions, DjfeedSessionTransactionsSchema, type DjfeedStripeEvents, DjfeedStripeEventsSchema, LISTED_DANCES, type LdcoChoreographers, LdcoChoreographersSchema, type LdcoDanceCollections, LdcoDanceCollectionsSchema, type LdcoDanceTracks, LdcoDanceTracksSchema, type LdcoDances, LdcoDancesSchema, type LdcoEvents, type LdcoEventsEventRegistrations, LdcoEventsEventRegistrationsSchema, type LdcoEventsEvents, LdcoEventsEventsSchema, LdcoEventsSchema, type LdcoFriendRequests, LdcoFriendRequestsSchema, type LdcoInstructorVenues, LdcoInstructorVenuesSchema, type LdcoInstructors, LdcoInstructorsSchema, type LdcoLessons, type LdcoLessonsEventInstructorRequests, LdcoLessonsEventInstructorRequestsSchema, type LdcoLessonsEventInstructors, LdcoLessonsEventInstructorsSchema, type LdcoLessonsEventTemplates, LdcoLessonsEventTemplatesSchema, type LdcoLessonsEventTypes, LdcoLessonsEventTypesSchema, type LdcoLessonsEvents, LdcoLessonsEventsSchema, type LdcoLessonsFrequencies, LdcoLessonsFrequenciesSchema, type LdcoLessonsLessons, LdcoLessonsLessonsSchema, LdcoLessonsSchema, type LdcoLoginEvents, LdcoLoginEventsSchema, type LdcoOauthAuthCodes, LdcoOauthAuthCodesSchema, type LdcoPendingDances, LdcoPendingDancesSchema, type LdcoReviewsChoreographers, LdcoReviewsChoreographersSchema, type LdcoReviewsDances, LdcoReviewsDancesSchema, type LdcoReviewsInstructorVenues, LdcoReviewsInstructorVenuesSchema, type LdcoReviewsInstructors, LdcoReviewsInstructorsSchema, type LdcoReviewsJoinChoreographerAppeals, LdcoReviewsJoinChoreographerAppealsSchema, type LdcoReviewsLessons, LdcoReviewsLessonsSchema, type LdcoReviewsReports, LdcoReviewsReportsSchema, type LdcoReviewsTracks, LdcoReviewsTracksSchema, type LdcoReviewsVenueUsers, LdcoReviewsVenueUsersSchema, type LdcoReviewsVenues, LdcoReviewsVenuesSchema, type LdcoReviewsVerifyUserInstructor, LdcoReviewsVerifyUserInstructorSchema, type LdcoTracks, LdcoTracksSchema, type LdcoUserFavoriteDances, LdcoUserFavoriteDancesSchema, type LdcoUserFlaggedDances, LdcoUserFlaggedDancesSchema, type LdcoUserFollowCollections, LdcoUserFollowCollectionsSchema, type LdcoUserFollows, LdcoUserFollowsSchema, type LdcoUserFriends, LdcoUserFriendsSchema, type LdcoUserKnownDances, LdcoUserKnownDancesSchema, type LdcoUserLessons, LdcoUserLessonsSchema, type LdcoUserRefreshDances, LdcoUserRefreshDancesSchema, type LdcoUserVenues, LdcoUserVenuesSchema, type LdcoUsers, LdcoUsersSchema, type LdcoVenueCheckins, LdcoVenueCheckinsSchema, type LdcoVenueUsers, LdcoVenueUsersSchema, type LdcoVenues, LdcoVenuesSchema, type LinedanceChoreographerPairReviews, LinedanceChoreographerPairReviewsSchema, type LinedanceChoreographers, LinedanceChoreographersSchema, type LinedanceDanceMergeUndos, LinedanceDanceMergeUndosSchema, type LinedanceDanceMerges, LinedanceDanceMergesSchema, type LinedanceDances, LinedanceDancesSchema, type LinedanceLevels, LinedanceLevelsSchema, type LinedanceMergeCandidates, LinedanceMergeCandidatesSchema, type LinedanceRecordings, LinedanceRecordingsSchema, type LinedanceTrackAliases, LinedanceTrackAliasesSchema, type LinedanceTrackLinks, LinedanceTrackLinksSchema, type LinedanceTrackMergeCandidates, LinedanceTrackMergeCandidatesSchema, type LinedanceTrackMergeUndos, LinedanceTrackMergeUndosSchema, type LinedanceTrackMerges, LinedanceTrackMergesSchema, type LinedanceTracks, LinedanceTracksSchema, MATCH_POINTS, type MatchKind, type MusicCatalogTracks, MusicCatalogTracksSchema, SEARCH_PAGE_SIZE, type Scope, type SearchOptions, type SearchQuery, type SearchResult, type SortSpec, byAnyId, collections, computeCollectionHashes, computeContractHash, inScope, keyOf, matchIds, nameKeyOf, nameWordsOf, resolveChoreographers, resolveDances, scopeFromPackageJson, searchDances, unmatchedEntries };

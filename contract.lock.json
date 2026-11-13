@@ -1,6 +1,6 @@
 {
-  "version": "0.24.0",
-  "hash": "0f2d7e5ff33e269d5cbd0e5af486c98624b27d73d7e78097221d9408616d7220",
+  "version": "0.25.0",
+  "hash": "4eb5a5820ba2917541fbdc3243eeffe4fefd320d7188496c8767259508041650",
   "collections": {
     "bld.event_templates": "1df4e84dea2413051623a8d5118f26507f7dc8767233a154ade9d17b1ca093d9",
     "bld.event_types": "72df6b91d956eccc5eb094833bdd45135f175ac9697e3e878a7da9dd241d0cb2",
@@ -78,6 +78,20 @@
     "ldco.venue_checkins": "e01902219a9d81ea071530cdb453c2af739c872e7651460f429415828ff38ecf",
     "ldco.venue_users": "b365f003bb9f3a13ab89291b2b1906c28c28239d1bb547074fa1192065c83af6",
     "ldco.venues": "1f5d0832a4c7eceb7b1c1cef310b564793553173644d1d879e606e1c10744423",
+    "linedance.choreographer_pair_reviews": "f4a5a062392595a16cafd7ddb6398599534bdc95a671f21da487127c593ca834",
+    "linedance.choreographers": "194a2295bd42e37b354c312827e18104415585dff8b7da1ea7577d45cf4ba813",
+    "linedance.dance_merge_undos": "41911849363d2c41afbd7565cb7f75f1b9099de098a40e0798547c01f5425016",
+    "linedance.dance_merges": "fe00ca2afd2d80fd3bbe5d66d5b3a1d1b69e5cadc7bc7f5e7ba99554df79e73e",
+    "linedance.dances": "ffd4e1e654c5a3d285929b2a32981c4d2fc35d449a91e432678e4d1c432eb297",
+    "linedance.levels": "b0e939a24c1bab3d9d233167091fbdb851332187b8fd124f75c3b7d67e62665e",
+    "linedance.merge_candidates": "f2bb23540ba08f826865c7b99f72b6549bd70bc507a45c32cec928912c2f4937",
+    "linedance.recordings": "18afb02682c760404a890e3316c39a789585fae6e8ad6697f20c16ec4e83d397",
+    "linedance.track_aliases": "f52da50e3753b6f4c5565f8c38406f7b4c054f37a878203262e950bfd6bdee12",
+    "linedance.track_links": "5592654f7029fcc168dd61790e8a6f9df82f4e56619d061c53e30a32f9abf8fe",
+    "linedance.track_merge_candidates": "eda1026ea6ea36fa2a21641d68fe1233ebdffda28196aabf4f5f61fed5185eef",
+    "linedance.track_merge_undos": "a7fe1d95bd677c7fdbd0b50b580a8d515ea10d3b9ca55381ab6127a6c7ab84a3",
+    "linedance.track_merges": "7fff2a310850f251c0c63d71d151c5f2bd9ea6e4d44137735d7bfef7a707cf5c",
+    "linedance.tracks": "3e0e045f10ca7e34ab432a6e73cfb97e20e63ae4bbdd4bcfb19152be08028641",
     "music_catalog.tracks": "108476379cc40c8264e23aba562c5151a8dc0c3af21498e7ed631a7a300d67fe"
   }
 }

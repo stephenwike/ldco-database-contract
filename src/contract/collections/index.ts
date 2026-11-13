@@ -75,6 +75,20 @@ import { LdcoReviewsTracksSchema } from "./ldco-reviews/tracks";
 import { LdcoReviewsVenueUsersSchema } from "./ldco-reviews/venue_users";
 import { LdcoReviewsVenuesSchema } from "./ldco-reviews/venues";
 import { LdcoReviewsVerifyUserInstructorSchema } from "./ldco-reviews/verify_user_instructor";
+import { LinedanceChoreographerPairReviewsSchema } from "./linedance/choreographer_pair_reviews";
+import { LinedanceChoreographersSchema } from "./linedance/choreographers";
+import { LinedanceDanceMergeUndosSchema } from "./linedance/dance_merge_undos";
+import { LinedanceDanceMergesSchema } from "./linedance/dance_merges";
+import { LinedanceDancesSchema } from "./linedance/dances";
+import { LinedanceLevelsSchema } from "./linedance/levels";
+import { LinedanceMergeCandidatesSchema } from "./linedance/merge_candidates";
+import { LinedanceRecordingsSchema } from "./linedance/recordings";
+import { LinedanceTrackAliasesSchema } from "./linedance/track_aliases";
+import { LinedanceTrackLinksSchema } from "./linedance/track_links";
+import { LinedanceTrackMergeCandidatesSchema } from "./linedance/track_merge_candidates";
+import { LinedanceTrackMergeUndosSchema } from "./linedance/track_merge_undos";
+import { LinedanceTrackMergesSchema } from "./linedance/track_merges";
+import { LinedanceTracksSchema } from "./linedance/tracks";
 import { MusicCatalogTracksSchema } from "./music_catalog/tracks";
 
 export * from "./bld/event_templates";
@@ -153,6 +167,20 @@ export * from "./ldco-reviews/tracks";
 export * from "./ldco-reviews/venue_users";
 export * from "./ldco-reviews/venues";
 export * from "./ldco-reviews/verify_user_instructor";
+export * from "./linedance/choreographer_pair_reviews";
+export * from "./linedance/choreographers";
+export * from "./linedance/dance_merge_undos";
+export * from "./linedance/dance_merges";
+export * from "./linedance/dances";
+export * from "./linedance/levels";
+export * from "./linedance/merge_candidates";
+export * from "./linedance/recordings";
+export * from "./linedance/track_aliases";
+export * from "./linedance/track_links";
+export * from "./linedance/track_merge_candidates";
+export * from "./linedance/track_merge_undos";
+export * from "./linedance/track_merges";
+export * from "./linedance/tracks";
 export * from "./music_catalog/tracks";
 
 // Key is `<database>.<collection>`.
@@ -233,5 +261,19 @@ export const collections = {
   "ldco-reviews.venue_users": { database: "ldco-reviews", name: "venue_users", schema: LdcoReviewsVenueUsersSchema },
   "ldco-reviews.venues": { database: "ldco-reviews", name: "venues", schema: LdcoReviewsVenuesSchema },
   "ldco-reviews.verify_user_instructor": { database: "ldco-reviews", name: "verify_user_instructor", schema: LdcoReviewsVerifyUserInstructorSchema },
+  "linedance.choreographer_pair_reviews": { database: "linedance", name: "choreographer_pair_reviews", schema: LinedanceChoreographerPairReviewsSchema },
+  "linedance.choreographers": { database: "linedance", name: "choreographers", schema: LinedanceChoreographersSchema },
+  "linedance.dance_merge_undos": { database: "linedance", name: "dance_merge_undos", schema: LinedanceDanceMergeUndosSchema },
+  "linedance.dance_merges": { database: "linedance", name: "dance_merges", schema: LinedanceDanceMergesSchema },
+  "linedance.dances": { database: "linedance", name: "dances", schema: LinedanceDancesSchema },
+  "linedance.levels": { database: "linedance", name: "levels", schema: LinedanceLevelsSchema },
+  "linedance.merge_candidates": { database: "linedance", name: "merge_candidates", schema: LinedanceMergeCandidatesSchema },
+  "linedance.recordings": { database: "linedance", name: "recordings", schema: LinedanceRecordingsSchema },
+  "linedance.track_aliases": { database: "linedance", name: "track_aliases", schema: LinedanceTrackAliasesSchema },
+  "linedance.track_links": { database: "linedance", name: "track_links", schema: LinedanceTrackLinksSchema },
+  "linedance.track_merge_candidates": { database: "linedance", name: "track_merge_candidates", schema: LinedanceTrackMergeCandidatesSchema },
+  "linedance.track_merge_undos": { database: "linedance", name: "track_merge_undos", schema: LinedanceTrackMergeUndosSchema },
+  "linedance.track_merges": { database: "linedance", name: "track_merges", schema: LinedanceTrackMergesSchema },
+  "linedance.tracks": { database: "linedance", name: "tracks", schema: LinedanceTracksSchema },
   "music_catalog.tracks": { database: "music_catalog", name: "tracks", schema: MusicCatalogTracksSchema },
 } as const;

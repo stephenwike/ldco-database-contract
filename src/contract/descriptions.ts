@@ -11,6 +11,23 @@ export const descriptions: Record<string, string> = {
   "ldco.dance_tracks":
     "Links a dance to a track (isPrimary). A one-time snapshot from July 2025 that nothing reads or writes; its shape is the model for future dance-to-track links.",
   "ldco.pending_dances": "A dance a user submitted in line-dance-manager, waiting for admin approval before it becomes an ldco.dances entry.",
+  "linedance.dances":
+    "One line dance in the full catalogue (decision 28): name and nameKey, count, wall, levels, choreographerIds, stepsheet links, songs (songArtists) and matched tracks, publish date (decision 22), rank (relevance 0–1000) and nameWords for search. ldcoIds lists every other id the dance is known by (its ldco id, dances merged into it), so stored ids keep working. Built by ldco-harvester, governed in its data desk; copperknob-alert adds new feed dances. unpublished: an event's dance waiting for its stepsheet.",
+  "linedance.choreographers":
+    "One choreographer: name, nameKey, aliases, countries, nameWords. A person merged into another stays as a stub with mergedInto; ldcoIds lists ldco's ids for the person.",
+  "linedance.tracks":
+    "One song (title and artist, key = normalised \"title|artist\"), provider-neutral; recordingId points at a MusicBrainz recording when matched. A track merged into another stays as a stub with mergedInto.",
+  "linedance.track_links": "A track on a music service (Spotify, Apple Music): providerId, url, how it was matched and how sure. _id is \"<provider>:track:<id>\".",
+  "linedance.track_aliases": "One spelling of a song (\"title|artist\" key) and the track it means, so every way a stepsheet writes a song finds the same track.",
+  "linedance.recordings": "One MusicBrainz recording (title, artist, version, ISRCs, length, year), cached by ldco-harvester.",
+  "linedance.levels": "The five standard levels (absolute-beginner to advanced) with their rank and the words that mean them.",
+  "linedance.merge_candidates": "A group of dances that may be the same dance, waiting for review (open, merged or rejected).",
+  "linedance.dance_merges": "A dance merged into another (into), kept whole in doc so the merge can be undone; who, why and what the kept dance gained.",
+  "linedance.dance_merge_undos": "An undone dance merge, kept for the record.",
+  "linedance.track_merge_candidates": "A pair of tracks that may be the same song (they share a recording), waiting for review.",
+  "linedance.track_merges": "A track merged into another, with the dances that moved, so it can be undone.",
+  "linedance.track_merge_undos": "An undone track merge, kept for the record.",
+  "linedance.choreographer_pair_reviews": "A reviewed pair of choreographers: the same person or not.",
   "music_catalog.tracks":
     "One song from MusicBrainz (title, artist, ISRCs, duration, year), cached when the lookup API finds it. Candidate universal track that dances will link to.",
 

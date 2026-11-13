@@ -8,6 +8,7 @@ import { collections } from "./collections";
 
 export * from "./collections";
 export * from "./scope";
+export * from "../catalogue";
 
 export const CONTRACT_VERSION: string = version;
 

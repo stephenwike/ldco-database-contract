@@ -176,4 +176,42 @@ export const declaredFields: Record<string, Record<string, string>> = {
   "copperknob_alert.processed_items": {
     "details.choreographer": "z.string()",
   },
+
+  // The linedance catalogue (decision 28). Dates follow decision 22, with one more estimate source
+  // (id-neighbours). rank, rankSignals and nameWords are written by ldco-harvester's npm run rank; a dance
+  // or choreographer copperknob-alert has just added has none until the next run, so they're optional.
+  "linedance.dances": {
+    published: String.raw`z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/).nullable()`,
+    publishedSource: 'z.enum(["feed", "feed-archive", "sync-time", "id-estimate", "id-neighbours"]).nullable()',
+    danceType: 'z.enum(["line", "partner", "contra", "circle", "chair"])',
+    levelQualifier: 'z.enum(["easy", "high", "low"]).nullable()',
+    yearFrom: 'z.enum(["choreographed", "published"]).nullable().optional()',
+    rank: "z.number().optional()",
+    rankSignals: "z.strictObject({ usage: z.number(), views: z.number(), languages: z.number(), recency: z.number(), gaps: z.number() }).optional()",
+    nameWords: "z.array(z.string()).optional()",
+    tracks: "z.array(z.strictObject({ trackId: z.string(), versionNote: z.string().optional(), recordingId: z.string().optional() })).optional()",
+  },
+  "linedance.choreographers": {
+    nameWords: "z.array(z.string()).optional()",
+  },
+  // Merge logs, written by the data desk and the admin's review pages (and undone from them). doc is the whole
+  // removed dance as it was, whatever fields it had; gained is what the kept dance took from it.
+  "linedance.dance_merges": {
+    doc: "z.record(z.string(), z.unknown())",
+    by: "z.string().optional()",
+    candidateId: "z.string().optional()",
+    gained: "z.strictObject({ stepsheets: z.array(z.string()), ids: z.array(z.string()), filled: z.record(z.string(), z.unknown()), before: z.record(z.string(), z.unknown()) }).optional()",
+  },
+  "linedance.track_merges": {
+    key: "z.string().nullable()",
+    by: "z.string().optional()",
+    movedDances: "z.array(z.string()).optional()",
+  },
+  // checkedAt is set when a link is re-checked; movedFrom when a track merge moves the link
+  "linedance.track_links": {
+    checkedAt: "bsonDate.nullable()",
+    movedFrom: "z.string().optional()",
+    provider: 'z.enum(["spotify", "apple"])',
+    confidence: 'z.enum(["high", "probable"])',
+  },
 };

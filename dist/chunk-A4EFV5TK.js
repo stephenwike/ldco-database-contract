@@ -1,9 +1,9 @@
 // src/contract/index.ts
 import { createHash } from "crypto";
-import { z as z79 } from "zod";
+import { z as z93 } from "zod";
 
 // contract.lock.json
-var hash = "0f2d7e5ff33e269d5cbd0e5af486c98624b27d73d7e78097221d9408616d7220";
+var hash = "4eb5a5820ba2917541fbdc3243eeffe4fefd320d7188496c8767259508041650";
 var collections = {
   "bld.event_templates": "1df4e84dea2413051623a8d5118f26507f7dc8767233a154ade9d17b1ca093d9",
   "bld.event_types": "72df6b91d956eccc5eb094833bdd45135f175ac9697e3e878a7da9dd241d0cb2",
@@ -81,11 +81,25 @@ var collections = {
   "ldco.venue_checkins": "e01902219a9d81ea071530cdb453c2af739c872e7651460f429415828ff38ecf",
   "ldco.venue_users": "b365f003bb9f3a13ab89291b2b1906c28c28239d1bb547074fa1192065c83af6",
   "ldco.venues": "1f5d0832a4c7eceb7b1c1cef310b564793553173644d1d879e606e1c10744423",
+  "linedance.choreographer_pair_reviews": "f4a5a062392595a16cafd7ddb6398599534bdc95a671f21da487127c593ca834",
+  "linedance.choreographers": "194a2295bd42e37b354c312827e18104415585dff8b7da1ea7577d45cf4ba813",
+  "linedance.dance_merge_undos": "41911849363d2c41afbd7565cb7f75f1b9099de098a40e0798547c01f5425016",
+  "linedance.dance_merges": "fe00ca2afd2d80fd3bbe5d66d5b3a1d1b69e5cadc7bc7f5e7ba99554df79e73e",
+  "linedance.dances": "ffd4e1e654c5a3d285929b2a32981c4d2fc35d449a91e432678e4d1c432eb297",
+  "linedance.levels": "b0e939a24c1bab3d9d233167091fbdb851332187b8fd124f75c3b7d67e62665e",
+  "linedance.merge_candidates": "f2bb23540ba08f826865c7b99f72b6549bd70bc507a45c32cec928912c2f4937",
+  "linedance.recordings": "18afb02682c760404a890e3316c39a789585fae6e8ad6697f20c16ec4e83d397",
+  "linedance.track_aliases": "f52da50e3753b6f4c5565f8c38406f7b4c054f37a878203262e950bfd6bdee12",
+  "linedance.track_links": "5592654f7029fcc168dd61790e8a6f9df82f4e56619d061c53e30a32f9abf8fe",
+  "linedance.track_merge_candidates": "eda1026ea6ea36fa2a21641d68fe1233ebdffda28196aabf4f5f61fed5185eef",
+  "linedance.track_merge_undos": "a7fe1d95bd677c7fdbd0b50b580a8d515ea10d3b9ca55381ab6127a6c7ab84a3",
+  "linedance.track_merges": "7fff2a310850f251c0c63d71d151c5f2bd9ea6e4d44137735d7bfef7a707cf5c",
+  "linedance.tracks": "3e0e045f10ca7e34ab432a6e73cfb97e20e63ae4bbdd4bcfb19152be08028641",
   "music_catalog.tracks": "108476379cc40c8264e23aba562c5151a8dc0c3af21498e7ed631a7a300d67fe"
 };
 
 // package.json
-var version = "0.24.0";
+var version = "0.25.0";
 
 // src/contract/collections/bld/event_templates.ts
 import { z as z2 } from "zod";
@@ -1271,26 +1285,258 @@ var LdcoReviewsVerifyUserInstructorSchema = z77.strictObject({
   // declared in src/contract/declared-fields.ts
 });
 
-// src/contract/collections/music_catalog/tracks.ts
+// src/contract/collections/linedance/choreographer_pair_reviews.ts
 import { z as z78 } from "zod";
-var MusicCatalogTracksSchema = z78.strictObject({
-  _id: z78.string(),
-  artist: z78.string(),
+var LinedanceChoreographerPairReviewsSchema = z78.looseObject({ _id: z78.union([z78.string(), objectId]) });
+
+// src/contract/collections/linedance/choreographers.ts
+import { z as z79 } from "zod";
+var LinedanceChoreographersSchema = z79.strictObject({
+  _id: z79.string(),
+  name: z79.string(),
+  nameKey: z79.string(),
+  aliases: z79.array(z79.string()),
+  countries: z79.array(z79.string()),
+  nameWords: z79.array(z79.string()).optional(),
+  // declared in src/contract/declared-fields.ts
+  ldcoIds: z79.array(z79.string()).optional(),
+  mergedAt: bsonDate.optional(),
+  mergedInto: z79.string().optional(),
+  splitInto: z79.array(z79.string()).optional()
+});
+
+// src/contract/collections/linedance/dance_merge_undos.ts
+import { z as z80 } from "zod";
+var LinedanceDanceMergeUndosSchema = z80.looseObject({ _id: z80.union([z80.string(), objectId]) });
+
+// src/contract/collections/linedance/dance_merges.ts
+import { z as z81 } from "zod";
+var LinedanceDanceMergesSchema = z81.strictObject({
+  _id: z81.string(),
+  into: z81.string(),
+  rule: z81.string(),
+  doc: z81.record(z81.string(), z81.unknown()),
+  // declared in src/contract/declared-fields.ts
+  at: bsonDate,
+  by: z81.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  candidateId: z81.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  gained: z81.strictObject({ stepsheets: z81.array(z81.string()), ids: z81.array(z81.string()), filled: z81.record(z81.string(), z81.unknown()), before: z81.record(z81.string(), z81.unknown()) }).optional()
+  // declared in src/contract/declared-fields.ts
+});
+
+// src/contract/collections/linedance/dances.ts
+import { z as z82 } from "zod";
+var LinedanceDancesSchema = z82.strictObject({
+  _id: z82.string(),
+  danceName: z82.string(),
+  nameKey: z82.string(),
+  count: z82.number().nullable(),
+  wall: z82.number().nullable(),
+  levels: z82.array(z82.string()),
+  levelQualifier: z82.enum(["easy", "high", "low"]).nullable(),
+  // declared in src/contract/declared-fields.ts
+  phrased: z82.boolean(),
+  danceType: z82.enum(["line", "partner", "contra", "circle", "chair"]),
+  // declared in src/contract/declared-fields.ts
+  levelRaw: z82.string().nullable(),
+  choreographerIds: z82.array(z82.string()),
+  credit: z82.string().nullable(),
+  songArtists: z82.array(z82.strictObject({
+    song: z82.string(),
+    artist: z82.string()
+  })),
+  musicRaw: z82.string().nullable(),
+  bpm: z82.number().nullable().optional(),
+  introCounts: z82.number().nullable().optional(),
+  hasTags: z82.boolean().nullable().optional(),
+  hasRestarts: z82.boolean().nullable().optional(),
+  hasBridge: z82.boolean().nullable().optional(),
+  choreographedIn: z82.string().nullable().optional(),
+  published: z82.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/).nullable(),
+  // declared in src/contract/declared-fields.ts
+  publishedSource: z82.enum(["feed", "feed-archive", "sync-time", "id-estimate", "id-neighbours"]).nullable(),
+  // declared in src/contract/declared-fields.ts
+  stepsheets: z82.array(z82.strictObject({
+    url: z82.string(),
+    lang: z82.string().nullable(),
+    title: z82.string().optional()
+  })),
+  tracks: z82.array(z82.strictObject({ trackId: z82.string(), versionNote: z82.string().optional(), recordingId: z82.string().optional() })).optional(),
+  // declared in src/contract/declared-fields.ts
+  notStated: z82.array(z82.string()).optional(),
+  publishedBy: z82.string().optional(),
+  rank: z82.number().optional(),
+  // declared in src/contract/declared-fields.ts
+  rankSignals: z82.strictObject({ usage: z82.number(), views: z82.number(), languages: z82.number(), recency: z82.number(), gaps: z82.number() }).optional(),
+  // declared in src/contract/declared-fields.ts
+  nameWords: z82.array(z82.string()).optional(),
+  // declared in src/contract/declared-fields.ts
+  dateKey: z82.string().nullable().optional(),
+  year: z82.number().nullable().optional(),
+  yearFrom: z82.enum(["choreographed", "published"]).nullable().optional(),
+  // declared in src/contract/declared-fields.ts
+  editedAt: bsonDate.optional(),
+  editedBy: z82.string().optional(),
+  editedFields: z82.array(z82.string()).optional(),
+  mergedFrom: z82.array(z82.string()).optional(),
+  ldcoIds: z82.array(z82.string()).optional(),
+  unpublished: z82.boolean().optional(),
+  unpublishedSource: z82.strictObject({
+    event: z82.string(),
+    createdBy: z82.string(),
+    createdAt: bsonDate
+  }).optional(),
+  addedFrom: z82.strictObject({
+    pendingDanceId: z82.string(),
+    submittedByUserId: z82.string(),
+    submittedAt: bsonDate
+  }).optional(),
+  createdAt: bsonDate.optional()
+});
+
+// src/contract/collections/linedance/levels.ts
+import { z as z83 } from "zod";
+var LinedanceLevelsSchema = z83.strictObject({
+  _id: z83.string(),
+  name: z83.string(),
+  rank: z83.number(),
+  aliases: z83.array(z83.string())
+});
+
+// src/contract/collections/linedance/merge_candidates.ts
+import { z as z84 } from "zod";
+var LinedanceMergeCandidatesSchema = z84.strictObject({
+  _id: z84.string(),
+  danceIds: z84.array(z84.string()),
+  reason: z84.string(),
+  confidence: z84.null(),
+  status: z84.string(),
+  resolvedAt: bsonDate.optional(),
+  resolvedBy: z84.string().optional()
+});
+
+// src/contract/collections/linedance/recordings.ts
+import { z as z85 } from "zod";
+var LinedanceRecordingsSchema = z85.strictObject({
+  _id: z85.string(),
+  artist: z85.string(),
   createdAt: bsonDate,
-  disambiguation: z78.string(),
-  durationMs: z78.number().nullable(),
-  isrcs: z78.array(z78.string()),
-  nArtist: z78.string(),
-  nTitle: z78.string(),
-  rank: z78.number(),
-  rankedAt: bsonDate.optional(),
-  source: z78.string(),
-  sourceId: z78.string(),
-  title: z78.string(),
+  disambiguation: z85.string(),
+  durationMs: z85.number().nullable(),
+  fetchedAt: bsonDate,
+  isrcs: z85.array(z85.string()),
+  releaseCount: z85.number(),
+  source: z85.string(),
+  sourceId: z85.string(),
+  title: z85.string(),
+  version: z85.string(),
+  year: z85.number().nullable()
+});
+
+// src/contract/collections/linedance/track_aliases.ts
+import { z as z86 } from "zod";
+var LinedanceTrackAliasesSchema = z86.strictObject({
+  _id: z86.string(),
+  createdAt: bsonDate,
+  source: z86.string(),
+  trackId: z86.string()
+});
+
+// src/contract/collections/linedance/track_links.ts
+import { z as z87 } from "zod";
+var LinedanceTrackLinksSchema = z87.strictObject({
+  _id: z87.string(),
+  checkedAt: bsonDate.nullable(),
+  // declared in src/contract/declared-fields.ts
+  confidence: z87.enum(["high", "probable"]),
+  // declared in src/contract/declared-fields.ts
+  createdAt: bsonDate,
+  matchedBy: z87.string(),
+  provider: z87.enum(["spotify", "apple"]),
+  // declared in src/contract/declared-fields.ts
+  providerId: z87.string(),
+  recordingId: z87.string().nullable(),
+  source: z87.string(),
+  trackId: z87.string(),
   updatedAt: bsonDate,
-  variantKey: z78.string(),
-  words: z78.array(z78.string()),
-  year: z78.number().nullable()
+  url: z87.string(),
+  confirmedBy: z87.array(z87.string()).optional(),
+  kind: z87.string().optional(),
+  rank: z87.number().optional(),
+  movedFrom: z87.string().optional()
+  // declared in src/contract/declared-fields.ts
+});
+
+// src/contract/collections/linedance/track_merge_candidates.ts
+import { z as z88 } from "zod";
+var LinedanceTrackMergeCandidatesSchema = z88.strictObject({
+  _id: z88.string(),
+  createdAt: bsonDate,
+  reason: z88.string(),
+  status: z88.string(),
+  trackIds: z88.array(z88.string()),
+  updatedAt: bsonDate
+});
+
+// src/contract/collections/linedance/track_merge_undos.ts
+import { z as z89 } from "zod";
+var LinedanceTrackMergeUndosSchema = z89.looseObject({ _id: z89.union([z89.string(), objectId]) });
+
+// src/contract/collections/linedance/track_merges.ts
+import { z as z90 } from "zod";
+var LinedanceTrackMergesSchema = z90.strictObject({
+  _id: z90.string(),
+  at: bsonDate,
+  into: z90.string(),
+  key: z90.string().nullable(),
+  // declared in src/contract/declared-fields.ts
+  reason: z90.string(),
+  by: z90.string().optional(),
+  // declared in src/contract/declared-fields.ts
+  movedDances: z90.array(z90.string()).optional()
+  // declared in src/contract/declared-fields.ts
+});
+
+// src/contract/collections/linedance/tracks.ts
+import { z as z91 } from "zod";
+var LinedanceTracksSchema = z91.strictObject({
+  _id: z91.string(),
+  artist: z91.string(),
+  createdAt: bsonDate,
+  danceCount: z91.number().optional(),
+  key: z91.string(),
+  matchStatus: z91.string().optional(),
+  recordingConfidence: z91.string().optional(),
+  recordingId: z91.string().nullable().optional(),
+  songMatch: z91.string().nullable().optional(),
+  title: z91.string(),
+  updatedAt: bsonDate,
+  versions: z91.array(z91.string()).optional(),
+  mergedInto: z91.string().optional()
+});
+
+// src/contract/collections/music_catalog/tracks.ts
+import { z as z92 } from "zod";
+var MusicCatalogTracksSchema = z92.strictObject({
+  _id: z92.string(),
+  artist: z92.string(),
+  createdAt: bsonDate,
+  disambiguation: z92.string(),
+  durationMs: z92.number().nullable(),
+  isrcs: z92.array(z92.string()),
+  nArtist: z92.string(),
+  nTitle: z92.string(),
+  rank: z92.number(),
+  rankedAt: bsonDate.optional(),
+  source: z92.string(),
+  sourceId: z92.string(),
+  title: z92.string(),
+  updatedAt: bsonDate,
+  variantKey: z92.string(),
+  words: z92.array(z92.string()),
+  year: z92.number().nullable()
 });
 
 // src/contract/collections/index.ts
@@ -1371,6 +1617,20 @@ var collections2 = {
   "ldco-reviews.venue_users": { database: "ldco-reviews", name: "venue_users", schema: LdcoReviewsVenueUsersSchema },
   "ldco-reviews.venues": { database: "ldco-reviews", name: "venues", schema: LdcoReviewsVenuesSchema },
   "ldco-reviews.verify_user_instructor": { database: "ldco-reviews", name: "verify_user_instructor", schema: LdcoReviewsVerifyUserInstructorSchema },
+  "linedance.choreographer_pair_reviews": { database: "linedance", name: "choreographer_pair_reviews", schema: LinedanceChoreographerPairReviewsSchema },
+  "linedance.choreographers": { database: "linedance", name: "choreographers", schema: LinedanceChoreographersSchema },
+  "linedance.dance_merge_undos": { database: "linedance", name: "dance_merge_undos", schema: LinedanceDanceMergeUndosSchema },
+  "linedance.dance_merges": { database: "linedance", name: "dance_merges", schema: LinedanceDanceMergesSchema },
+  "linedance.dances": { database: "linedance", name: "dances", schema: LinedanceDancesSchema },
+  "linedance.levels": { database: "linedance", name: "levels", schema: LinedanceLevelsSchema },
+  "linedance.merge_candidates": { database: "linedance", name: "merge_candidates", schema: LinedanceMergeCandidatesSchema },
+  "linedance.recordings": { database: "linedance", name: "recordings", schema: LinedanceRecordingsSchema },
+  "linedance.track_aliases": { database: "linedance", name: "track_aliases", schema: LinedanceTrackAliasesSchema },
+  "linedance.track_links": { database: "linedance", name: "track_links", schema: LinedanceTrackLinksSchema },
+  "linedance.track_merge_candidates": { database: "linedance", name: "track_merge_candidates", schema: LinedanceTrackMergeCandidatesSchema },
+  "linedance.track_merge_undos": { database: "linedance", name: "track_merge_undos", schema: LinedanceTrackMergeUndosSchema },
+  "linedance.track_merges": { database: "linedance", name: "track_merges", schema: LinedanceTrackMergesSchema },
+  "linedance.tracks": { database: "linedance", name: "tracks", schema: LinedanceTracksSchema },
   "music_catalog.tracks": { database: "music_catalog", name: "tracks", schema: MusicCatalogTracksSchema }
 };
 
@@ -1391,17 +1651,141 @@ function scopeFromPackageJson(pkg) {
   return uses;
 }
 
+// src/catalogue/keys.ts
+var keyOf = (s) => String(s ?? "").normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().replace(/&/g, " and ").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+function nameKeyOf(name) {
+  const latin = String(name ?? "").replace(
+    /[([]([^)\]]*)[)\]]/g,
+    (all, inner) => /[^\p{Script=Latin}\p{N}\p{P}\p{S}\p{Z}]/u.test(inner) ? " " : all
+  );
+  return keyOf(latin) || keyOf(name);
+}
+var nameWordsOf = (nameKey) => [...new Set(String(nameKey ?? "").split(" ").filter(Boolean))];
+
+// src/catalogue/resolve.ts
+var byAnyId = (ids) => ({ $or: [{ _id: { $in: ids } }, { ldcoIds: { $in: ids } }] });
+function matchIds(ids, docs) {
+  const own = new Map(docs.map((d) => [String(d._id), d]));
+  const old = /* @__PURE__ */ new Map();
+  for (const d of docs) for (const x of d.ldcoIds ?? []) if (!old.has(String(x))) old.set(String(x), d);
+  return new Map(ids.map((id) => [id, own.get(id) ?? old.get(id) ?? null]));
+}
+var unique = (ids) => [...new Set(ids.filter((x) => typeof x === "string" && x))];
+async function resolveDances(db, ids, projection) {
+  const want = unique(ids);
+  if (!want.length) return /* @__PURE__ */ new Map();
+  const docs = await db.collection("dances").find(byAnyId(want), projection ? { projection: { ...projection, ldcoIds: 1 } } : {}).toArray();
+  return matchIds(want, docs);
+}
+async function resolveChoreographers(db, ids, projection) {
+  const want = unique(ids);
+  if (!want.length) return /* @__PURE__ */ new Map();
+  const people = db.collection("choreographers");
+  const proj = projection ? { projection: { ...projection, ldcoIds: 1, mergedInto: 1 } } : {};
+  const out = matchIds(want, await people.find(byAnyId(want), proj).toArray());
+  for (let hop = 0; hop < 5; hop++) {
+    const next = unique([...out.values()].map((d) => d?.mergedInto ?? "").filter(Boolean));
+    if (!next.length) break;
+    const kept = new Map((await people.find({ _id: { $in: next } }, proj).toArray()).map((d) => [String(d._id), d]));
+    for (const [id, d] of out) if (d?.mergedInto) out.set(id, kept.get(String(d.mergedInto)) ?? null);
+  }
+  return out;
+}
+
+// src/catalogue/search.ts
+var SEARCH_PAGE_SIZE = 50;
+var TIER_LIMIT = 2e3;
+var esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+var MATCH_POINTS = { id: 1e3, name: 300, start: 200, word: 150, choreographer: 100, song: 80 };
+var LISTED_DANCES = { unpublished: { $ne: true } };
+var wordStarts = (w) => ({ $or: [{ nameWords: new RegExp(`^${esc(w)}`) }, { nameWords: null, nameKey: new RegExp(`(^| )${esc(w)}`) }] });
+async function searchDances(db, options = {}) {
+  const { q = "", filter = {}, page: rawPage = 0, pageSize = SEARCH_PAGE_SIZE, projection, trace } = options;
+  const dances = db.collection("dances");
+  const note = (t) => trace?.push(t);
+  const text = q.trim();
+  const page = Math.max(0, Math.floor(rawPage));
+  const skip = page * pageSize;
+  const sort = { rank: -1, nameKey: 1 };
+  let ids = [];
+  let total = 0;
+  let more = false;
+  const kindOf = /* @__PURE__ */ new Map();
+  if (!text) {
+    note({ label: "count", collection: "dances", kind: "count", filter });
+    note({ label: "page by rank", collection: "dances", kind: "find", filter, sort, skip, limit: pageSize, projection: { _id: 1 } });
+    const [n, docs2] = await Promise.all([
+      dances.countDocuments(filter),
+      dances.find(filter, { projection: { _id: 1 } }).sort(sort).skip(skip).limit(pageSize).toArray()
+    ]);
+    total = n;
+    ids = docs2.map((d) => String(d._id));
+  } else {
+    const kinds = [];
+    if (/^https?:\/\//i.test(text)) kinds.push(["id", { "stepsheets.url": text }]);
+    else if (/^[0-9a-f]{24}$/i.test(text)) kinds.push(["id", { $or: [{ _id: text }, { ldcoIds: text }] }]);
+    else {
+      const key = nameKeyOf(text);
+      if (key) {
+        const words = key.split(" ").filter(Boolean);
+        kinds.push(["name", { nameKey: key }]);
+        kinds.push(["start", { nameKey: new RegExp(`^${esc(key)}`) }]);
+        kinds.push(["word", words.length > 1 ? { $and: words.map(wordStarts) } : wordStarts(key)]);
+        const pk = keyOf(text);
+        const peopleFilter = { mergedInto: { $exists: false }, ...pk.includes(" ") ? { nameKey: new RegExp(`(^| )${esc(pk)}`), ...wordStarts(pk.split(" ")[0]) } : wordStarts(pk) };
+        note({ label: "choreographers named", collection: "choreographers", kind: "find", filter: peopleFilter, limit: 300, projection: { _id: 1 } });
+        const people2 = await db.collection("choreographers").find(peopleFilter, { projection: { _id: 1 } }).limit(300).toArray();
+        if (people2.length) kinds.push(["choreographer", { choreographerIds: { $in: people2.map((p) => String(p._id)) } }]);
+        const trackFilter = { key: new RegExp(`^${esc(pk)}`) };
+        note({ label: "songs titled", collection: "tracks", kind: "find", filter: trackFilter, limit: 1e3, projection: { _id: 1 } });
+        const tracks = await db.collection("tracks").find(trackFilter, { projection: { _id: 1 } }).limit(1e3).toArray();
+        if (tracks.length) kinds.push(["song", { "tracks.trackId": { $in: tracks.map((t) => String(t._id)) } }]);
+      }
+    }
+    const score = /* @__PURE__ */ new Map();
+    for (const [kind, match] of kinds) {
+      const hint = kind === "name" || kind === "start" ? { nameKey: 1 } : void 0;
+      const q2 = { $and: [match, filter] };
+      note({ label: `match: ${kind}`, collection: "dances", kind: "find", filter: q2, sort, limit: TIER_LIMIT, projection: { _id: 1, rank: 1 }, hint });
+      let cursor = dances.find(q2, { projection: { _id: 1, rank: 1 } });
+      if (hint) cursor = cursor.hint(hint);
+      const found = await cursor.sort(sort).limit(TIER_LIMIT).toArray();
+      if (found.length === TIER_LIMIT) more = true;
+      for (const d of found) {
+        const id = String(d._id);
+        const points = MATCH_POINTS[kind] + (d.rank ?? 0);
+        if ((score.get(id) ?? -1) < points) {
+          score.set(id, points);
+          kindOf.set(id, kind);
+        }
+      }
+    }
+    const ranked = [...score].sort((a, b) => b[1] - a[1]).map(([id]) => id);
+    total = ranked.length;
+    ids = ranked.slice(skip, skip + pageSize);
+  }
+  note({ label: "the page's dances", collection: "dances", kind: "find", filter: { _id: { $in: ids } }, projection });
+  const docs = new Map(
+    (await dances.find({ _id: { $in: ids } }, projection ? { projection: { ...projection, choreographerIds: 1 } } : {}).toArray()).map((d) => [String(d._id), d])
+  );
+  const list = ids.map((id) => docs.get(id)).filter((d) => !!d);
+  const people = [...new Set(list.flatMap((d) => d.choreographerIds ?? []))];
+  note({ label: "their choreographers' names", collection: "choreographers", kind: "find", filter: { _id: { $in: people } }, projection: { name: 1 } });
+  const names = people.length ? Object.fromEntries((await db.collection("choreographers").find({ _id: { $in: people } }, { projection: { name: 1 } }).toArray()).map((c) => [String(c._id), String(c.name)])) : {};
+  return { total, more, page, pageSize, choreographers: names, dances: list.map((d) => ({ ...d, match: kindOf.get(String(d._id)) ?? null })) };
+}
+
 // src/contract/index.ts
 var CONTRACT_VERSION = version;
 function computeContractHash() {
-  const description = Object.entries(collections2).sort(([a], [b]) => a.localeCompare(b)).map(([key, c]) => [key, c.database, c.name, z79.toJSONSchema(c.schema, { unrepresentable: "any" })]);
+  const description = Object.entries(collections2).sort(([a], [b]) => a.localeCompare(b)).map(([key, c]) => [key, c.database, c.name, z93.toJSONSchema(c.schema, { unrepresentable: "any" })]);
   return createHash("sha256").update(JSON.stringify(description)).digest("hex");
 }
 function computeCollectionHashes() {
   return Object.fromEntries(
     Object.entries(collections2).sort(([a], [b]) => a.localeCompare(b)).map(([key, c]) => [
       key,
-      createHash("sha256").update(JSON.stringify([key, c.database, c.name, z79.toJSONSchema(c.schema, { unrepresentable: "any" })])).digest("hex")
+      createHash("sha256").update(JSON.stringify([key, c.database, c.name, z93.toJSONSchema(c.schema, { unrepresentable: "any" })])).digest("hex")
     ])
   );
 }
@@ -1485,11 +1869,36 @@ export {
   LdcoReviewsVenueUsersSchema,
   LdcoReviewsVenuesSchema,
   LdcoReviewsVerifyUserInstructorSchema,
+  LinedanceChoreographerPairReviewsSchema,
+  LinedanceChoreographersSchema,
+  LinedanceDanceMergeUndosSchema,
+  LinedanceDanceMergesSchema,
+  LinedanceDancesSchema,
+  LinedanceLevelsSchema,
+  LinedanceMergeCandidatesSchema,
+  LinedanceRecordingsSchema,
+  LinedanceTrackAliasesSchema,
+  LinedanceTrackLinksSchema,
+  LinedanceTrackMergeCandidatesSchema,
+  LinedanceTrackMergeUndosSchema,
+  LinedanceTrackMergesSchema,
+  LinedanceTracksSchema,
   MusicCatalogTracksSchema,
   collections2 as collections,
   inScope,
   unmatchedEntries,
   scopeFromPackageJson,
+  keyOf,
+  nameKeyOf,
+  nameWordsOf,
+  byAnyId,
+  matchIds,
+  resolveDances,
+  resolveChoreographers,
+  SEARCH_PAGE_SIZE,
+  MATCH_POINTS,
+  LISTED_DANCES,
+  searchDances,
   CONTRACT_VERSION,
   computeContractHash,
   computeCollectionHashes,
