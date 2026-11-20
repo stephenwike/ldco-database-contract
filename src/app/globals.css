@@ -173,3 +173,12 @@ dl.facts dd { margin: 0; overflow-wrap: anywhere; }
 .record-search input { flex: 1; min-width: 220px; }
 .record-search input, .record-search button, .record-action button { font: inherit; padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); }
 .record-search button, .record-action button { cursor: pointer; }
+.mergebox input, .mergebox button { font: inherit; padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); }
+.mergebox input { width: 100%; }
+.mergebox button { cursor: pointer; }
+.mergebox button:disabled { opacity: .55; cursor: default; }
+.mergebox-list { margin-top: 6px; max-height: 320px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
+.mergebox-list li { padding: 0; border-bottom: 1px solid var(--border); }
+.mergebox-list li:last-child { border-bottom: 0; }
+.mergebox-list button { width: 100%; text-align: left; border: 0; border-radius: 0; background: none; }
+.mergebox-list button:hover { background: var(--surface-2); }

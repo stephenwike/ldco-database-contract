@@ -57,13 +57,22 @@ export async function tracksSame(db: Db, candidateId: string, keepId: string, by
   if (!cand) return { status: 404, error: "That pair isn't open any more." };
   const ids = cand.trackIds.map(String);
   if (!ids.includes(keepId)) return { status: 400, error: "Pick one of the two tracks to keep." };
-  const loseId = ids.find((id) => id !== keepId)!;
+  // The pair itself is settled as "merged" with the other open pairs that named the lost track
+  return mergeTrackInto(db, keepId, ids.find((id) => id !== keepId)!, by, "reviewed: same song");
+}
+
+/**
+ * Merges track loseId into keepId, any two tracks (the review's "Same song", or two picked on their pages): its dances
+ * and links move over, it stays as a stub (mergedInto), and track_merges records it whole enough to undo.
+ */
+export async function mergeTrackInto(db: Db, keepId: string, loseId: string, by: string, reason: string) {
+  if (!keepId || !loseId || keepId === loseId) return { status: 400, error: "Pick two different tracks." };
   const tracks = db.collection<Track>("tracks");
   const [keep, lose] = await Promise.all([tracks.findOne({ _id: keepId }), tracks.findOne({ _id: loseId })]);
   if (!keep || !lose || keep.mergedInto || lose.mergedInto) return { status: 409, error: "One of these tracks has changed. Reload and try again." };
   const now = new Date();
   // The log first, as tracks:build keeps it: the merge always stands
-  await db.collection<{ _id: string }>("track_merges").updateOne({ _id: loseId }, { $setOnInsert: { into: keepId, reason: "reviewed: same song", key: lose.key ?? null, by, at: now } }, { upsert: true });
+  await db.collection<{ _id: string }>("track_merges").updateOne({ _id: loseId }, { $setOnInsert: { into: keepId, reason, key: lose.key ?? null, by, at: now } }, { upsert: true });
   // Dances: the lost track becomes the kept one (once), keeping each entry's version note
   const dances = db.collection<{ _id: string; tracks: { trackId: string; recordingId?: string; versionNote?: string }[] }>("dances");
   let moved = 0;
@@ -81,8 +90,7 @@ export async function tracksSame(db: Db, candidateId: string, keepId: string, by
   await tracks.updateOne({ _id: loseId }, { $set: { mergedInto: keepId, updatedAt: now }, $unset: { matchStatus: "", songMatch: "", recordingId: "", recordingConfidence: "", versions: "", danceCount: "" } });
   if (!keep.recordingId && lose.recordingId) await tracks.updateOne({ _id: keepId }, { $set: { recordingId: lose.recordingId, recordingConfidence: lose.recordingConfidence ?? "probable", matchStatus: "matched" } });
   await tracks.updateOne({ _id: keepId }, { $set: { danceCount: await dances.countDocuments({ "tracks.trackId": keepId }), updatedAt: now } });
-  await settle(db, candidateId, "merged", by);
-  // Other open pairs with the lost track now concern the kept one; a pair of one is settled
+  // Open pairs with the lost track now concern the kept one; a pair of one is settled
   for (const c of await db.collection<Candidate>("track_merge_candidates").find({ status: "open", trackIds: loseId }).toArray()) {
     const list = [...new Set(c.trackIds.map((id) => (id === loseId ? keepId : id)))];
     await db.collection<Candidate>("track_merge_candidates").updateOne({ _id: c._id }, { $set: list.length < 2 ? { trackIds: list, status: "merged", resolvedAt: now, resolvedBy: by } : { trackIds: list } });

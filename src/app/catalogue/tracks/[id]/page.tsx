@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getLinedanceDb } from "@/server/write";
 import { traceTrack } from "@/server/catalogue/trace";
 import RecordAction from "@/components/RecordAction";
+import MergeBox from "@/components/MergeBox";
 
 // One track in the linedance catalogue: its recording, links, spellings, dances, merges and possible duplicates
 // (decision 29; from the data desk).
@@ -108,6 +109,15 @@ export default async function TrackRecordPage({ params }: { params: Promise<{ id
               );
             })}
           </ul>
+        </>
+      )}
+
+      {!k.mergedInto && (
+        <>
+          <h2>Merge with another track</h2>
+          <div className="panel">
+            <MergeBox kind="tracks" id={id} name={`${k.title} – ${k.artist}`} />
+          </div>
         </>
       )}
 

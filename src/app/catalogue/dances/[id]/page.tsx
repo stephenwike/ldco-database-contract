@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getLinedanceDb } from "@/server/write";
 import { traceDance, whereDidDanceGo } from "@/server/catalogue/trace";
 import RecordAction from "@/components/RecordAction";
+import MergeBox from "@/components/MergeBox";
 
 // One dance in the linedance catalogue, with everything that points at it (decision 29; from the data desk).
 // Edits are made on the Catalogue page; merges are undone here or in Merge history.
@@ -150,6 +151,11 @@ export default async function DanceRecordPage({ params }: { params: Promise<{ id
           ))}
         </ul>
       ) : <p className="muted">None.</p>}
+
+      <h2>Merge with another dance</h2>
+      <div className="panel">
+        <MergeBox kind="dances" id={id} name={d.danceName} />
+      </div>
 
       {t.undone.length > 0 && (
         <>

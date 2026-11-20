@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getLinedanceDb } from "@/server/write";
 import { traceChoreographer } from "@/server/catalogue/trace";
 import RecordAction from "@/components/RecordAction";
+import MergeBox from "@/components/MergeBox";
 
 // One choreographer in the linedance catalogue, with their dances, the records merged into them and the pairs
 // reviewed (decision 29; from the data desk).
@@ -79,6 +80,15 @@ export default async function ChoreographerRecordPage({ params }: { params: Prom
               );
             })}
           </ul>
+        </>
+      )}
+
+      {!p.mergedInto && (
+        <>
+          <h2>Merge with another person</h2>
+          <div className="panel">
+            <MergeBox kind="choreographers" id={id} name={p.name} />
+          </div>
         </>
       )}
 
