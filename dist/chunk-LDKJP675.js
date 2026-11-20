@@ -99,7 +99,7 @@ var collections = {
 };
 
 // package.json
-var version = "0.27.0";
+var version = "0.28.0";
 
 // src/contract/collections/bld/event_templates.ts
 import { z as z2 } from "zod";
@@ -2234,6 +2234,128 @@ function rankExpressions(caps, weights = RANK_WEIGHTS, recentMonths = RANK_RECEN
   return { parts, rank };
 }
 
+// src/catalogue/appDances.ts
+var CATALOGUE_DB = "linedance";
+var APP_DANCE_FIELDS = { danceName: 1, choreographerIds: 1, stepsheets: 1, levels: 1, levelQualifier: 1, levelRaw: 1, tracks: 1, songArtists: 1, unpublished: 1 };
+var LEVEL_NAMES = { "absolute-beginner": "Absolute Beginner", beginner: "Beginner", improver: "Improver", intermediate: "Intermediate", advanced: "Advanced" };
+var MAX_RESULTS = 50;
+var esc2 = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+var levelIdOf = (name) => String(name ?? "").trim().toLowerCase().replace(/\s+/g, "-");
+function difficultyOf(d) {
+  if (d.levelRaw) return d.levelRaw;
+  const levels = (d.levels ?? []).map((l) => LEVEL_NAMES[l] ?? l).join(" / ");
+  return levels && d.levelQualifier ? `${d.levelQualifier[0].toUpperCase()}${d.levelQualifier.slice(1)} ${levels}` : levels;
+}
+function trackIdOf(d) {
+  const tracks = d.tracks ?? [];
+  return String((tracks.find((t) => t.versionNote === "chosen in the apps") ?? tracks[0])?.trackId ?? "");
+}
+async function trackDetails(client, trackIds) {
+  const ids = [...new Set(trackIds.filter(Boolean))];
+  const out = /* @__PURE__ */ new Map();
+  if (!ids.length) return out;
+  const db = client.db(CATALOGUE_DB);
+  const [tracks, links] = await Promise.all([
+    db.collection("tracks").find({ _id: { $in: ids } }, { projection: { title: 1, artist: 1, recordingId: 1 } }).toArray(),
+    db.collection("track_links").find({ trackId: { $in: ids }, provider: "spotify" }, { projection: { providerId: 1, trackId: 1, kind: 1, confidence: 1 } }).toArray()
+  ]);
+  const order = { high: 0, probable: 1 };
+  const spotifyOf = /* @__PURE__ */ new Map();
+  for (const l of links.filter((l2) => l2.kind !== "album").sort((a, b) => (order[a.confidence] ?? 2) - (order[b.confidence] ?? 2))) {
+    if (!spotifyOf.has(String(l.trackId))) spotifyOf.set(String(l.trackId), String(l.providerId));
+  }
+  const recordingIds = [...new Set(tracks.map((t) => t.recordingId).filter(Boolean))];
+  const spotifyIds = [...new Set(spotifyOf.values())];
+  const [recordings, spotifyTracks] = await Promise.all([
+    recordingIds.length ? db.collection("recordings").find({ _id: { $in: recordingIds } }, { projection: { isrcs: 1, durationMs: 1 } }).toArray() : [],
+    spotifyIds.length ? client.db("ldco").collection("tracks").find({ _id: { $in: spotifyIds } }, { projection: { duration_ms: 1, isrc: 1 } }).toArray() : []
+  ]);
+  const recordingById = new Map(recordings.map((r) => [String(r._id), r]));
+  const spotifyById = new Map(spotifyTracks.map((t) => [String(t._id), t]));
+  for (const t of tracks) {
+    const rec = t.recordingId ? recordingById.get(String(t.recordingId)) : null;
+    const spotify = spotifyOf.get(String(t._id)) ?? null;
+    const known = spotify ? spotifyById.get(spotify) : null;
+    out.set(String(t._id), {
+      title: t.title ?? "",
+      artist: t.artist ?? "",
+      spotifyUri: spotify ? `spotify:track:${spotify}` : null,
+      isrc: rec?.isrcs?.[0] ?? (known?.isrc ? String(known.isrc).toUpperCase() : null),
+      duration_ms: rec?.durationMs ?? known?.duration_ms ?? null
+    });
+  }
+  return out;
+}
+async function toAppDances(client, docs) {
+  if (!docs.length) return [];
+  const people = [...new Set(docs.flatMap((d) => d.choreographerIds ?? []).map(String))];
+  const [names, tracks] = await Promise.all([
+    people.length ? client.db(CATALOGUE_DB).collection("choreographers").find({ _id: { $in: people } }, { projection: { name: 1 } }).toArray() : [],
+    trackDetails(client, docs.map(trackIdOf))
+  ]);
+  const nameOf = new Map(names.map((c) => [String(c._id), String(c.name)]));
+  return docs.map((d) => {
+    const trackId = trackIdOf(d);
+    const track = tracks.get(trackId) ?? null;
+    const song = track ? null : d.songArtists?.[0] ?? null;
+    const choreographerIds = (d.choreographerIds ?? []).map(String);
+    return {
+      id: String(d._id),
+      currentId: String(d._id),
+      danceName: d.danceName ?? "",
+      difficulty: difficultyOf(d),
+      levels: d.levels ?? [],
+      stepsheet: (d.stepsheets ?? []).find((s) => !s.lang)?.url ?? d.stepsheets?.[0]?.url ?? "",
+      primaryTrack: trackId,
+      songName: track?.title ?? song?.song ?? "",
+      artist: track?.artist ?? song?.artist ?? "",
+      duration_ms: track?.duration_ms ?? null,
+      spotifyUri: track?.spotifyUri ?? null,
+      isrc: track?.isrc ?? null,
+      choreographers: choreographerIds.map((id) => nameOf.get(id)).filter((n) => !!n),
+      choreographerIds
+    };
+  });
+}
+async function byArtist(client, text, limit) {
+  const key = keyOf(text);
+  if (!key) return [];
+  const db = client.db(CATALOGUE_DB);
+  const tracks = await db.collection("tracks").find({ key: new RegExp(`\\|(?:.* )?${esc2(key)}`), mergedInto: { $exists: false } }, { projection: { _id: 1 } }).limit(1e3).toArray();
+  if (!tracks.length) return [];
+  return db.collection("dances").find({ ...LISTED_DANCES, "tracks.trackId": { $in: tracks.map((t) => String(t._id)) } }, { projection: APP_DANCE_FIELDS }).sort({ rank: -1 }).limit(limit).toArray();
+}
+async function searchAppDances(client, q2, { field = "danceName", limit = 20 } = {}) {
+  const text = String(q2 ?? "").trim().slice(0, 100);
+  if (!text) return [];
+  const n = Math.max(1, Math.min(MAX_RESULTS, Number(limit) || 20));
+  const docs = field === "artist" ? await byArtist(client, text, n) : (await searchDances(client.db(CATALOGUE_DB), { q: text, filter: LISTED_DANCES, pageSize: n, projection: APP_DANCE_FIELDS })).dances;
+  return toAppDances(client, docs);
+}
+async function appDancesByIds(client, ids) {
+  const wanted = [...new Set((ids ?? []).map(String).filter(Boolean))].slice(0, 1e3);
+  if (!wanted.length) return [];
+  const found = await resolveDances(client.db(CATALOGUE_DB), wanted, APP_DANCE_FIELDS);
+  const docs = [...new Map([...found.values()].filter(Boolean).map((d) => [String(d._id), d])).values()];
+  const app = new Map((await toAppDances(client, docs)).map((d) => [d.id, d]));
+  return wanted.flatMap((id) => {
+    const d = found.get(id);
+    const dance = d && app.get(String(d._id));
+    return dance ? [{ ...dance, id }] : [];
+  });
+}
+async function danceExists(client, id) {
+  return (await resolveDances(client.db(CATALOGUE_DB), [String(id)], { _id: 1 })).get(String(id)) != null;
+}
+async function sampleCommunityDances(client, { levels = [], choreographerIds = [], count = 5 } = {}) {
+  const match = { ...LISTED_DANCES, "rankSignals.usage": { $gt: 0 } };
+  if (levels.length) match.levels = { $in: levels };
+  if (choreographerIds.length) match.choreographerIds = { $in: choreographerIds };
+  const size = Math.min(Math.max(1, Math.floor(count) || 5), 50);
+  const docs = await client.db(CATALOGUE_DB).collection("dances").aggregate([{ $match: match }, { $sample: { size } }, { $project: APP_DANCE_FIELDS }]).toArray();
+  return toAppDances(client, docs);
+}
+
 // src/dances/merge.ts
 var q = (filter) => filter;
 function normalizeName(s) {
@@ -2555,6 +2677,17 @@ export {
   rankOf,
   rankCaps,
   rankExpressions,
+  CATALOGUE_DB,
+  APP_DANCE_FIELDS,
+  levelIdOf,
+  difficultyOf,
+  trackIdOf,
+  trackDetails,
+  toAppDances,
+  searchAppDances,
+  appDancesByIds,
+  danceExists,
+  sampleCommunityDances,
   normalizeName,
   nameKeys,
   findUnpublishedMatch,

@@ -2,12 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { MongoClient, type Db } from "mongodb";
 import { LinedanceDancesSchema, LinedanceChoreographersSchema } from "../contract/collections";
-import { keyOf, nameKeyOf, nameWordsOf, matchIds, resolveDances, resolveChoreographers, searchDances, LISTED_DANCES, type DbLike, type WriteDbLike } from "./index";
+import { keyOf, nameKeyOf, nameWordsOf, matchIds, resolveDances, resolveChoreographers, searchDances, LISTED_DANCES, type DbLike, type WriteDbLike, type ClientLike } from "./index";
 
 // Any driver's Db must fit the catalogue's minimal interface (a type error here fails `npm run typecheck`)
 export const fitsDriver = (db: Db): DbLike => db;
 // ...and the editing helpers' interface
 export const fitsWriteDriver = (db: Db): WriteDbLike => db;
+// ...and a client, for the app dances
+export const fitsClient = (client: MongoClient): ClientLike => client;
 
 test("keys match the harvester's", () => {
   assert.equal(keyOf("Boot Scootin' Boogie"), "boot scootin boogie");
