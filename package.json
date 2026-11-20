@@ -37,13 +37,15 @@
     "db:migrate:live": "tsx --env-file-if-exists=.env.local scripts/migrate.ts --live",
     "contract:infer": "tsx --env-file-if-exists=.env.local scripts/infer-contract.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --env-file-if-exists=.env.local --test src/contract/declared-fields.test.ts src/catalogue/catalogue.test.ts src/catalogue/edit.test.ts src/catalogue/review.test.ts src/dances/merge.test.ts src/server/catalogue/audit.test.ts src/server/catalogue/choreographerReview.test.ts"
+    "test": "tsx --env-file-if-exists=.env.local --experimental-test-module-mocks --test src/contract/declared-fields.test.ts src/catalogue/catalogue.test.ts src/catalogue/edit.test.ts src/catalogue/review.test.ts src/dances/merge.test.ts src/server/catalogue/audit.test.ts src/server/catalogue/choreographerReview.test.ts src/lib/dancePublished.test.ts src/server/dancePatch.test.ts src/server/bodyGuards.test.ts"
   },
   "dependencies": {
+    "jsdom": "^26.1.0",
     "mongodb": "^7.7.0",
     "zod": "^4.1.0"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.7",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

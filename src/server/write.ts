@@ -32,3 +32,9 @@ export const getLinedanceDb = () => getWriteDb("linedance");
  * a setting: EDITOR_NAME, which should match the admin's username so its audits and reviews carry on.
  */
 export const EDITOR = process.env.EDITOR_NAME || "ldco-database";
+
+/** The ldco database (published dances, choreographers, tracks), for the Dances tools. */
+export const getMainDb = () => getWriteDb("ldco");
+
+/** ldco-reviews, where unpublished dances wait (decision 26). */
+export const getReviewDb = () => getWriteDb("ldco-reviews");

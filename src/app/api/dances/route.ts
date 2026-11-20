@@ -1,0 +1,140 @@
+import { NextResponse } from "next/server";
+import { readJsonObject } from "@/server/jsonBody";
+import { ObjectId, Db } from "mongodb";
+import { getMainDb } from "@/server/write";
+
+// ── Shared helpers (mirrors logic in dances/[id]/route.ts) ───────────────────
+
+type TrackDoc = { _id: string } & Record<string, unknown>;
+
+interface TrackInput {
+  spotifyId?: string;
+  spotifyUri?: string;
+  name: string;
+  artists: string[];
+  isrc?: string;
+  duration_ms?: number;
+  explicit?: boolean;
+  preview_url?: string | null;
+}
+
+async function resolveChoreographer(db: Db, name: string): Promise<string> {
+  const escaped = name.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const existing = await db
+    .collection("choreographers")
+    .findOne({ name: { $regex: new RegExp(`^${escaped}$`, "i") } });
+  if (existing) return existing._id.toString();
+  const id = new ObjectId().toHexString();
+  await db.collection("choreographers").insertOne({ _id: id as never, name: name.trim() });
+  return id;
+}
+
+// Only a matched Spotify track becomes a track document. A manually typed song has no real track,
+// so it is kept on the dance in songArtists instead of creating a placeholder (ldco-database decision 7).
+const toSongArtist = (t: TrackInput) => ({ song: t.name, artist: (t.artists ?? []).join(", ") });
+
+async function upsertTrack(db: Db, t: TrackInput): Promise<string> {
+  if (!t.spotifyId) throw new Error("upsertTrack requires a Spotify track");
+  const trackId = t.spotifyId;
+  const tracks = db.collection<TrackDoc>("tracks");
+  const existing = await tracks.findOne({ _id: trackId });
+  if (!existing) {
+    await tracks.insertOne({
+      _id: trackId,
+      name: t.name,
+      artists: t.artists,
+      isrc: t.isrc ?? "",
+      uri: t.spotifyUri ?? "",
+      ...(t.duration_ms != null && { duration_ms: t.duration_ms }),
+      ...(t.explicit != null && { explicit: t.explicit }),
+      ...(t.preview_url !== undefined && { preview_url: t.preview_url }),
+    });
+  }
+  return trackId;
+}
+
+// ── GET /api/admin/dances ─────────────────────────────────────────────────────
+
+export async function GET() {
+  const db = await getMainDb();
+  const dances = await db.collection("pending_dances")
+    .find({})
+    .sort({ submittedAt: 1 })
+    .toArray();
+
+  return NextResponse.json(dances.map((d) => ({
+    id: d._id.toString(),
+    danceName: d.danceName,
+    songTitle: d.songTitle,
+    artist: d.artist,
+    choreographer: d.choreographer,
+    count: d.count,
+    wall: d.wall,
+    difficulty: d.difficulty,
+    stepsheetUrl: d.stepsheetUrl ?? d.stepsheet ?? null,
+    submittedByUserId: d.submittedByUserId ?? null,
+    submittedAt: d.submittedAt,
+  })));
+}
+
+// ── POST /api/admin/dances — create a dance directly (admin-entered) ──────────
+
+export async function POST(req: Request) {
+  try {
+    const body = await readJsonObject(req);
+    if (body instanceof NextResponse) return body;
+    const { track, overrides, additionalTracks } = body;
+
+    if (!overrides?.danceName?.trim()) {
+      return NextResponse.json({ error: "danceName is required" }, { status: 400 });
+    }
+
+    const db = await getMainDb();
+
+    // Resolve choreographers
+    const choreographerNames: string[] = Array.isArray(overrides?.choreographers)
+      ? overrides.choreographers.filter(Boolean)
+      : [];
+    const choreographerIds = await Promise.all(
+      choreographerNames.map((n: string) => resolveChoreographer(db, n))
+    );
+
+    // Upsert primary track (Spotify picks only; typed-in songs go to songArtists)
+    let primaryTrackId = "";
+    const songArtists: { song: string; artist: string }[] = [];
+    if (track?.name) {
+      const t = track as TrackInput;
+      if (t.spotifyId) primaryTrackId = await upsertTrack(db, t);
+      else songArtists.push(toSongArtist(t));
+    }
+
+    // Upsert additional tracks
+    const additionalTrackIds: string[] = [];
+    if (Array.isArray(additionalTracks)) {
+      for (const at of additionalTracks as TrackInput[]) {
+        if (!at?.name) continue;
+        if (at.spotifyId) additionalTrackIds.push(await upsertTrack(db, at));
+        else songArtists.push(toSongArtist(at));
+      }
+    }
+
+    // ldco ids are strings (ldco-database decision 5), never ObjectIds
+    const danceId = new ObjectId().toHexString();
+    const allTrackIds = [...new Set([primaryTrackId, ...additionalTrackIds].filter(Boolean))];
+
+    await db.collection("dances").insertOne({
+      _id: danceId as never,
+      danceName: overrides.danceName.trim(),
+      choreographers: choreographerIds,
+      stepsheet: overrides?.stepsheetUrl?.trim() || "",
+      difficulty: overrides?.difficulty?.trim() || "Beginner",
+      primaryTrack: primaryTrackId,
+      tracks: allTrackIds,
+      ...(songArtists.length ? { songArtists } : {}),
+    });
+
+    return NextResponse.json({ ok: true, danceId });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
+  }
+}
