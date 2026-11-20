@@ -99,7 +99,7 @@ var collections = {
 };
 
 // package.json
-var version = "0.25.0";
+var version = "0.26.0";
 
 // src/contract/collections/bld/event_templates.ts
 import { z as z2 } from "zod";
@@ -1700,10 +1700,10 @@ var MATCH_POINTS = { id: 1e3, name: 300, start: 200, word: 150, choreographer: 1
 var LISTED_DANCES = { unpublished: { $ne: true } };
 var wordStarts = (w) => ({ $or: [{ nameWords: new RegExp(`^${esc(w)}`) }, { nameWords: null, nameKey: new RegExp(`(^| )${esc(w)}`) }] });
 async function searchDances(db, options = {}) {
-  const { q = "", filter = {}, page: rawPage = 0, pageSize = SEARCH_PAGE_SIZE, projection, trace } = options;
+  const { q: q2 = "", filter = {}, page: rawPage = 0, pageSize = SEARCH_PAGE_SIZE, projection, trace } = options;
   const dances = db.collection("dances");
   const note = (t) => trace?.push(t);
-  const text = q.trim();
+  const text = q2.trim();
   const page = Math.max(0, Math.floor(rawPage));
   const skip = page * pageSize;
   const sort = { rank: -1, nameKey: 1 };
@@ -1745,9 +1745,9 @@ async function searchDances(db, options = {}) {
     const score = /* @__PURE__ */ new Map();
     for (const [kind, match] of kinds) {
       const hint = kind === "name" || kind === "start" ? { nameKey: 1 } : void 0;
-      const q2 = { $and: [match, filter] };
-      note({ label: `match: ${kind}`, collection: "dances", kind: "find", filter: q2, sort, limit: TIER_LIMIT, projection: { _id: 1, rank: 1 }, hint });
-      let cursor = dances.find(q2, { projection: { _id: 1, rank: 1 } });
+      const q22 = { $and: [match, filter] };
+      note({ label: `match: ${kind}`, collection: "dances", kind: "find", filter: q22, sort, limit: TIER_LIMIT, projection: { _id: 1, rank: 1 }, hint });
+      let cursor = dances.find(q22, { projection: { _id: 1, rank: 1 } });
       if (hint) cursor = cursor.hint(hint);
       const found = await cursor.sort(sort).limit(TIER_LIMIT).toArray();
       if (found.length === TIER_LIMIT) more = true;
@@ -1773,6 +1773,553 @@ async function searchDances(db, options = {}) {
   note({ label: "their choreographers' names", collection: "choreographers", kind: "find", filter: { _id: { $in: people } }, projection: { name: 1 } });
   const names = people.length ? Object.fromEntries((await db.collection("choreographers").find({ _id: { $in: people } }, { projection: { name: 1 } }).toArray()).map((c) => [String(c._id), String(c.name)])) : {};
   return { total, more, page, pageSize, choreographers: names, dances: list.map((d) => ({ ...d, match: kindOf.get(String(d._id)) ?? null })) };
+}
+
+// src/catalogue/edit.ts
+var LEVEL_QUALIFIERS = ["easy", "high", "low"];
+var DANCE_TYPES = ["line", "partner", "contra", "circle", "chair"];
+var PUBLISHED = /^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?)?$/;
+var CHOREOGRAPHED = /^\d{4}(-(0[1-9]|1[0-2]))?$/;
+var STATABLE = ["level", "count", "wall", "choreographer", "choreographedIn"];
+var GAPS = [
+  { id: "level", label: "No level", core: true, filter: { levels: { $size: 0 }, notStated: { $ne: "level" } } },
+  { id: "count", label: "No count", core: true, filter: { count: null, notStated: { $ne: "count" } } },
+  { id: "wall", label: "No wall", core: true, filter: { wall: null, notStated: { $ne: "wall" } } },
+  { id: "choreographer", label: "No choreographer", core: true, filter: { choreographerIds: { $size: 0 }, notStated: { $ne: "choreographer" } } },
+  // When it was choreographed, from the credit ("- August 2021"); a credit that gives no date is "not stated"
+  { id: "choreographedIn", label: "No choreographed date", core: true, filter: { choreographedIn: null, notStated: { $ne: "choreographedIn" } } },
+  { id: "song", label: "No song", core: true, filter: { songArtists: { $size: 0 } } },
+  { id: "stepsheet", label: "No stepsheet", core: true, filter: { stepsheets: { $size: 0 }, unpublished: { $ne: true } } },
+  { id: "published", label: "No publish date", core: true, filter: { published: null } },
+  { id: "estimated", label: "Estimated date", core: false, filter: { publishedSource: "id-estimate" } },
+  { id: "yearOnly", label: "Year-only date", core: false, filter: { published: /^\d{4}$/ } },
+  { id: "translationOnly", label: "Translations only", core: false, filter: { "stepsheets.0": { $exists: true }, stepsheets: { $not: { $elemMatch: { lang: null } } } } },
+  { id: "notStated", label: "Not stated on the stepsheet", core: false, filter: { "notStated.0": { $exists: true } } },
+  { id: "unpublished", label: "Not on copperknob yet", core: false, filter: { unpublished: true } },
+  { id: "edited", label: "Edited by hand", core: false, filter: { "editedFields.0": { $exists: true } } }
+];
+function gapsOf(d) {
+  const gaps = [];
+  const stated = (f) => !d.notStated?.includes(f);
+  if (!d.levels?.length && stated("level")) gaps.push("level");
+  if (d.count == null && stated("count")) gaps.push("count");
+  if (d.wall == null && stated("wall")) gaps.push("wall");
+  if (!d.choreographerIds?.length && stated("choreographer")) gaps.push("choreographer");
+  if (!d.choreographedIn && stated("choreographedIn")) gaps.push("choreographedIn");
+  if (!d.songArtists?.length) gaps.push("song");
+  if (!d.stepsheets?.length && !d.unpublished) gaps.push("stepsheet");
+  if (!d.published) gaps.push("published");
+  return gaps;
+}
+var escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function danceFilter({ gaps = [], q: q2, lang, level, danceType, choreographerId }) {
+  const and = [];
+  for (const id of gaps) {
+    const gap = GAPS.find((g) => g.id === id);
+    if (gap) and.push(gap.filter);
+  }
+  const text = q2?.trim();
+  if (text) {
+    if (/^https?:\/\//i.test(text)) and.push({ "stepsheets.url": text });
+    else {
+      const key = nameKeyOf(text);
+      if (key) and.push({ nameKey: new RegExp(`^${escapeRegex(key)}`) });
+    }
+  }
+  if (lang) and.push({ "stepsheets.lang": lang });
+  if (level) and.push({ levels: level });
+  if (danceType) and.push({ danceType });
+  if (choreographerId) and.push({ choreographerIds: choreographerId });
+  return and.length ? { $and: and } : {};
+}
+var CATALOGUE_PAGE_SIZE = 50;
+async function listDances(db, query, page) {
+  const dances = db.collection("dances");
+  const filter = danceFilter(query);
+  const [total, docs] = await Promise.all([
+    dances.countDocuments(filter),
+    dances.find(filter).sort({ nameKey: 1 }).skip(Math.max(0, page) * CATALOGUE_PAGE_SIZE).limit(CATALOGUE_PAGE_SIZE).toArray()
+  ]);
+  const ids = [...new Set(docs.flatMap((d) => d.choreographerIds ?? []))];
+  const choreographers = await db.collection("choreographers").find({ _id: { $in: ids } }).project({ name: 1 }).toArray();
+  return {
+    total,
+    pageSize: CATALOGUE_PAGE_SIZE,
+    choreographers: Object.fromEntries(choreographers.map((c) => [c._id, c.name])),
+    dances: docs.map((d) => ({ ...d, gaps: gapsOf(d) }))
+  };
+}
+async function catalogueStats(db) {
+  const dances = db.collection("dances");
+  const total = await dances.countDocuments();
+  const [gaps, complete, byLanguage, byLevel, candidates, choreographers, levels] = await Promise.all([
+    Promise.all(GAPS.map(async (g) => ({ id: g.id, label: g.label, core: g.core, count: await dances.countDocuments(g.filter) }))),
+    dances.countDocuments({ $nor: GAPS.filter((g) => g.core).map((g) => g.filter) }),
+    dances.aggregate([{ $unwind: "$stepsheets" }, { $match: { "stepsheets.lang": { $ne: null } } }, { $group: { _id: "$stepsheets.lang", n: { $sum: 1 } } }, { $sort: { n: -1 } }]).toArray(),
+    dances.aggregate([{ $unwind: "$levels" }, { $group: { _id: "$levels", n: { $sum: 1 } } }]).toArray(),
+    db.collection("merge_candidates").countDocuments({ status: "open" }),
+    db.collection("choreographers").countDocuments({ mergedInto: { $exists: false } }),
+    db.collection("levels").find({}).sort({ rank: 1 }).toArray()
+  ]);
+  return {
+    total,
+    complete,
+    gaps,
+    openMergeCandidates: candidates,
+    choreographers,
+    languages: byLanguage.map((l) => ({ id: l._id, count: l.n })),
+    levels: levels.map((l) => ({ id: l._id, name: l.name, aliases: l.aliases, count: byLevel.find((x) => x._id === l._id)?.n ?? 0 }))
+  };
+}
+var wholeOrNull = (v, min, max) => v === null || Number.isInteger(v) && v >= min && v <= max;
+function cleanDancePatch(body, levelIds) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return { ok: false, error: "Nothing to save." };
+  const set = {};
+  for (const [field, value] of Object.entries(body)) {
+    switch (field) {
+      case "danceName": {
+        const name = typeof value === "string" ? value.trim() : "";
+        if (!name) return { ok: false, error: "A dance needs a name." };
+        set.danceName = name;
+        set.nameKey = nameKeyOf(name);
+        set.nameWords = nameWordsOf(set.nameKey);
+        break;
+      }
+      case "count":
+        if (!wholeOrNull(value, 0, 2e3)) return { ok: false, error: "Count must be a whole number, or blank." };
+        set.count = value;
+        break;
+      case "wall":
+        if (!wholeOrNull(value, 0, 8)) return { ok: false, error: "Wall must be a whole number from 0 to 8, or blank." };
+        set.wall = value;
+        break;
+      case "introCounts":
+        if (!wholeOrNull(value, 0, 999)) return { ok: false, error: "Intro must be a whole number, or blank." };
+        set.introCounts = value;
+        break;
+      case "levels":
+        if (!Array.isArray(value) || !value.every((l) => levelIds.includes(l))) return { ok: false, error: "Unknown level." };
+        set.levels = [...new Set(value)].sort((a, b) => levelIds.indexOf(a) - levelIds.indexOf(b));
+        break;
+      case "levelQualifier":
+        if (value !== null && !LEVEL_QUALIFIERS.includes(value)) return { ok: false, error: "Unknown level qualifier." };
+        set.levelQualifier = value;
+        break;
+      case "phrased":
+        if (typeof value !== "boolean") return { ok: false, error: "Phrased must be yes or no." };
+        set.phrased = value;
+        break;
+      case "danceType":
+        if (!DANCE_TYPES.includes(value)) return { ok: false, error: "Unknown dance type." };
+        set.danceType = value;
+        break;
+      case "hasTags":
+      case "hasRestarts":
+      case "hasBridge":
+        if (value !== null && typeof value !== "boolean") return { ok: false, error: `${field} must be yes, no or unknown.` };
+        set[field] = value;
+        break;
+      case "choreographerIds":
+        if (!Array.isArray(value) || !value.every((c) => typeof c === "string" && c)) return { ok: false, error: "Bad choreographer list." };
+        set.choreographerIds = [...new Set(value)];
+        break;
+      case "songArtists": {
+        if (!Array.isArray(value)) return { ok: false, error: "Bad song list." };
+        const songs = value.map((s) => ({ song: String(s?.song ?? "").trim(), artist: String(s?.artist ?? "").trim() }));
+        if (songs.some((s) => !s.song || !s.artist)) return { ok: false, error: "A song needs a title and an artist." };
+        set.songArtists = songs;
+        break;
+      }
+      case "choreographedIn":
+        if (value === null || value === "") set.choreographedIn = null;
+        else if (typeof value === "string" && CHOREOGRAPHED.test(value.trim())) set.choreographedIn = value.trim();
+        else return { ok: false, error: "Choreographed date must be YYYY or YYYY-MM." };
+        break;
+      case "published":
+        if (value === null || value === "") {
+          set.published = null;
+          set.publishedSource = null;
+        } else {
+          if (typeof value !== "string" || !PUBLISHED.test(value.trim())) return { ok: false, error: "Publish date must be YYYY, YYYY-MM or YYYY-MM-DD." };
+          set.published = value.trim();
+          set.publishedSource = "manual";
+        }
+        break;
+      case "stepsheets": {
+        if (!Array.isArray(value)) return { ok: false, error: "Bad stepsheet list." };
+        const sheets = [];
+        for (const s of value) {
+          const url = String(s?.url ?? "").trim();
+          if (!/^https?:\/\/\S+$/i.test(url)) return { ok: false, error: `Not a web address: ${url || "(blank)"}` };
+          const lang = s?.lang ? String(s.lang).trim().toLowerCase() : null;
+          if (lang && !/^[a-z]{2}$/.test(lang)) return { ok: false, error: `Language must be a two-letter code: ${lang}` };
+          if (sheets.some((x) => x.url === url)) return { ok: false, error: `Listed twice: ${url}` };
+          sheets.push({ url, lang, ...s?.title ? { title: String(s.title) } : {} });
+        }
+        set.stepsheets = sheets;
+        break;
+      }
+      default:
+        return { ok: false, error: `${field} can't be edited here.` };
+    }
+  }
+  return Object.keys(set).length ? { ok: true, set } : { ok: false, error: "Nothing to save." };
+}
+function yearFields(d) {
+  const pick = d.choreographedIn ? ["choreographed", d.choreographedIn] : d.published ? ["published", d.published] : null;
+  const m = pick && /^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?/.exec(pick[1]);
+  if (!pick || !m) return { year: null, yearFrom: null, dateKey: null };
+  return { year: Number(m[1]), yearFrom: pick[0], dateKey: m[3] ? `${m[1]}-${m[2]}-${m[3]}` : m[2] ? `${m[1]}-${m[2]}-31` : `${m[1]}-12-31` };
+}
+var sameValue = (a, b) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+function filledStatable(changed) {
+  const filled = [];
+  if (changed.levels?.length) filled.push("level");
+  if (changed.count != null) filled.push("count");
+  if (changed.wall != null) filled.push("wall");
+  if (changed.choreographerIds?.length) filled.push("choreographer");
+  if (changed.choreographedIn) filled.push("choreographedIn");
+  return filled;
+}
+async function updateDance(db, id, body, by) {
+  const dances = db.collection("dances");
+  const current = await dances.findOne({ _id: id });
+  if (!current) return { status: 404, error: "That dance doesn't exist." };
+  const levelIds = (await db.collection("levels").find({}).sort({ rank: 1 }).toArray()).map((l) => l._id);
+  const clean = cleanDancePatch(body, levelIds);
+  if (!clean.ok) return { status: 400, error: clean.error };
+  const changed = Object.fromEntries(Object.entries(clean.set).filter(([k, v]) => !sameValue(v, current[k])));
+  if (!("published" in changed)) delete changed.publishedSource;
+  if (!("danceName" in changed)) {
+    delete changed.nameKey;
+    delete changed.nameWords;
+  }
+  if (!Object.keys(changed).length) return { status: 200, dance: { ...current, gaps: gapsOf(current) }, changed: [] };
+  if (changed.choreographerIds?.length) {
+    const found = await db.collection("choreographers").countDocuments({ _id: { $in: changed.choreographerIds } });
+    if (found !== changed.choreographerIds.length) return { status: 400, error: "One of those choreographers doesn't exist." };
+  }
+  if (changed.stepsheets?.length) {
+    const urls = changed.stepsheets.map((s) => s.url);
+    const other = await dances.findOne({ _id: { $ne: id }, "stepsheets.url": { $in: urls } }, { projection: { danceName: 1 } });
+    if (other) return { status: 409, error: `Another dance already has that stepsheet: ${other.danceName}` };
+  }
+  const fields = Object.keys(changed).filter((f) => f !== "nameKey" && f !== "nameWords" && f !== "publishedSource");
+  const filled = filledStatable(changed);
+  const dates = "choreographedIn" in changed || "published" in changed ? yearFields({ ...current, ...changed }) : {};
+  const res = await dances.updateOne(
+    { _id: id },
+    { $set: { ...changed, ...dates, editedAt: /* @__PURE__ */ new Date(), editedBy: by }, $addToSet: { editedFields: { $each: fields } }, ...filled.length ? { $pull: { notStated: { $in: filled } } } : {} }
+  );
+  const updated = res.matchedCount ? await dances.findOne({ _id: id }) : null;
+  if (!updated) return { status: 404, error: "That dance doesn't exist." };
+  return { status: 200, dance: { ...updated, gaps: gapsOf(updated) }, changed: fields };
+}
+async function searchChoreographers(db, q2) {
+  const key = keyOf(q2);
+  if (!key) return [];
+  return db.collection("choreographers").find({ mergedInto: { $exists: false }, $or: [{ nameKey: new RegExp(`^${escapeRegex(key)}`) }, { aliases: new RegExp(`^${escapeRegex(q2.trim())}`, "i") }] }).sort({ nameKey: 1 }).limit(15).project({ name: 1, aliases: 1 }).toArray();
+}
+async function findOrCreateChoreographer(db, rawName, newId) {
+  const name = typeof rawName === "string" ? rawName.replace(/\s+/g, " ").trim() : "";
+  const nameKey = keyOf(name);
+  if (!nameKey) return { error: "A choreographer needs a name." };
+  const col = db.collection("choreographers");
+  let known = await col.findOne({ $or: [{ nameKey }, { aliases: name }] });
+  for (let hops = 0; known?.mergedInto && hops < 5; hops++) known = await col.findOne({ _id: known.mergedInto });
+  if (known) return { choreographer: { _id: known._id, name: known.name }, created: false };
+  await col.insertOne({ _id: newId, name, nameKey, aliases: [], countries: [] });
+  return { choreographer: { _id: newId, name }, created: true };
+}
+
+// src/catalogue/review.ts
+var FILL = ["count", "wall", "credit", "musicRaw", "bpm", "introCounts", "hasTags", "hasRestarts", "hasBridge", "choreographedIn", "published", "publishedSource", "publishedBy"];
+var LEVEL = ["levels", "levelQualifier", "phrased", "danceType", "levelRaw"];
+var STATED = {
+  count: (d) => d.count != null,
+  wall: (d) => d.wall != null,
+  level: (d) => !!d.levels?.length,
+  choreographer: (d) => !!d.choreographerIds?.length,
+  choreographedIn: (d) => !!d.choreographedIn
+};
+var blank = (v) => v == null || Array.isArray(v) && !v.length || v === "";
+var facts = (d) => ["count", "wall", "published", "credit", "bpm"].filter((f) => d[f] != null).length + (d.levels?.length ? 1 : 0) + (d.songArtists?.length ? 1 : 0);
+var sheetId = (u) => /stepsheets\/([^/?#]+)/i.exec(u ?? "")?.[1] ?? "";
+function suggestKeep(dances) {
+  const sorted = [...dances].sort((a, b) => Number(b.stepsheets?.some((s) => !s.lang) ?? false) - Number(a.stepsheets?.some((s) => !s.lang) ?? false) || facts(b) - facts(a) || (/^\d+$/.test(sheetId(b.stepsheets?.[0]?.url)) ? 1 : 0) - (/^\d+$/.test(sheetId(a.stepsheets?.[0]?.url)) ? 1 : 0) || Number(sheetId(a.stepsheets?.[0]?.url)) - Number(sheetId(b.stepsheets?.[0]?.url)) || String(a._id).localeCompare(String(b._id)));
+  return sorted[0] ? String(sorted[0]._id) : null;
+}
+function planCatalogueMerge(keep, others) {
+  const set = {};
+  const urls = new Set((keep.stepsheets ?? []).map((s) => s.url));
+  const stepsheets = [...keep.stepsheets ?? []];
+  for (const o of others) for (const s of o.stepsheets ?? []) if (!urls.has(s.url)) {
+    urls.add(s.url);
+    stepsheets.push(s);
+  }
+  if (stepsheets.length !== (keep.stepsheets ?? []).length) set.stepsheets = stepsheets;
+  const k = keep;
+  for (const f of FILL) if (blank(k[f])) {
+    const from = others.find((o) => !blank(o[f]));
+    if (from) set[f] = from[f];
+  }
+  if (!keep.levels?.length) {
+    const from = others.find((o) => o.levels?.length);
+    if (from) for (const f of LEVEL) set[f] = from[f] ?? null;
+  }
+  if (!keep.songArtists?.length) {
+    const from = others.find((o) => o.songArtists?.length);
+    if (from) set.songArtists = from.songArtists;
+  }
+  if (!keep.tracks?.length) {
+    const from = others.find((o) => o.tracks?.length);
+    if (from) set.tracks = from.tracks;
+  }
+  if (!keep.choreographerIds?.length) {
+    const from = others.find((o) => o.choreographerIds?.length);
+    if (from) set.choreographerIds = from.choreographerIds;
+  }
+  if (keep.unpublished && others.some((o) => !o.unpublished)) set.unpublished = false;
+  if ("choreographedIn" in set || "published" in set) Object.assign(set, yearFields({ ...keep, ...set }));
+  const after = { ...keep, ...set };
+  const notStated = [...new Set([keep, ...others].flatMap((d) => d.notStated ?? []))].filter((f) => STATED[f] && !STATED[f](after)).sort();
+  if (JSON.stringify(notStated) !== JSON.stringify([...keep.notStated ?? []].sort())) set.notStated = notStated;
+  const ids = [...new Set(others.flatMap((o) => [o._id, ...o.ldcoIds ?? [], ...o.mergedFrom ?? []]).map(String))];
+  return { set, addIds: ids };
+}
+var summary = { danceName: 1, count: 1, wall: 1, levels: 1, levelQualifier: 1, danceType: 1, choreographerIds: 1, songArtists: 1, choreographedIn: 1, published: 1, publishedSource: 1, publishedBy: 1, stepsheets: 1, unpublished: 1, notStated: 1, credit: 1, editedFields: 1 };
+async function listDanceCandidates(db, { reason, page = 0, size = 20 }) {
+  const col = db.collection("merge_candidates");
+  const filter = { status: "open", ...reason ? { reason } : {} };
+  const [reasons, total, rows] = await Promise.all([
+    col.aggregate([{ $match: { status: "open" } }, { $group: { _id: "$reason", n: { $sum: 1 } } }, { $sort: { n: -1 } }]).toArray(),
+    col.countDocuments(filter),
+    col.find(filter).sort({ _id: 1 }).skip(page * size).limit(size).toArray()
+  ]);
+  const dances = new Map((await db.collection("dances").find({ _id: { $in: rows.flatMap((r) => r.danceIds) } }, { projection: summary }).toArray()).map((d) => [String(d._id), d]));
+  const names = Object.fromEntries((await db.collection("choreographers").find({ _id: { $in: [...dances.values()].flatMap((d) => d.choreographerIds ?? []) } }, { projection: { name: 1 } }).toArray()).map((c) => [String(c._id), c.name]));
+  return {
+    reasons: reasons.map((r) => ({ reason: r._id, n: r.n })),
+    total,
+    pageSize: size,
+    candidates: rows.map((r) => {
+      const ds = r.danceIds.map((id) => dances.get(String(id))).filter((d) => !!d);
+      return {
+        _id: r._id,
+        reason: r.reason,
+        missing: r.danceIds.filter((id) => !dances.has(String(id))),
+        suggestedKeep: suggestKeep(ds),
+        dances: ds.map((d) => ({ ...d, choreographers: (d.choreographerIds ?? []).map((c) => names[String(c)] ?? c) }))
+      };
+    })
+  };
+}
+async function keepApart(db, candidateId, by) {
+  const r = await db.collection("merge_candidates").updateOne({ _id: candidateId, status: "open" }, { $set: { status: "rejected", resolvedAt: /* @__PURE__ */ new Date(), resolvedBy: by } });
+  return r.matchedCount ? { status: 200 } : { status: 404, error: "That candidate isn't open any more." };
+}
+async function mergeCandidate(db, candidateId, keepId, mergeIds, by) {
+  const candidates = db.collection("merge_candidates");
+  const cand = await candidates.findOne({ _id: candidateId, status: "open" });
+  if (!cand) return { status: 404, error: "That candidate isn't open any more." };
+  const ids = cand.danceIds.map(String);
+  const merge = [...new Set(mergeIds.map(String))].filter((id) => id !== keepId);
+  if (!ids.includes(keepId) || !merge.length || merge.some((id) => !ids.includes(id))) return { status: 400, error: "Pick the record to keep and at least one other from this group." };
+  const dances = db.collection("dances");
+  const keep = await dances.findOne({ _id: keepId });
+  const others = await dances.find({ _id: { $in: merge } }).toArray();
+  if (!keep || others.length !== merge.length) return { status: 409, error: "One of these dances has changed or gone. Reload and try again." };
+  const now = await mergeDanceRecords(db, keep, others, by, "reviewed: same dance", candidateId);
+  const into = new Map(merge.map((id) => [id, keepId]));
+  const rest = [...new Set(ids.map((id) => into.get(id) ?? id))];
+  if (rest.length < 2) await candidates.updateOne({ _id: candidateId }, { $set: { status: "merged", resolvedAt: now, resolvedBy: by } });
+  return { status: 200, kept: keepId, merged: merge.length, remaining: rest.length };
+}
+async function mergeDanceRecords(db, keep, others, by, rule, candidateId) {
+  const dances = db.collection("dances");
+  const candidates = db.collection("merge_candidates");
+  const keepId = String(keep._id);
+  const merge = others.map((o) => String(o._id));
+  const { set, addIds } = planCatalogueMerge(keep, others);
+  const now = /* @__PURE__ */ new Date();
+  const k = keep;
+  const filledKeys = Object.keys(set).filter((f) => !["stepsheets", "notStated", "unpublished"].includes(f));
+  const gained = {
+    stepsheets: (set.stepsheets ?? []).map((s) => s.url).filter((u) => !(keep.stepsheets ?? []).some((s) => s.url === u)),
+    ids: addIds,
+    filled: Object.fromEntries(filledKeys.map((f) => [f, set[f]])),
+    before: Object.fromEntries(filledKeys.map((f) => [f, k[f] ?? null]))
+  };
+  await db.collection("dance_merges").bulkWrite(others.map((o) => ({ replaceOne: { filter: { _id: o._id }, replacement: { into: keep._id, rule, ...candidateId ? { candidateId } : {}, by, doc: o, gained, at: now }, upsert: true } })));
+  await dances.updateOne({ _id: keepId }, { ...Object.keys(set).length ? { $set: { ...set, editedAt: now, editedBy: by } } : {}, $addToSet: { ldcoIds: { $each: addIds }, mergedFrom: { $each: addIds } } });
+  await dances.deleteMany({ _id: { $in: merge } });
+  const into = new Map(merge.map((id) => [id, keepId]));
+  for (const c of await candidates.find({ status: "open", danceIds: { $in: merge } }).toArray()) {
+    const list = [...new Set(c.danceIds.map((id) => into.get(String(id)) ?? String(id)))];
+    await candidates.updateOne({ _id: c._id }, { $set: list.length < 2 ? { danceIds: list, status: "merged", resolvedAt: now, resolvedBy: by } : { danceIds: list } });
+  }
+  return now;
+}
+
+// src/dances/merge.ts
+var q = (filter) => filter;
+function normalizeName(s) {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/&/g, " and ").replace(/['‘’`´]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+}
+function nameKeys(name) {
+  const keys = [normalizeName(name), normalizeName(name.replace(/\([^)]*\)/g, " "))].filter(Boolean);
+  return [...new Set(keys)];
+}
+function findUnpublishedMatch(dance, candidates) {
+  const keys = new Set(nameKeys(dance.title));
+  const ids = new Set(dance.choreographerIds);
+  const names = new Set(dance.choreographerNames.map(normalizeName));
+  const matches = candidates.filter(
+    (c) => nameKeys(c.danceName).some((k) => keys.has(k)) && ((c.choreographers ?? []).some((id) => ids.has(id)) || (c.unresolvedChoreographers ?? []).some((n) => names.has(normalizeName(n))))
+  );
+  return matches.length === 1 ? matches[0] : void 0;
+}
+var strings = (v) => Array.isArray(v) ? v.filter((x) => typeof x === "string" && x !== "") : [];
+function mergedDance(keep, other) {
+  const location = keep.location === "ldco" || other.location === "ldco" ? "ldco" : "ldco-reviews";
+  const [base, fill] = keep.location === "ldco-reviews" && other.location === "ldco" ? [other.doc, keep.doc] : [keep.doc, other.doc];
+  const stepsheet = base.stepsheet || fill.stepsheet || "";
+  const stepsheetUrls = [.../* @__PURE__ */ new Set([...strings([base.stepsheet]), ...strings(base.stepsheetUrls), ...strings([fill.stepsheet]), ...strings(fill.stepsheetUrls)])].filter((u) => u !== stepsheet);
+  const hasTrack = Boolean(base.primaryTrack);
+  const doc = {
+    _id: keep.doc._id,
+    danceName: base.danceName || fill.danceName,
+    difficulty: base.difficulty || fill.difficulty || "",
+    choreographers: strings(base.choreographers).length ? strings(base.choreographers) : strings(fill.choreographers),
+    stepsheet,
+    stepsheetUrls,
+    primaryTrack: hasTrack ? base.primaryTrack : fill.primaryTrack || "",
+    tracks: hasTrack ? strings(base.tracks) : strings(fill.tracks)
+  };
+  const songArtists = base.songArtists?.length ? base.songArtists : fill.songArtists;
+  if (songArtists?.length) doc.songArtists = songArtists;
+  const dated = base.published ? base : fill.published ? fill : null;
+  if (dated) {
+    if (dated.publishedAt) doc.publishedAt = dated.publishedAt;
+    doc.published = dated.published;
+    if (dated.publishedSource) doc.publishedSource = dated.publishedSource;
+  }
+  if (location === "ldco-reviews") {
+    for (const k of ["reviewKind", "sourceEvent", "createdBy", "createdAt"]) if (keep.doc[k] !== void 0) doc[k] = keep.doc[k];
+    const unresolved = [.../* @__PURE__ */ new Set([...strings(keep.doc.unresolvedChoreographers), ...strings(other.doc.unresolvedChoreographers)])];
+    if (unresolved.length) doc.unresolvedChoreographers = unresolved;
+  }
+  return { doc, location };
+}
+function replaceId(ids, from, to) {
+  return [...new Set(ids.map((id) => id === from ? to : id))];
+}
+var OWNED_ROWS = [
+  { db: "ldco", coll: "user_known_dances", owner: "userId" },
+  { db: "ldco", coll: "user_favorite_dances", owner: "userId" },
+  { db: "ldco", coll: "user_flagged_dances", owner: "userId" },
+  { db: "ldco", coll: "user_refresh_dances", owner: "userId" },
+  { db: "ldco", coll: "dance_tracks", owner: "trackId" },
+  { db: "feed", coll: "feed_lessons", owner: "sessionId" }
+];
+var FLAT_REFS = [
+  { db: "lessons", coll: "lessons" },
+  { db: "bld", coll: "lessons" },
+  { db: "feed", coll: "dj_requests" }
+];
+var NESTED_REFS = [
+  { db: "lessons", coll: "events", array: "lessons" },
+  { db: "bld", coll: "events", array: "lessons" },
+  { db: "feed", coll: "requester_history", array: "requests" },
+  { db: "feed", coll: "session_reports", array: "playedTracks" },
+  { db: "events", coll: "event_registrations", array: "requests" }
+];
+var USER_ARRAYS = ["favorites", "known", "flagged", "refresh"];
+async function countReferences(dbs, danceId) {
+  const counts = [];
+  const add = async (db, coll, filter) => {
+    const count = await dbs[db].collection(coll).countDocuments(q(filter));
+    if (count) counts.push({ collection: `${dbs[db].databaseName}.${coll}`, count });
+  };
+  await add("ldco", "dance_collections", { danceIds: danceId });
+  await add("ldco", "users", { $or: [...USER_ARRAYS.map((k) => ({ [k]: danceId })), { "collections.danceIds": danceId }] });
+  for (const r of OWNED_ROWS) await add(r.db, r.coll, { danceId });
+  for (const r of FLAT_REFS) await add(r.db, r.coll, { danceId });
+  for (const r of NESTED_REFS) await add(r.db, r.coll, { [`${r.array}.danceId`]: danceId });
+  return counts;
+}
+async function repointReferences(dbs, fromId, keepId) {
+  const changed = [];
+  const note = (db, coll, count) => {
+    if (count) changed.push({ collection: `${dbs[db].databaseName}.${coll}`, count });
+  };
+  const collections3 = dbs.ldco.collection("dance_collections");
+  let n = 0;
+  for (const c of await collections3.find(q({ danceIds: fromId })).toArray()) {
+    await collections3.updateOne(q({ _id: c._id }), { $set: { danceIds: replaceId(strings(c.danceIds), fromId, keepId) } });
+    n++;
+  }
+  note("ldco", "dance_collections", n);
+  const users = dbs.ldco.collection("users");
+  n = 0;
+  for (const u of await users.find(q({ $or: [...USER_ARRAYS.map((k) => ({ [k]: fromId })), { "collections.danceIds": fromId }] })).toArray()) {
+    const set = {};
+    for (const k of USER_ARRAYS) if (Array.isArray(u[k]) && u[k].includes(fromId)) set[k] = replaceId(u[k], fromId, keepId);
+    if (Array.isArray(u.collections) && u.collections.some((c) => strings(c.danceIds).includes(fromId))) {
+      set.collections = u.collections.map((c) => ({ ...c, danceIds: replaceId(strings(c.danceIds), fromId, keepId) }));
+    }
+    await users.updateOne(q({ _id: u._id }), { $set: set });
+    n++;
+  }
+  note("ldco", "users", n);
+  for (const r of OWNED_ROWS) {
+    const coll = dbs[r.db].collection(r.coll);
+    n = 0;
+    for (const row of await coll.find(q({ danceId: fromId })).toArray()) {
+      const duplicate = await coll.findOne(q({ [r.owner]: row[r.owner], danceId: keepId }));
+      if (duplicate) await coll.deleteOne(q({ _id: row._id }));
+      else await coll.updateOne(q({ _id: row._id }), { $set: { danceId: keepId } });
+      n++;
+    }
+    note(r.db, r.coll, n);
+  }
+  for (const r of FLAT_REFS) {
+    const res = await dbs[r.db].collection(r.coll).updateMany(q({ danceId: fromId }), { $set: { danceId: keepId } });
+    note(r.db, r.coll, res.modifiedCount);
+  }
+  for (const r of NESTED_REFS) {
+    const res = await dbs[r.db].collection(r.coll).updateMany(
+      q({ [`${r.array}.danceId`]: fromId }),
+      { $set: { [`${r.array}.$[x].danceId`]: keepId } },
+      { arrayFilters: [{ "x.danceId": fromId }] }
+    );
+    note(r.db, r.coll, res.modifiedCount);
+  }
+  return changed;
+}
+async function findDance(dbs, id) {
+  const published = await dbs.ldco.collection("dances").findOne(q({ _id: id }));
+  if (published) return { doc: published, location: "ldco" };
+  const review = await dbs.reviews.collection("dances").findOne(q({ _id: id }));
+  return review ? { doc: review, location: "ldco-reviews" } : null;
+}
+async function planDanceMerge(dbs, keepId, otherId) {
+  if (!keepId || !otherId || keepId === otherId) throw new Error("Choose two different dances.");
+  const [keep, other] = await Promise.all([findDance(dbs, keepId), findDance(dbs, otherId)]);
+  if (!keep) throw new Error(`Dance ${keepId} no longer exists.`);
+  if (!other) throw new Error(`Dance ${otherId} no longer exists.`);
+  return { keep, other, result: mergedDance(keep, other), references: await countReferences(dbs, otherId) };
+}
+async function mergeDances(dbs, keepId, otherId) {
+  const { keep, other, result } = await planDanceMerge(dbs, keepId, otherId);
+  const target = result.location === "ldco" ? dbs.ldco : dbs.reviews;
+  const stepsheetClash = other.location === "ldco" && !!result.doc.stepsheet && other.doc.stepsheet === result.doc.stepsheet && result.location === "ldco";
+  await target.collection("dances").replaceOne(q({ _id: keepId }), stepsheetClash ? { ...result.doc, stepsheet: "" } : result.doc, { upsert: true });
+  const repointed = await repointReferences(dbs, otherId, keepId);
+  await (other.location === "ldco" ? dbs.ldco : dbs.reviews).collection("dances").deleteOne(q({ _id: otherId }));
+  if (stepsheetClash) await dbs.ldco.collection("dances").updateOne(q({ _id: keepId }), { $set: { stepsheet: result.doc.stepsheet } });
+  if (keep.location === "ldco-reviews" && result.location === "ldco") await dbs.reviews.collection("dances").deleteOne(q({ _id: keepId }));
+  return { keepId, removedId: otherId, location: result.location, repointed };
 }
 
 // src/contract/index.ts
@@ -1899,6 +2446,36 @@ export {
   MATCH_POINTS,
   LISTED_DANCES,
   searchDances,
+  LEVEL_QUALIFIERS,
+  DANCE_TYPES,
+  STATABLE,
+  GAPS,
+  gapsOf,
+  danceFilter,
+  CATALOGUE_PAGE_SIZE,
+  listDances,
+  catalogueStats,
+  cleanDancePatch,
+  yearFields,
+  filledStatable,
+  updateDance,
+  searchChoreographers,
+  findOrCreateChoreographer,
+  suggestKeep,
+  planCatalogueMerge,
+  listDanceCandidates,
+  keepApart,
+  mergeCandidate,
+  mergeDanceRecords,
+  normalizeName,
+  nameKeys,
+  findUnpublishedMatch,
+  mergedDance,
+  replaceId,
+  countReferences,
+  findDance,
+  planDanceMerge,
+  mergeDances,
   CONTRACT_VERSION,
   computeContractHash,
   computeCollectionHashes,

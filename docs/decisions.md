@@ -218,6 +218,20 @@ Decided 2026-11-13. Plan: line-dance-manager `docs/specs/linedance-integration.m
 - **Who writes it.** ldco-harvester (desk pushes, `rank`, track jobs), the admin's review pages (merges), copperknob-alert (new feed dances, and choreographers). Next: line-dance-manager reads it and adds dances, tracks and choreographers to it; then the DJ Feed and the admin.
 - **Order.** (1) This decision and contract 0.25.0 (nothing breaks: new collections only). (2) line-dance-manager reads `linedance` (server-side search and paging, reads by id through the resolver) and writes new dances there. (3) On the same day, copperknob-alert adds new dances only to `linedance` and writes to `ldco.dances` stop. (4) The DJ Feed and the admin move. (5) The `ldco` catalogue collections (`dances`, `tracks`, `choreographers`, `dance_tracks`, `pending_dances`) and `ldco-reviews.dances` are retired by a migration once nothing reads them.
 
+## 29. This app becomes the one data management UI, editing live; catalogue editing code is in the package
+Decided 2026-11-20. Plan: line-dance-manager-admin `docs/cms-plan.md` (the admin becomes an instructor CMS, so the tools that maintain the data leave it). Supersedes decision 28's "governed in its data desk".
+
+- **One data UI, editing live.** The admin's database tools (its Catalogue section on `linedance`; Dances, Incomplete, Possible Duplicates and Bulk Import on `ldco`) move here, and edit live directly, as they do in the admin now. The harvester's data desk (local working copy, then a push) is absorbed here and retired: its pages, and what it has that the admin doesn't (trace, operation log, search lab, search metrics), rewritten to edit live. Its push and conflict logic (`ldco-harvester/desk/lib/sync.ts`) isn't carried over; it's the model if bulk work ever needs a staging step again.
+- **Editing code is shared, in the package.** What both this UI and the admin's remaining review pages (Submitted and Unpublished Dances) need, so neither keeps a copy:
+  - `src/catalogue/edit.ts`: gaps, browse filter, stats, hand edits (`updateDance`, `cleanDancePatch`), `yearFields`, choreographer search and find-or-create.
+  - `src/catalogue/review.ts`: duplicate candidates and the lossless catalogue merge (`planCatalogueMerge`, `mergeDanceRecords`).
+  - `src/dances/merge.ts`: merging two `ldco` dances into one id, repointing every reference (decision 26; `planDanceMerge`, `mergeDances`).
+  - They take `WriteDbLike`, the editing counterpart of `DbLike`: plain interfaces any 6.x/7.x driver's `Db` fits (checked by a type test), with documents untyped. The two `planMerge` functions became `planCatalogueMerge` and `planDanceMerge`, and the admin's `PAGE_SIZE` is `CATALOGUE_PAGE_SIZE`, as one package exports them all.
+  - Fixed on the way: renaming a dance sets `nameWords` as well as `nameKey`, so the word search finds it by its new name.
+- **Search algorithms stay in the package** (`searchDances`, decision 28), so improving one improves every app. Next: the weights become parameters, so the search lab here can try new ones before the defaults change; the admin and the DJ Feed move to it from their own searches.
+- **Access.** Editing live from a deployed app needs a write connection (separate from the read one the browser uses) and real sign-in: `ldco-auth` with an admin role, as the admin will use (cms-plan phase 2). Until then it stays behind the shared password, the same protection the admin's tools have now.
+- **Contract 0.26.0.** Package code only; no collection changed, so no app has to update.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?

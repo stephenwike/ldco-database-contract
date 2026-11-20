@@ -3224,6 +3224,47 @@ interface CollectionLike {
 interface DbLike {
     collection(name: string): CollectionLike;
 }
+interface WriteCursorLike<T = any> {
+    sort(sort: SortSpec): WriteCursorLike<T>;
+    skip(n: number): WriteCursorLike<T>;
+    limit(n: number): WriteCursorLike<T>;
+    project(projection: Record<string, number>): WriteCursorLike<any>;
+    toArray(): Promise<T[]>;
+}
+interface WriteCollectionLike<T = any> {
+    find(filter: object, options?: {
+        projection?: Record<string, number>;
+    }): WriteCursorLike<T>;
+    findOne(filter: object, options?: {
+        projection?: Record<string, number>;
+    }): Promise<T | null>;
+    countDocuments(filter?: object): Promise<number>;
+    aggregate(pipeline: object[]): {
+        toArray(): Promise<any[]>;
+    };
+    insertOne(doc: any): Promise<unknown>;
+    updateOne(filter: object, update: object, options?: object): Promise<{
+        matchedCount: number;
+        modifiedCount: number;
+    }>;
+    updateMany(filter: object, update: object, options?: object): Promise<{
+        matchedCount: number;
+        modifiedCount: number;
+    }>;
+    replaceOne(filter: object, replacement: any, options?: object): Promise<unknown>;
+    deleteOne(filter: object): Promise<{
+        deletedCount: number;
+    }>;
+    deleteMany(filter: object): Promise<{
+        deletedCount: number;
+    }>;
+    bulkWrite(operations: any[]): Promise<unknown>;
+}
+/** A writable connection to one database (client.db(name)). */
+interface WriteDbLike {
+    readonly databaseName: string;
+    collection<T = any>(name: string): WriteCollectionLike<T>;
+}
 
 /** Lower case, accents and punctuation gone, "&" as "and", single spaces: "Boot Scootin' Boogie" → "boot scootin boogie". */
 declare const keyOf: (s: unknown) => string;
@@ -3232,7 +3273,7 @@ declare function nameKeyOf(name: string): string;
 /** The distinct words of a nameKey, stored as nameWords for the indexed word search. */
 declare const nameWordsOf: (nameKey: string) => string[];
 
-type Doc = {
+type Doc$1 = {
     _id: string;
     ldcoIds?: string[];
     mergedInto?: string;
@@ -3253,14 +3294,14 @@ declare const byAnyId: (ids: string[]) => {
     })[];
 };
 /** Each requested id with the record it means now, or null when it's gone. Prefers a record's own _id. */
-declare function matchIds<T extends Doc>(ids: string[], docs: T[]): Map<string, T | null>;
+declare function matchIds<T extends Doc$1>(ids: string[], docs: T[]): Map<string, T | null>;
 /**
  * The dances behind these ids (from lists, collections, lessons…), each id mapped to the dance it means now, or
  * null when it doesn't lead to any dance. projection: the fields to read (ldcoIds is always read).
  */
-declare function resolveDances<T extends Doc = Doc>(db: DbLike, ids: string[], projection?: Record<string, 1>): Promise<Map<string, T | null>>;
+declare function resolveDances<T extends Doc$1 = Doc$1>(db: DbLike, ids: string[], projection?: Record<string, 1>): Promise<Map<string, T | null>>;
 /** The choreographers behind these ids, following merges (mergedInto) to the person kept. */
-declare function resolveChoreographers<T extends Doc = Doc>(db: DbLike, ids: string[], projection?: Record<string, 1>): Promise<Map<string, T | null>>;
+declare function resolveChoreographers<T extends Doc$1 = Doc$1>(db: DbLike, ids: string[], projection?: Record<string, 1>): Promise<Map<string, T | null>>;
 
 declare const SEARCH_PAGE_SIZE = 50;
 type MatchKind = "id" | "name" | "start" | "word" | "choreographer" | "song";
@@ -3271,7 +3312,7 @@ declare const LISTED_DANCES: {
         $ne: boolean;
     };
 };
-type Dance = {
+type Dance$1 = {
     _id: string;
     rank?: number;
     [field: string]: any;
@@ -3315,7 +3356,427 @@ interface SearchResult<T> {
     /** Names of the page's choreographers, by id. */
     choreographers: Record<string, string>;
 }
-declare function searchDances<T extends Dance = Dance>(db: DbLike, options?: SearchOptions): Promise<SearchResult<T>>;
+declare function searchDances<T extends Dance$1 = Dance$1>(db: DbLike, options?: SearchOptions): Promise<SearchResult<T>>;
+
+type Filter = Record<string, unknown>;
+interface CatalogueStepsheet {
+    url: string;
+    lang: string | null;
+    title?: string;
+}
+interface CatalogueDance {
+    _id: string;
+    danceName: string;
+    nameKey: string;
+    /** The distinct words of nameKey, for the indexed word search (nameWordsOf) */
+    nameWords?: string[];
+    count: number | null;
+    wall: number | null;
+    levels: string[];
+    levelQualifier: string | null;
+    phrased: boolean;
+    danceType: string;
+    levelRaw: string | null;
+    choreographerIds: string[];
+    credit: string | null;
+    songArtists: {
+        song: string;
+        artist: string;
+    }[];
+    musicRaw: string | null;
+    bpm: number | null;
+    introCounts: number | null;
+    hasTags: boolean | null;
+    hasRestarts: boolean | null;
+    hasBridge: boolean | null;
+    choreographedIn: string | null;
+    published: string | null;
+    publishedSource: string | null;
+    /** No publish date, but on copperknob by then (YYYY-MM): old sheets from copperknob's alphabetical import. */
+    publishedBy?: string | null;
+    stepsheets: CatalogueStepsheet[];
+    ldcoIds?: string[];
+    mergedFrom?: string[];
+    editedFields?: string[];
+    /** Fields the stepsheet itself leaves blank ("-", empty, "Unknown"): not a gap we can fill. */
+    notStated?: string[];
+    /** A dance from an event that isn't on copperknob yet, so it has no stepsheet (ldco-reviews' unpublished dances) */
+    unpublished?: boolean;
+    editedAt?: Date;
+    editedBy?: string;
+}
+declare const LEVEL_QUALIFIERS: string[];
+declare const DANCE_TYPES: string[];
+/** Fields a stepsheet can leave blank on purpose. A dance with one listed in `notStated` isn't missing it. */
+declare const STATABLE: readonly ["level", "count", "wall", "choreographer", "choreographedIn"];
+/**
+ * A gap: `core` gaps decide whether a dance counts as complete; the others are weak spots worth browsing. A field the
+ * stepsheet doesn't state isn't a gap; those are listed under "Not stated on the stepsheet".
+ */
+declare const GAPS: {
+    id: string;
+    label: string;
+    core: boolean;
+    filter: Filter;
+}[];
+/** The core gaps a dance has, for showing on its row. */
+declare function gapsOf(d: Pick<CatalogueDance, "levels" | "count" | "wall" | "choreographerIds" | "songArtists" | "stepsheets" | "published" | "notStated"> & {
+    choreographedIn?: string | null;
+    unpublished?: boolean;
+}): string[];
+interface DanceQuery {
+    gaps?: string[];
+    q?: string;
+    lang?: string;
+    level?: string;
+    danceType?: string;
+    choreographerId?: string;
+}
+/** The Mongo filter for a browse query. A pasted URL finds that stepsheet; any other text matches the start of the name. */
+declare function danceFilter({ gaps, q, lang, level, danceType, choreographerId }: DanceQuery): Filter;
+declare const CATALOGUE_PAGE_SIZE = 50;
+declare function listDances(db: WriteDbLike, query: DanceQuery, page: number): Promise<{
+    total: number;
+    pageSize: number;
+    choreographers: {
+        [k: string]: string;
+    };
+    dances: {
+        gaps: string[];
+        _id: string;
+        danceName: string;
+        nameKey: string;
+        /** The distinct words of nameKey, for the indexed word search (nameWordsOf) */
+        nameWords?: string[];
+        count: number | null;
+        wall: number | null;
+        levels: string[];
+        levelQualifier: string | null;
+        phrased: boolean;
+        danceType: string;
+        levelRaw: string | null;
+        choreographerIds: string[];
+        credit: string | null;
+        songArtists: {
+            song: string;
+            artist: string;
+        }[];
+        musicRaw: string | null;
+        bpm: number | null;
+        introCounts: number | null;
+        hasTags: boolean | null;
+        hasRestarts: boolean | null;
+        hasBridge: boolean | null;
+        choreographedIn: string | null;
+        published: string | null;
+        publishedSource: string | null;
+        /** No publish date, but on copperknob by then (YYYY-MM): old sheets from copperknob's alphabetical import. */
+        publishedBy?: string | null;
+        stepsheets: CatalogueStepsheet[];
+        ldcoIds?: string[];
+        mergedFrom?: string[];
+        editedFields?: string[];
+        /** Fields the stepsheet itself leaves blank ("-", empty, "Unknown"): not a gap we can fill. */
+        notStated?: string[];
+        /** A dance from an event that isn't on copperknob yet, so it has no stepsheet (ldco-reviews' unpublished dances) */
+        unpublished?: boolean;
+        editedAt?: Date;
+        editedBy?: string;
+    }[];
+}>;
+declare function catalogueStats(db: WriteDbLike): Promise<{
+    total: number;
+    complete: number;
+    gaps: {
+        id: string;
+        label: string;
+        core: boolean;
+        count: number;
+    }[];
+    openMergeCandidates: number;
+    choreographers: number;
+    languages: {
+        id: any;
+        count: any;
+    }[];
+    levels: {
+        id: string;
+        name: string;
+        aliases: string[];
+        count: any;
+    }[];
+}>;
+type Clean = {
+    ok: true;
+    set: Partial<CatalogueDance>;
+} | {
+    ok: false;
+    error: string;
+};
+/** Checks a hand edit. Only known fields get through, and each must be valid; anything else is refused, not ignored. */
+declare function cleanDancePatch(body: unknown, levelIds: string[]): Clean;
+/**
+ * The fields apps filter and sort dances by, from a dance's own dates: the choreographed date first, then the publish
+ * date. dateKey is the end of the period, sortable ("2021" -> "2021-12-31"), as ldco-database decision 22 sorts.
+ * A copy of ldco-harvester's scripts/lib/publishDates.mjs yearFields: change all three (copperknob-alert has one too).
+ */
+declare function yearFields(d: {
+    choreographedIn?: string | null;
+    published?: string | null;
+}): {
+    year: number | null;
+    yearFrom: "choreographed" | "published" | null;
+    dateKey: string | null;
+};
+/** The statable fields an edit gives a value to. */
+declare function filledStatable(changed: Partial<CatalogueDance>): string[];
+/** Saves a hand edit: only fields that really changed, each noted in `editedFields`. */
+declare function updateDance(db: WriteDbLike, id: string, body: unknown, by: string): Promise<{
+    status: number;
+    error: string;
+    dance?: undefined;
+    changed?: undefined;
+} | {
+    status: number;
+    dance: {
+        gaps: string[];
+        _id: string;
+        danceName: string;
+        nameKey: string;
+        /** The distinct words of nameKey, for the indexed word search (nameWordsOf) */
+        nameWords?: string[];
+        count: number | null;
+        wall: number | null;
+        levels: string[];
+        levelQualifier: string | null;
+        phrased: boolean;
+        danceType: string;
+        levelRaw: string | null;
+        choreographerIds: string[];
+        credit: string | null;
+        songArtists: {
+            song: string;
+            artist: string;
+        }[];
+        musicRaw: string | null;
+        bpm: number | null;
+        introCounts: number | null;
+        hasTags: boolean | null;
+        hasRestarts: boolean | null;
+        hasBridge: boolean | null;
+        choreographedIn: string | null;
+        published: string | null;
+        publishedSource: string | null;
+        /** No publish date, but on copperknob by then (YYYY-MM): old sheets from copperknob's alphabetical import. */
+        publishedBy?: string | null;
+        stepsheets: CatalogueStepsheet[];
+        ldcoIds?: string[];
+        mergedFrom?: string[];
+        editedFields?: string[];
+        /** Fields the stepsheet itself leaves blank ("-", empty, "Unknown"): not a gap we can fill. */
+        notStated?: string[];
+        /** A dance from an event that isn't on copperknob yet, so it has no stepsheet (ldco-reviews' unpublished dances) */
+        unpublished?: boolean;
+        editedAt?: Date;
+        editedBy?: string;
+    };
+    changed: string[];
+    error?: undefined;
+}>;
+declare function searchChoreographers(db: WriteDbLike, q: string): Promise<{
+    _id: string;
+    name: string;
+    aliases: string[];
+}[]>;
+/** Finds a choreographer by name or alias, or creates one. Never makes a second record for a name it already knows. */
+declare function findOrCreateChoreographer(db: WriteDbLike, rawName: unknown, newId: string): Promise<{
+    error: string;
+    choreographer?: undefined;
+    created?: undefined;
+} | {
+    choreographer: {
+        _id: string;
+        name: string;
+    };
+    created: boolean;
+    error?: undefined;
+}>;
+
+type Dance = CatalogueDance & {
+    tracks?: {
+        trackId: string;
+        recordingId?: string;
+        versionNote?: string;
+    }[];
+    unpublished?: boolean;
+    publishedBy?: string | null;
+};
+/** The record to keep by default: one with an untranslated stepsheet, then the most facts, then the oldest stepsheet id. */
+declare function suggestKeep(dances: Dance[]): string | null;
+/** What the record kept changes to when the others merge into it. Pure, so it can be tested. */
+declare function planCatalogueMerge(keep: Dance, others: Dance[]): {
+    set: Record<string, unknown>;
+    addIds: string[];
+};
+/** A page of open candidates with their dances, the reasons with counts, and the suggested record to keep. */
+declare function listDanceCandidates(db: WriteDbLike, { reason, page, size }: {
+    reason?: string;
+    page?: number;
+    size?: number;
+}): Promise<{
+    reasons: {
+        reason: any;
+        n: any;
+    }[];
+    total: number;
+    pageSize: number;
+    candidates: {
+        _id: string;
+        reason: string;
+        missing: string[];
+        suggestedKeep: string | null;
+        dances: {
+            choreographers: string[];
+            _id: string;
+            danceName: string;
+            nameKey: string;
+            nameWords?: string[];
+            count: number | null;
+            wall: number | null;
+            levels: string[];
+            levelQualifier: string | null;
+            phrased: boolean;
+            danceType: string;
+            levelRaw: string | null;
+            choreographerIds: string[];
+            credit: string | null;
+            songArtists: {
+                song: string;
+                artist: string;
+            }[];
+            musicRaw: string | null;
+            bpm: number | null;
+            introCounts: number | null;
+            hasTags: boolean | null;
+            hasRestarts: boolean | null;
+            hasBridge: boolean | null;
+            choreographedIn: string | null;
+            published: string | null;
+            publishedSource: string | null;
+            publishedBy?: string | null;
+            stepsheets: CatalogueStepsheet[];
+            ldcoIds?: string[];
+            mergedFrom?: string[];
+            editedFields?: string[];
+            notStated?: string[];
+            unpublished?: boolean;
+            editedAt?: Date;
+            editedBy?: string;
+            tracks?: {
+                trackId: string;
+                recordingId?: string;
+                versionNote?: string;
+            }[];
+        }[];
+    }[];
+}>;
+/** "Different dances": the candidate is rejected and never suggested again. */
+declare function keepApart(db: WriteDbLike, candidateId: string, by: string): Promise<{
+    status: number;
+    error?: undefined;
+} | {
+    status: number;
+    error: string;
+}>;
+/** "Same dance": the dances in mergeIds merge into keepId, losslessly. Only dances of this candidate. */
+declare function mergeCandidate(db: WriteDbLike, candidateId: string, keepId: string, mergeIds: string[], by: string): Promise<{
+    status: number;
+    error: string;
+    kept?: undefined;
+    merged?: undefined;
+    remaining?: undefined;
+} | {
+    status: number;
+    kept: string;
+    merged: number;
+    remaining: number;
+    error?: undefined;
+}>;
+/**
+ * Merges `others` into `keep`, losslessly: each removed record is saved whole in dance_merges first (with what the kept
+ * record gained, so lib/undo.ts can undo it exactly), the kept record fills its blanks from them and lists their ids
+ * in ldcoIds and mergedFrom (so anything that stored those ids still finds the dance), and open candidates that
+ * named a removed record now name the kept one. Returns the time it was recorded under.
+ */
+declare function mergeDanceRecords(db: WriteDbLike, keep: Dance, others: Dance[], by: string, rule: string, candidateId?: string): Promise<Date>;
+
+type Doc = Record<string, any>;
+interface MergeDbs {
+    ldco: WriteDbLike;
+    reviews: WriteDbLike;
+    lessons: WriteDbLike;
+    feed: WriteDbLike;
+    events: WriteDbLike;
+    bld: WriteDbLike;
+}
+type DanceLocation = "ldco" | "ldco-reviews";
+interface LocatedDance {
+    doc: Doc;
+    location: DanceLocation;
+}
+declare function normalizeName(s: string): string;
+/** The name with and without anything in brackets: "Pull It On Over (Park)" also matches "Pull It On Over". */
+declare function nameKeys(name: string): string[];
+interface UnpublishedCandidate {
+    _id: string;
+    danceName: string;
+    choreographers?: string[];
+    unresolvedChoreographers?: string[];
+}
+/**
+ * The one unpublished dance a newly published dance should take the id of: same name key and a shared choreographer
+ * (an id, or a name in unresolvedChoreographers). Several qualifying, or none, means no match. Same rule as
+ * copperknob-alert lib/unpublished.ts.
+ */
+declare function findUnpublishedMatch(dance: {
+    title: string;
+    choreographerIds: string[];
+    choreographerNames: string[];
+}, candidates: UnpublishedCandidate[]): UnpublishedCandidate | undefined;
+/**
+ * The kept dance's document after the merge. The published dance's data wins over an unpublished one's (copperknob is
+ * the source of truth); with both published or both unpublished, the kept dance's data wins and gaps are filled from
+ * the other. Every stepsheet either had is kept, the primary one first.
+ */
+declare function mergedDance(keep: LocatedDance, other: LocatedDance): LocatedDance;
+/** `ids` with `from` replaced by `to`, keeping the first position of each id and dropping repeats. */
+declare function replaceId(ids: string[], from: string, to: string): string[];
+interface ReferenceCount {
+    collection: string;
+    count: number;
+}
+/** How many documents reference the dance, per collection (only those with any). */
+declare function countReferences(dbs: MergeDbs, danceId: string): Promise<ReferenceCount[]>;
+/** The dance with this id, published (ldco.dances) or not (ldco-reviews.dances), or null. */
+declare function findDance(dbs: MergeDbs, id: string): Promise<LocatedDance | null>;
+interface DanceMergePlan {
+    keep: LocatedDance;
+    other: LocatedDance;
+    result: LocatedDance;
+    references: ReferenceCount[];
+}
+declare function planDanceMerge(dbs: MergeDbs, keepId: string, otherId: string): Promise<DanceMergePlan>;
+/**
+ * Merges `otherId` into `keepId`. The steps are ordered so an interruption never loses the dance: the kept document
+ * is written first, references are repointed, and only then is the other dance deleted. Running it again after an
+ * interruption finishes the job as long as the other dance still exists.
+ */
+declare function mergeDances(dbs: MergeDbs, keepId: string, otherId: string): Promise<{
+    keepId: string;
+    removedId: string;
+    location: DanceLocation;
+    repointed: ReferenceCount[];
+}>;
 
 declare const CONTRACT_VERSION: string;
 declare function computeContractHash(): string;
@@ -3324,4 +3785,4 @@ declare const CONTRACT_HASH: string;
 /** Locked hash of each collection, keyed "<database>.<collection>". */
 declare const COLLECTION_HASHES: Record<string, string>;
 
-export { type BldEventTemplates, BldEventTemplatesSchema, type BldEventTypes, BldEventTypesSchema, type BldEvents, BldEventsSchema, type BldFrequencies, BldFrequenciesSchema, type BldLessons, BldLessonsSchema, COLLECTION_HASHES, CONTRACT_HASH, CONTRACT_VERSION, type CollectionLike, type CopperknobAlertProcessedItems, CopperknobAlertProcessedItemsSchema, type CopperknobAlertSyncMetadata, CopperknobAlertSyncMetadataSchema, type CopperknobAlertWatchRules, CopperknobAlertWatchRulesSchema, type CursorLike, type DbLike, type DjfeedAttendeeNotifications, DjfeedAttendeeNotificationsSchema, type DjfeedBeatBalances, DjfeedBeatBalancesSchema, type DjfeedBeatTransactions, DjfeedBeatTransactionsSchema, type DjfeedDancerFavoriteSongs, DjfeedDancerFavoriteSongsSchema, type DjfeedDjDirectMessages, DjfeedDjDirectMessagesSchema, type DjfeedDjMessages, DjfeedDjMessagesSchema, type DjfeedDjNotifications, DjfeedDjNotificationsSchema, type DjfeedDjProfiles, DjfeedDjProfilesSchema, type DjfeedDjRequesterNicknames, DjfeedDjRequesterNicknamesSchema, type DjfeedDjRequests, DjfeedDjRequestsSchema, type DjfeedDjSessions, DjfeedDjSessionsSchema, type DjfeedDjWalletLocks, DjfeedDjWalletLocksSchema, type DjfeedDjWalletTransactions, DjfeedDjWalletTransactionsSchema, type DjfeedFeedLessons, DjfeedFeedLessonsSchema, type DjfeedFreeAccess, DjfeedFreeAccessSchema, type DjfeedHostDancers, DjfeedHostDancersSchema, type DjfeedLessonChecks, DjfeedLessonChecksSchema, type DjfeedRequesterHistory, DjfeedRequesterHistorySchema, type DjfeedSessionAttendance, DjfeedSessionAttendanceSchema, type DjfeedSessionReports, DjfeedSessionReportsSchema, type DjfeedSessionTransactions, DjfeedSessionTransactionsSchema, type DjfeedStripeEvents, DjfeedStripeEventsSchema, LISTED_DANCES, type LdcoChoreographers, LdcoChoreographersSchema, type LdcoDanceCollections, LdcoDanceCollectionsSchema, type LdcoDanceTracks, LdcoDanceTracksSchema, type LdcoDances, LdcoDancesSchema, type LdcoEvents, type LdcoEventsEventRegistrations, LdcoEventsEventRegistrationsSchema, type LdcoEventsEvents, LdcoEventsEventsSchema, LdcoEventsSchema, type LdcoFriendRequests, LdcoFriendRequestsSchema, type LdcoInstructorVenues, LdcoInstructorVenuesSchema, type LdcoInstructors, LdcoInstructorsSchema, type LdcoLessons, type LdcoLessonsEventInstructorRequests, LdcoLessonsEventInstructorRequestsSchema, type LdcoLessonsEventInstructors, LdcoLessonsEventInstructorsSchema, type LdcoLessonsEventTemplates, LdcoLessonsEventTemplatesSchema, type LdcoLessonsEventTypes, LdcoLessonsEventTypesSchema, type LdcoLessonsEvents, LdcoLessonsEventsSchema, type LdcoLessonsFrequencies, LdcoLessonsFrequenciesSchema, type LdcoLessonsLessons, LdcoLessonsLessonsSchema, LdcoLessonsSchema, type LdcoLoginEvents, LdcoLoginEventsSchema, type LdcoOauthAuthCodes, LdcoOauthAuthCodesSchema, type LdcoPendingDances, LdcoPendingDancesSchema, type LdcoReviewsChoreographers, LdcoReviewsChoreographersSchema, type LdcoReviewsDances, LdcoReviewsDancesSchema, type LdcoReviewsInstructorVenues, LdcoReviewsInstructorVenuesSchema, type LdcoReviewsInstructors, LdcoReviewsInstructorsSchema, type LdcoReviewsJoinChoreographerAppeals, LdcoReviewsJoinChoreographerAppealsSchema, type LdcoReviewsLessons, LdcoReviewsLessonsSchema, type LdcoReviewsReports, LdcoReviewsReportsSchema, type LdcoReviewsTracks, LdcoReviewsTracksSchema, type LdcoReviewsVenueUsers, LdcoReviewsVenueUsersSchema, type LdcoReviewsVenues, LdcoReviewsVenuesSchema, type LdcoReviewsVerifyUserInstructor, LdcoReviewsVerifyUserInstructorSchema, type LdcoTracks, LdcoTracksSchema, type LdcoUserFavoriteDances, LdcoUserFavoriteDancesSchema, type LdcoUserFlaggedDances, LdcoUserFlaggedDancesSchema, type LdcoUserFollowCollections, LdcoUserFollowCollectionsSchema, type LdcoUserFollows, LdcoUserFollowsSchema, type LdcoUserFriends, LdcoUserFriendsSchema, type LdcoUserKnownDances, LdcoUserKnownDancesSchema, type LdcoUserLessons, LdcoUserLessonsSchema, type LdcoUserRefreshDances, LdcoUserRefreshDancesSchema, type LdcoUserVenues, LdcoUserVenuesSchema, type LdcoUsers, LdcoUsersSchema, type LdcoVenueCheckins, LdcoVenueCheckinsSchema, type LdcoVenueUsers, LdcoVenueUsersSchema, type LdcoVenues, LdcoVenuesSchema, type LinedanceChoreographerPairReviews, LinedanceChoreographerPairReviewsSchema, type LinedanceChoreographers, LinedanceChoreographersSchema, type LinedanceDanceMergeUndos, LinedanceDanceMergeUndosSchema, type LinedanceDanceMerges, LinedanceDanceMergesSchema, type LinedanceDances, LinedanceDancesSchema, type LinedanceLevels, LinedanceLevelsSchema, type LinedanceMergeCandidates, LinedanceMergeCandidatesSchema, type LinedanceRecordings, LinedanceRecordingsSchema, type LinedanceTrackAliases, LinedanceTrackAliasesSchema, type LinedanceTrackLinks, LinedanceTrackLinksSchema, type LinedanceTrackMergeCandidates, LinedanceTrackMergeCandidatesSchema, type LinedanceTrackMergeUndos, LinedanceTrackMergeUndosSchema, type LinedanceTrackMerges, LinedanceTrackMergesSchema, type LinedanceTracks, LinedanceTracksSchema, MATCH_POINTS, type MatchKind, type MusicCatalogTracks, MusicCatalogTracksSchema, SEARCH_PAGE_SIZE, type Scope, type SearchOptions, type SearchQuery, type SearchResult, type SortSpec, byAnyId, collections, computeCollectionHashes, computeContractHash, inScope, keyOf, matchIds, nameKeyOf, nameWordsOf, resolveChoreographers, resolveDances, scopeFromPackageJson, searchDances, unmatchedEntries };
+export { type BldEventTemplates, BldEventTemplatesSchema, type BldEventTypes, BldEventTypesSchema, type BldEvents, BldEventsSchema, type BldFrequencies, BldFrequenciesSchema, type BldLessons, BldLessonsSchema, CATALOGUE_PAGE_SIZE, COLLECTION_HASHES, CONTRACT_HASH, CONTRACT_VERSION, type CatalogueDance, type CatalogueStepsheet, type CollectionLike, type CopperknobAlertProcessedItems, CopperknobAlertProcessedItemsSchema, type CopperknobAlertSyncMetadata, CopperknobAlertSyncMetadataSchema, type CopperknobAlertWatchRules, CopperknobAlertWatchRulesSchema, type CursorLike, DANCE_TYPES, type DanceLocation, type DanceMergePlan, type DanceQuery, type DbLike, type DjfeedAttendeeNotifications, DjfeedAttendeeNotificationsSchema, type DjfeedBeatBalances, DjfeedBeatBalancesSchema, type DjfeedBeatTransactions, DjfeedBeatTransactionsSchema, type DjfeedDancerFavoriteSongs, DjfeedDancerFavoriteSongsSchema, type DjfeedDjDirectMessages, DjfeedDjDirectMessagesSchema, type DjfeedDjMessages, DjfeedDjMessagesSchema, type DjfeedDjNotifications, DjfeedDjNotificationsSchema, type DjfeedDjProfiles, DjfeedDjProfilesSchema, type DjfeedDjRequesterNicknames, DjfeedDjRequesterNicknamesSchema, type DjfeedDjRequests, DjfeedDjRequestsSchema, type DjfeedDjSessions, DjfeedDjSessionsSchema, type DjfeedDjWalletLocks, DjfeedDjWalletLocksSchema, type DjfeedDjWalletTransactions, DjfeedDjWalletTransactionsSchema, type DjfeedFeedLessons, DjfeedFeedLessonsSchema, type DjfeedFreeAccess, DjfeedFreeAccessSchema, type DjfeedHostDancers, DjfeedHostDancersSchema, type DjfeedLessonChecks, DjfeedLessonChecksSchema, type DjfeedRequesterHistory, DjfeedRequesterHistorySchema, type DjfeedSessionAttendance, DjfeedSessionAttendanceSchema, type DjfeedSessionReports, DjfeedSessionReportsSchema, type DjfeedSessionTransactions, DjfeedSessionTransactionsSchema, type DjfeedStripeEvents, DjfeedStripeEventsSchema, GAPS, LEVEL_QUALIFIERS, LISTED_DANCES, type LdcoChoreographers, LdcoChoreographersSchema, type LdcoDanceCollections, LdcoDanceCollectionsSchema, type LdcoDanceTracks, LdcoDanceTracksSchema, type LdcoDances, LdcoDancesSchema, type LdcoEvents, type LdcoEventsEventRegistrations, LdcoEventsEventRegistrationsSchema, type LdcoEventsEvents, LdcoEventsEventsSchema, LdcoEventsSchema, type LdcoFriendRequests, LdcoFriendRequestsSchema, type LdcoInstructorVenues, LdcoInstructorVenuesSchema, type LdcoInstructors, LdcoInstructorsSchema, type LdcoLessons, type LdcoLessonsEventInstructorRequests, LdcoLessonsEventInstructorRequestsSchema, type LdcoLessonsEventInstructors, LdcoLessonsEventInstructorsSchema, type LdcoLessonsEventTemplates, LdcoLessonsEventTemplatesSchema, type LdcoLessonsEventTypes, LdcoLessonsEventTypesSchema, type LdcoLessonsEvents, LdcoLessonsEventsSchema, type LdcoLessonsFrequencies, LdcoLessonsFrequenciesSchema, type LdcoLessonsLessons, LdcoLessonsLessonsSchema, LdcoLessonsSchema, type LdcoLoginEvents, LdcoLoginEventsSchema, type LdcoOauthAuthCodes, LdcoOauthAuthCodesSchema, type LdcoPendingDances, LdcoPendingDancesSchema, type LdcoReviewsChoreographers, LdcoReviewsChoreographersSchema, type LdcoReviewsDances, LdcoReviewsDancesSchema, type LdcoReviewsInstructorVenues, LdcoReviewsInstructorVenuesSchema, type LdcoReviewsInstructors, LdcoReviewsInstructorsSchema, type LdcoReviewsJoinChoreographerAppeals, LdcoReviewsJoinChoreographerAppealsSchema, type LdcoReviewsLessons, LdcoReviewsLessonsSchema, type LdcoReviewsReports, LdcoReviewsReportsSchema, type LdcoReviewsTracks, LdcoReviewsTracksSchema, type LdcoReviewsVenueUsers, LdcoReviewsVenueUsersSchema, type LdcoReviewsVenues, LdcoReviewsVenuesSchema, type LdcoReviewsVerifyUserInstructor, LdcoReviewsVerifyUserInstructorSchema, type LdcoTracks, LdcoTracksSchema, type LdcoUserFavoriteDances, LdcoUserFavoriteDancesSchema, type LdcoUserFlaggedDances, LdcoUserFlaggedDancesSchema, type LdcoUserFollowCollections, LdcoUserFollowCollectionsSchema, type LdcoUserFollows, LdcoUserFollowsSchema, type LdcoUserFriends, LdcoUserFriendsSchema, type LdcoUserKnownDances, LdcoUserKnownDancesSchema, type LdcoUserLessons, LdcoUserLessonsSchema, type LdcoUserRefreshDances, LdcoUserRefreshDancesSchema, type LdcoUserVenues, LdcoUserVenuesSchema, type LdcoUsers, LdcoUsersSchema, type LdcoVenueCheckins, LdcoVenueCheckinsSchema, type LdcoVenueUsers, LdcoVenueUsersSchema, type LdcoVenues, LdcoVenuesSchema, type LinedanceChoreographerPairReviews, LinedanceChoreographerPairReviewsSchema, type LinedanceChoreographers, LinedanceChoreographersSchema, type LinedanceDanceMergeUndos, LinedanceDanceMergeUndosSchema, type LinedanceDanceMerges, LinedanceDanceMergesSchema, type LinedanceDances, LinedanceDancesSchema, type LinedanceLevels, LinedanceLevelsSchema, type LinedanceMergeCandidates, LinedanceMergeCandidatesSchema, type LinedanceRecordings, LinedanceRecordingsSchema, type LinedanceTrackAliases, LinedanceTrackAliasesSchema, type LinedanceTrackLinks, LinedanceTrackLinksSchema, type LinedanceTrackMergeCandidates, LinedanceTrackMergeCandidatesSchema, type LinedanceTrackMergeUndos, LinedanceTrackMergeUndosSchema, type LinedanceTrackMerges, LinedanceTrackMergesSchema, type LinedanceTracks, LinedanceTracksSchema, type LocatedDance, MATCH_POINTS, type MatchKind, type MergeDbs, type MusicCatalogTracks, MusicCatalogTracksSchema, type ReferenceCount, SEARCH_PAGE_SIZE, STATABLE, type Scope, type SearchOptions, type SearchQuery, type SearchResult, type SortSpec, type UnpublishedCandidate, type WriteCollectionLike, type WriteCursorLike, type WriteDbLike, byAnyId, catalogueStats, cleanDancePatch, collections, computeCollectionHashes, computeContractHash, countReferences, danceFilter, filledStatable, findDance, findOrCreateChoreographer, findUnpublishedMatch, gapsOf, inScope, keepApart, keyOf, listDanceCandidates, listDances, matchIds, mergeCandidate, mergeDanceRecords, mergeDances, mergedDance, nameKeyOf, nameKeys, nameWordsOf, normalizeName, planCatalogueMerge, planDanceMerge, replaceId, resolveChoreographers, resolveDances, scopeFromPackageJson, searchChoreographers, searchDances, suggestKeep, unmatchedEntries, updateDance, yearFields };
