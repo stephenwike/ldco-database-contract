@@ -161,3 +161,15 @@ ul.plain li { padding: 4px 0; }
 .bar { display: block; height: 100%; }
 .bar-usage { background: #2f5fd0; } .bar-views { background: #d0452f; } .bar-languages { background: #2f9e6a; } .bar-recency { background: #c99a1d; } .bar-complete { background: #8a62c9; }
 @media (max-width: 600px) { .slider { grid-template-columns: 1fr 52px; } .slider span { grid-column: 1 / -1; } }
+
+/* Record pages (decision 29) */
+dl.facts { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 6px 14px; margin: 0; font-size: 14px; }
+dl.facts dt { color: var(--muted); }
+dl.facts dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 600px) { dl.facts { grid-template-columns: 1fr; } dl.facts dd { margin-bottom: 6px; } }
+.record-row { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+.record-row > div { flex: 1; min-width: 220px; }
+.record-search { display: flex; gap: 8px; margin: 0 0 16px; flex-wrap: wrap; }
+.record-search input { flex: 1; min-width: 220px; }
+.record-search input, .record-search button, .record-action button { font: inherit; padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); }
+.record-search button, .record-action button { cursor: pointer; }

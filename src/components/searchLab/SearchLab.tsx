@@ -185,7 +185,7 @@ function LabRow({ d, n, s, open, toggle }: { d: Row; n: number; s: LabSettings; 
         <td className="num muted">{n}</td>
         <td className="num"><b>{d.score}</b></td>
         <td>
-          <Link href={`/catalogue?q=${encodeURIComponent(d.danceName)}`} onClick={(e) => e.stopPropagation()}>{d.danceName}</Link>
+          <Link href={`/catalogue/dances/${d._id}`} onClick={(e) => e.stopPropagation()}>{d.danceName}</Link>
           <div className="desc">{d.choreographers}{d.year ? ` · ${d.year}` : ""}</div>
         </td>
         <td className="num">{d.matchPoints ? <>+{d.matchPoints}<div className="desc">{d.matched.join(", ")}</div></> : <span className="muted">—</span>}</td>

@@ -12,6 +12,8 @@ const TABS = [
   { href: "/catalogue/track-duplicates", label: "Duplicate tracks" },
   { href: "/catalogue/choreographer-duplicates", label: "Duplicate choreographers" },
   { href: "/catalogue/merges", label: "Merge history" },
+  { href: "/catalogue/choreographers", label: "Choreographers" },
+  { href: "/catalogue/tracks", label: "Tracks" },
 ];
 
 export default function CatalogueLayout({ children }: { children: React.ReactNode }) {

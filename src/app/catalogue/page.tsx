@@ -344,7 +344,8 @@ function DanceRow({ dance, names, levels, open, onToggle, onSaved, onChoreograph
           <button key={id} type="button" onClick={() => onChoreographer(id, names[id] ?? id)} title="Show this choreographer's dances" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: "var(--accent-text)", fontSize: 12 }}>{names[id] ?? id}</button>
         ))}
         {!dance.choreographerIds.length && dance.credit && <span style={{ color: "var(--text-tertiary)" }}>{dance.credit}</span>}
-        {firstSheet && <a href={firstSheet} target="_blank" rel="noreferrer" style={{ color: "var(--text-tertiary)", marginLeft: "auto" }}>Stepsheet ↗</a>}
+        <a href={`/catalogue/dances/${dance._id}`} style={{ color: "var(--text-tertiary)", marginLeft: "auto" }}>Everything about it</a>
+        {firstSheet && <a href={firstSheet} target="_blank" rel="noreferrer" style={{ color: "var(--text-tertiary)" }}>Stepsheet ↗</a>}
       </div>
       {open && <DanceEditor dance={dance} names={names} levels={levels} onSaved={onSaved} onClose={onToggle} />}
     </div>

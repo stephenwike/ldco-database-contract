@@ -85,7 +85,7 @@ function CandidateCard({ c, onDone }: { c: Candidate; onDone: (message: string) 
               <div style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{when(d)}{d.unpublished ? " · unpublished" : ""}{d.editedFields?.length ? " · fixed by hand" : ""}</div>
               <div style={{ fontSize: 12, marginTop: 4, display: "flex", flexWrap: "wrap", gap: 6 }}>
                 {d.stepsheets.map((s) => <a key={s.url} href={s.url} target="_blank" rel="noreferrer" style={{ color: "var(--accent-text)" }}>{sheet(s)}{s.lang ? ` (${s.lang})` : ""} ↗</a>)}
-                <Link href={`/catalogue?q=${encodeURIComponent(d.danceName)}`} target="_blank" style={{ color: "var(--text-tertiary)" }}>Catalogue ↗</Link>
+                <Link href={`/catalogue/dances/${d._id}`} target="_blank" style={{ color: "var(--text-tertiary)" }}>Everything about it ↗</Link>
               </div>
               <div style={{ display: "flex", gap: 12, marginTop: 8, fontSize: 12, color: "var(--text-primary)" }}>
                 <label style={{ display: "flex", gap: 4, alignItems: "center" }}>
