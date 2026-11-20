@@ -16,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/collections">Collections</Link>
             <Link href="/relationships">Relationships</Link>
             <Link href="/migrations">Migrations</Link>
+            <Link href="/catalogue">Catalogue</Link>
             <span className="version">contract v{CONTRACT_VERSION}</span>
           </nav>
         </header>

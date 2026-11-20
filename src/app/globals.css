@@ -119,3 +119,29 @@ ul.plain { list-style: none; padding: 0; margin: 0; }
 ul.plain li { padding: 4px 0; }
 
 .pager { display: flex; gap: 16px; margin-top: 12px; }
+
+/* Data tools (decision 29): pages moved from line-dance-manager-admin use its colour names; these map them onto this
+   app's, so they follow light and dark mode. */
+.tools {
+  --surface-raised: var(--surface-2);
+  --text-primary: var(--text);
+  --text-secondary: var(--muted);
+  --text-tertiary: var(--muted);
+  --border-strong: var(--muted);
+  --accent-hover: color-mix(in srgb, var(--accent) 85%, black);
+  --accent-subtle: color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-text: var(--accent);
+  --success: var(--ok);
+  --success-subtle: var(--ok-bg);
+  --success-text: var(--ok);
+  --warning: var(--warn);
+  --warning-subtle: var(--warn-bg);
+  --warning-text: var(--warn);
+  --danger: var(--bad);
+  --danger-hover: color-mix(in srgb, var(--bad) 85%, black);
+  --danger-subtle: var(--bad-bg);
+  --danger-text: var(--bad);
+}
+.tools input, .tools select, .tools textarea, .tools button { font: inherit; color: inherit; }
+.tools .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 700px) { .tools .grid-2 { grid-template-columns: 1fr; } }

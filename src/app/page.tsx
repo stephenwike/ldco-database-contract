@@ -14,7 +14,7 @@ export default function Home() {
       <h1>LDCO Database</h1>
       <p className="lede">
         The contract for the shared MongoDB: {keys.length} collections across {databases.size} databases, organised by
-        purpose. Everything here is read-only.
+        purpose. Browsing is read-only; the Catalogue tools edit the live catalogue.
       </p>
 
       <div className="cards" style={{ marginBottom: 24 }}>
@@ -33,6 +33,10 @@ export default function Home() {
         <Link className="card" href="/migrations">
           <div className="stat">⇄</div>
           <p>Migrations: status and dry runs.</p>
+        </Link>
+        <Link className="card" href="/catalogue">
+          <div className="stat">✎</div>
+          <p>Catalogue: fix dances, review duplicates, audit and undo merges (live).</p>
         </Link>
       </div>
 
