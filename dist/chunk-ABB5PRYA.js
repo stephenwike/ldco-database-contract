@@ -99,7 +99,7 @@ var collections = {
 };
 
 // package.json
-var version = "0.26.0";
+var version = "0.27.0";
 
 // src/contract/collections/bld/event_templates.ts
 import { z as z2 } from "zod";
@@ -1701,6 +1701,7 @@ var LISTED_DANCES = { unpublished: { $ne: true } };
 var wordStarts = (w) => ({ $or: [{ nameWords: new RegExp(`^${esc(w)}`) }, { nameWords: null, nameKey: new RegExp(`(^| )${esc(w)}`) }] });
 async function searchDances(db, options = {}) {
   const { q: q2 = "", filter = {}, page: rawPage = 0, pageSize = SEARCH_PAGE_SIZE, projection, trace } = options;
+  const points = { ...MATCH_POINTS, ...options.matchPoints };
   const dances = db.collection("dances");
   const note = (t) => trace?.push(t);
   const text = q2.trim();
@@ -1753,9 +1754,9 @@ async function searchDances(db, options = {}) {
       if (found.length === TIER_LIMIT) more = true;
       for (const d of found) {
         const id = String(d._id);
-        const points = MATCH_POINTS[kind] + (d.rank ?? 0);
-        if ((score.get(id) ?? -1) < points) {
-          score.set(id, points);
+        const scored = points[kind] + (d.rank ?? 0);
+        if ((score.get(id) ?? -1) < scored) {
+          score.set(id, scored);
           kindOf.set(id, kind);
         }
       }
@@ -2161,6 +2162,78 @@ async function mergeDanceRecords(db, keep, others, by, rule, candidateId) {
   return now;
 }
 
+// src/catalogue/rank.ts
+var RANK_WEIGHTS = { usage: 0.4, views: 0.3, languages: 0.12, recency: 0.12, complete: 0.06 };
+var RANK_USAGE_POINTS = { lesson: 3, feedLesson: 3, requested: 1, played: 1, known: 1, favorite: 2, refresh: 1, interested: 1, collection: 1 };
+var RANK_RECENT_MONTHS = 18;
+var RANK_CORE_FACTS = ["level", "count", "wall", "choreographer", "song", "stepsheet"];
+var RANK_CAP_QUANTILE = 0.995;
+var RANK_LANGUAGES_CAP_MIN = 5;
+var clamp = (x) => Math.max(0, Math.min(1, x));
+var logScale = (n, cap) => n && n > 0 && cap > 0 ? clamp(Math.log1p(n) / Math.log1p(cap)) : 0;
+function capOf(values, q2 = RANK_CAP_QUANTILE) {
+  const pos = values.filter((v) => v > 0).sort((a, b) => a - b);
+  return pos.length ? pos[Math.min(pos.length - 1, Math.floor(q2 * (pos.length - 1)))] : 0;
+}
+function monthsOld(dateKey, now = /* @__PURE__ */ new Date()) {
+  const t = Date.parse(dateKey ?? "");
+  return Number.isNaN(t) ? null : Math.max(0, (now.getTime() - t) / (30.44 * 864e5));
+}
+var recencyOf = (months, recentMonths = RANK_RECENT_MONTHS) => months == null ? 0 : clamp(1 - months / Math.max(1, recentMonths));
+function coreGaps(d) {
+  const stated = (f) => !(d.notStated ?? []).includes(f);
+  const gaps = [];
+  if (!d.levels?.length && stated("level")) gaps.push("level");
+  if (d.count == null && stated("count")) gaps.push("count");
+  if (d.wall == null && stated("wall")) gaps.push("wall");
+  if (!d.choreographerIds?.length && stated("choreographer")) gaps.push("choreographer");
+  if (!d.songArtists?.length) gaps.push("song");
+  if (!d.stepsheets?.length && !d.unpublished) gaps.push("stepsheet");
+  return gaps;
+}
+var languagesOf = (d) => new Set((d.stepsheets ?? []).map((s) => s.lang).filter(Boolean)).size;
+function rankOf(signals, caps, weights = RANK_WEIGHTS, recentMonths = RANK_RECENT_MONTHS) {
+  const parts = {
+    usage: logScale(signals.usage, caps.usage),
+    views: logScale(signals.views, caps.views),
+    languages: logScale(signals.languages, caps.languages),
+    recency: recencyOf(signals.monthsOld, recentMonths),
+    complete: clamp(1 - (signals.gaps ?? 0) / RANK_CORE_FACTS.length)
+  };
+  const score = Object.keys(weights).reduce((sum, k) => sum + weights[k] * parts[k], 0);
+  return { rank: Math.round(score * 1e3), parts };
+}
+async function rankCaps(db) {
+  const one = async (f) => {
+    const [r] = await db.collection("dances").aggregate([
+      { $match: { [`rankSignals.${f}`]: { $gt: 0 } } },
+      { $group: { _id: null, p: { $percentile: { input: `$rankSignals.${f}`, p: [RANK_CAP_QUANTILE], method: "approximate" } } } }
+    ]).toArray();
+    return r?.p?.[0] ?? 0;
+  };
+  return { usage: await one("usage"), views: await one("views"), languages: Math.max(RANK_LANGUAGES_CAP_MIN, await one("languages")) };
+}
+var partExpr = (field, cap) => cap > 0 ? { $min: [1, { $divide: [{ $ln: { $add: [1, { $ifNull: [`$rankSignals.${field}`, 0] }] } }, Math.log1p(cap)] }] } : 0;
+function rankExpressions(caps, weights = RANK_WEIGHTS, recentMonths = RANK_RECENT_MONTHS, now = /* @__PURE__ */ new Date()) {
+  const months = {
+    $divide: [{ $dateDiff: { startDate: { $dateFromString: { dateString: "$dateKey", onError: null, onNull: null } }, endDate: now, unit: "day" } }, 30.44]
+  };
+  const parts = {
+    usage: partExpr("usage", caps.usage),
+    views: partExpr("views", caps.views),
+    languages: partExpr("languages", caps.languages),
+    recency: {
+      $let: {
+        vars: { m: months },
+        in: { $cond: [{ $eq: ["$$m", null] }, 0, { $max: [0, { $min: [1, { $subtract: [1, { $divide: [{ $max: [0, "$$m"] }, Math.max(1, recentMonths)] }] }] }] }] }
+      }
+    },
+    complete: { $max: [0, { $subtract: [1, { $divide: [{ $ifNull: ["$rankSignals.gaps", 0] }, RANK_CORE_FACTS.length] }] }] }
+  };
+  const rank = { $round: [{ $multiply: [1e3, { $add: Object.keys(weights).map((k) => ({ $multiply: [weights[k], `$_rankParts.${k}`] })) }] }, 0] };
+  return { parts, rank };
+}
+
 // src/dances/merge.ts
 var q = (filter) => filter;
 function normalizeName(s) {
@@ -2467,6 +2540,21 @@ export {
   keepApart,
   mergeCandidate,
   mergeDanceRecords,
+  RANK_WEIGHTS,
+  RANK_USAGE_POINTS,
+  RANK_RECENT_MONTHS,
+  RANK_CORE_FACTS,
+  RANK_CAP_QUANTILE,
+  RANK_LANGUAGES_CAP_MIN,
+  logScale,
+  capOf,
+  monthsOld,
+  recencyOf,
+  coreGaps,
+  languagesOf,
+  rankOf,
+  rankCaps,
+  rankExpressions,
   normalizeName,
   nameKeys,
   findUnpublishedMatch,

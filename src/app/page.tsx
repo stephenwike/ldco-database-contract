@@ -42,6 +42,10 @@ export default function Home() {
           <div className="stat">♪</div>
           <p>Dances: the ldco dances apps still read; fix gaps, merge duplicates, bulk import (live).</p>
         </Link>
+        <Link className="card" href="/search-lab">
+          <div className="stat">⚗</div>
+          <p>Search lab: try the package's search and rank with other weights, and see what a search costs (read-only).</p>
+        </Link>
       </div>
 
       <h2>Purposes</h2>

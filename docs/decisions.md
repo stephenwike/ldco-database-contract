@@ -231,6 +231,7 @@ Decided 2026-11-20. Plan: line-dance-manager-admin `docs/cms-plan.md` (the admin
 - **Search algorithms stay in the package** (`searchDances`, decision 28), so improving one improves every app. Next: the weights become parameters, so the search lab here can try new ones before the defaults change; the admin and the DJ Feed move to it from their own searches.
 - **Access.** Editing live from a deployed app needs a write connection (separate from the read one the browser uses) and real sign-in: `ldco-auth` with an admin role, as the admin will use (cms-plan phase 2). Until then it stays behind the shared password, the same protection the admin's tools have now.
 - **Contract 0.26.0.** Package code only; no collection changed, so no app has to update.
+- **Contract 0.27.0: the search lab.** `searchDances` takes `matchPoints` (instead of `MATCH_POINTS`), and the rank formula is in the package (`src/catalogue/rank.ts`: `RANK_WEIGHTS`, `RANK_RECENT_MONTHS`, `rankOf`, and `rankExpressions` / `rankCaps` to work it out inside MongoDB), the same as ldco-harvester's `scripts/lib/rank.mjs`, which still writes the stored `rank` (tests pin the two to the same values; change both until the harvester imports this). This app's `/search-lab` (from the desk) tries other weights on the live catalogue, read-only, and shows what the apps' search returns and costs with them. Package code only.
 
 ## Future considerations (not decided)
 

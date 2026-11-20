@@ -62,11 +62,11 @@ test("inserting into an array element keeps the closing brace's indent", () => {
   assert.equal(applyDeclaredFields(next, { "playedTracks[].lesson": "z.string().optional()" }), next);
 });
 
-test("contract version is 0.26.0 and matches the lock", () => {
-  assert.equal(CONTRACT_VERSION, "0.26.0");
+test("contract version is 0.27.0 and matches the lock", () => {
+  assert.equal(CONTRACT_VERSION, "0.27.0");
   assert.equal(computeContractHash(), CONTRACT_HASH);
   const lock = JSON.parse(readFileSync("contract.lock.json", "utf8")) as { version: string };
-  assert.equal(lock.version, "0.26.0");
+  assert.equal(lock.version, "0.27.0");
 });
 
 test("dj_requests.lessonPhase is an optional string or null", () => {

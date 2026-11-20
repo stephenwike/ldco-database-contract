@@ -54,6 +54,8 @@ export interface SearchOptions {
   projection?: Record<string, 1>;
   /** Collects every query made, if given. */
   trace?: SearchQuery[];
+  /** Points for each kind of match, instead of MATCH_POINTS (the search lab tries other values this way). */
+  matchPoints?: Partial<Record<MatchKind, number>>;
 }
 
 export interface SearchResult<T> {
@@ -75,6 +77,7 @@ const wordStarts = (w: string) => ({ $or: [{ nameWords: new RegExp(`^${esc(w)}`)
 
 export async function searchDances<T extends Dance = Dance>(db: DbLike, options: SearchOptions = {}): Promise<SearchResult<T>> {
   const { q = "", filter = {}, page: rawPage = 0, pageSize = SEARCH_PAGE_SIZE, projection, trace } = options;
+  const points = { ...MATCH_POINTS, ...options.matchPoints };
   const dances = db.collection("dances");
   const note = (t: SearchQuery) => trace?.push(t);
   const text = q.trim();
@@ -129,9 +132,9 @@ export async function searchDances<T extends Dance = Dance>(db: DbLike, options:
       if (found.length === TIER_LIMIT) more = true;
       for (const d of found) {
         const id = String(d._id);
-        const points = MATCH_POINTS[kind] + (d.rank ?? 0);
-        if ((score.get(id) ?? -1) < points) {
-          score.set(id, points);
+        const scored = points[kind] + (d.rank ?? 0);
+        if ((score.get(id) ?? -1) < scored) {
+          score.set(id, scored);
           kindOf.set(id, kind);
         }
       }

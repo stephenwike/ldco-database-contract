@@ -3341,6 +3341,8 @@ interface SearchOptions {
     projection?: Record<string, 1>;
     /** Collects every query made, if given. */
     trace?: SearchQuery[];
+    /** Points for each kind of match, instead of MATCH_POINTS (the search lab tries other values this way). */
+    matchPoints?: Partial<Record<MatchKind, number>>;
 }
 interface SearchResult<T> {
     /** How many dances matched (for text searches, those found within each kind's limit). */
@@ -3710,6 +3712,85 @@ declare function mergeCandidate(db: WriteDbLike, candidateId: string, keepId: st
  */
 declare function mergeDanceRecords(db: WriteDbLike, keep: Dance, others: Dance[], by: string, rule: string, candidateId?: string): Promise<Date>;
 
+type RankPart = "usage" | "views" | "languages" | "recency" | "complete";
+type RankWeights = Record<RankPart, number>;
+interface RankCaps {
+    usage: number;
+    views: number;
+    languages: number;
+}
+interface RankSignals {
+    usage?: number;
+    views?: number;
+    languages?: number;
+    monthsOld?: number | null;
+    gaps?: number;
+}
+declare const RANK_WEIGHTS: RankWeights;
+declare const RANK_USAGE_POINTS: {
+    lesson: number;
+    feedLesson: number;
+    requested: number;
+    played: number;
+    known: number;
+    favorite: number;
+    refresh: number;
+    interested: number;
+    collection: number;
+};
+declare const RANK_RECENT_MONTHS = 18;
+/** The facts `complete` counts. */
+declare const RANK_CORE_FACTS: readonly ["level", "count", "wall", "choreographer", "song", "stepsheet"];
+/** The quantile each cap is taken at, and the least the languages cap can be. */
+declare const RANK_CAP_QUANTILE = 0.995;
+declare const RANK_LANGUAGES_CAP_MIN = 5;
+declare const logScale: (n: number | undefined, cap: number) => number;
+/** The value at quantile q of the positive numbers in a list. */
+declare function capOf(values: number[], q?: number): number;
+/** Months between a dateKey ("2024-03-31") and now; null without a date. */
+declare function monthsOld(dateKey: string | null | undefined, now?: Date): number | null;
+declare const recencyOf: (months: number | null | undefined, recentMonths?: number) => number;
+/** The core facts a dance is missing (a fact the stepsheet doesn't state isn't missing). */
+declare function coreGaps(d: {
+    levels?: string[];
+    count?: number | null;
+    wall?: number | null;
+    choreographerIds?: string[];
+    songArtists?: unknown[];
+    stepsheets?: unknown[];
+    unpublished?: boolean;
+    notStated?: string[];
+}): string[];
+/** The languages a dance's stepsheets are translated into (not counting the original). */
+declare const languagesOf: (d: {
+    stepsheets?: {
+        lang?: string | null;
+    }[];
+}) => number;
+/** A dance's rank from its signals and the caps over all dances, with each part (0–1). */
+declare function rankOf(signals: RankSignals, caps: RankCaps, weights?: RankWeights, recentMonths?: number): {
+    rank: number;
+    parts: Record<RankPart, number>;
+};
+/** The caps over all dances, as the harvester takes them (approximate percentiles of the positive values). */
+declare function rankCaps(db: WriteDbLike): Promise<RankCaps>;
+/**
+ * Aggregation expressions matching rankOf: `parts` for an $addFields into `_rankParts`, then `rank` (which reads
+ * `$_rankParts`) in a later stage.
+ */
+declare function rankExpressions(caps: RankCaps, weights?: RankWeights, recentMonths?: number, now?: Date): {
+    parts: Record<RankPart, number | object>;
+    rank: {
+        $round: (number | {
+            $multiply: (number | {
+                $add: {
+                    $multiply: (string | number)[];
+                }[];
+            })[];
+        })[];
+    };
+};
+
 type Doc = Record<string, any>;
 interface MergeDbs {
     ldco: WriteDbLike;
@@ -3785,4 +3866,4 @@ declare const CONTRACT_HASH: string;
 /** Locked hash of each collection, keyed "<database>.<collection>". */
 declare const COLLECTION_HASHES: Record<string, string>;
 
-export { type BldEventTemplates, BldEventTemplatesSchema, type BldEventTypes, BldEventTypesSchema, type BldEvents, BldEventsSchema, type BldFrequencies, BldFrequenciesSchema, type BldLessons, BldLessonsSchema, CATALOGUE_PAGE_SIZE, COLLECTION_HASHES, CONTRACT_HASH, CONTRACT_VERSION, type CatalogueDance, type CatalogueStepsheet, type CollectionLike, type CopperknobAlertProcessedItems, CopperknobAlertProcessedItemsSchema, type CopperknobAlertSyncMetadata, CopperknobAlertSyncMetadataSchema, type CopperknobAlertWatchRules, CopperknobAlertWatchRulesSchema, type CursorLike, DANCE_TYPES, type DanceLocation, type DanceMergePlan, type DanceQuery, type DbLike, type DjfeedAttendeeNotifications, DjfeedAttendeeNotificationsSchema, type DjfeedBeatBalances, DjfeedBeatBalancesSchema, type DjfeedBeatTransactions, DjfeedBeatTransactionsSchema, type DjfeedDancerFavoriteSongs, DjfeedDancerFavoriteSongsSchema, type DjfeedDjDirectMessages, DjfeedDjDirectMessagesSchema, type DjfeedDjMessages, DjfeedDjMessagesSchema, type DjfeedDjNotifications, DjfeedDjNotificationsSchema, type DjfeedDjProfiles, DjfeedDjProfilesSchema, type DjfeedDjRequesterNicknames, DjfeedDjRequesterNicknamesSchema, type DjfeedDjRequests, DjfeedDjRequestsSchema, type DjfeedDjSessions, DjfeedDjSessionsSchema, type DjfeedDjWalletLocks, DjfeedDjWalletLocksSchema, type DjfeedDjWalletTransactions, DjfeedDjWalletTransactionsSchema, type DjfeedFeedLessons, DjfeedFeedLessonsSchema, type DjfeedFreeAccess, DjfeedFreeAccessSchema, type DjfeedHostDancers, DjfeedHostDancersSchema, type DjfeedLessonChecks, DjfeedLessonChecksSchema, type DjfeedRequesterHistory, DjfeedRequesterHistorySchema, type DjfeedSessionAttendance, DjfeedSessionAttendanceSchema, type DjfeedSessionReports, DjfeedSessionReportsSchema, type DjfeedSessionTransactions, DjfeedSessionTransactionsSchema, type DjfeedStripeEvents, DjfeedStripeEventsSchema, GAPS, LEVEL_QUALIFIERS, LISTED_DANCES, type LdcoChoreographers, LdcoChoreographersSchema, type LdcoDanceCollections, LdcoDanceCollectionsSchema, type LdcoDanceTracks, LdcoDanceTracksSchema, type LdcoDances, LdcoDancesSchema, type LdcoEvents, type LdcoEventsEventRegistrations, LdcoEventsEventRegistrationsSchema, type LdcoEventsEvents, LdcoEventsEventsSchema, LdcoEventsSchema, type LdcoFriendRequests, LdcoFriendRequestsSchema, type LdcoInstructorVenues, LdcoInstructorVenuesSchema, type LdcoInstructors, LdcoInstructorsSchema, type LdcoLessons, type LdcoLessonsEventInstructorRequests, LdcoLessonsEventInstructorRequestsSchema, type LdcoLessonsEventInstructors, LdcoLessonsEventInstructorsSchema, type LdcoLessonsEventTemplates, LdcoLessonsEventTemplatesSchema, type LdcoLessonsEventTypes, LdcoLessonsEventTypesSchema, type LdcoLessonsEvents, LdcoLessonsEventsSchema, type LdcoLessonsFrequencies, LdcoLessonsFrequenciesSchema, type LdcoLessonsLessons, LdcoLessonsLessonsSchema, LdcoLessonsSchema, type LdcoLoginEvents, LdcoLoginEventsSchema, type LdcoOauthAuthCodes, LdcoOauthAuthCodesSchema, type LdcoPendingDances, LdcoPendingDancesSchema, type LdcoReviewsChoreographers, LdcoReviewsChoreographersSchema, type LdcoReviewsDances, LdcoReviewsDancesSchema, type LdcoReviewsInstructorVenues, LdcoReviewsInstructorVenuesSchema, type LdcoReviewsInstructors, LdcoReviewsInstructorsSchema, type LdcoReviewsJoinChoreographerAppeals, LdcoReviewsJoinChoreographerAppealsSchema, type LdcoReviewsLessons, LdcoReviewsLessonsSchema, type LdcoReviewsReports, LdcoReviewsReportsSchema, type LdcoReviewsTracks, LdcoReviewsTracksSchema, type LdcoReviewsVenueUsers, LdcoReviewsVenueUsersSchema, type LdcoReviewsVenues, LdcoReviewsVenuesSchema, type LdcoReviewsVerifyUserInstructor, LdcoReviewsVerifyUserInstructorSchema, type LdcoTracks, LdcoTracksSchema, type LdcoUserFavoriteDances, LdcoUserFavoriteDancesSchema, type LdcoUserFlaggedDances, LdcoUserFlaggedDancesSchema, type LdcoUserFollowCollections, LdcoUserFollowCollectionsSchema, type LdcoUserFollows, LdcoUserFollowsSchema, type LdcoUserFriends, LdcoUserFriendsSchema, type LdcoUserKnownDances, LdcoUserKnownDancesSchema, type LdcoUserLessons, LdcoUserLessonsSchema, type LdcoUserRefreshDances, LdcoUserRefreshDancesSchema, type LdcoUserVenues, LdcoUserVenuesSchema, type LdcoUsers, LdcoUsersSchema, type LdcoVenueCheckins, LdcoVenueCheckinsSchema, type LdcoVenueUsers, LdcoVenueUsersSchema, type LdcoVenues, LdcoVenuesSchema, type LinedanceChoreographerPairReviews, LinedanceChoreographerPairReviewsSchema, type LinedanceChoreographers, LinedanceChoreographersSchema, type LinedanceDanceMergeUndos, LinedanceDanceMergeUndosSchema, type LinedanceDanceMerges, LinedanceDanceMergesSchema, type LinedanceDances, LinedanceDancesSchema, type LinedanceLevels, LinedanceLevelsSchema, type LinedanceMergeCandidates, LinedanceMergeCandidatesSchema, type LinedanceRecordings, LinedanceRecordingsSchema, type LinedanceTrackAliases, LinedanceTrackAliasesSchema, type LinedanceTrackLinks, LinedanceTrackLinksSchema, type LinedanceTrackMergeCandidates, LinedanceTrackMergeCandidatesSchema, type LinedanceTrackMergeUndos, LinedanceTrackMergeUndosSchema, type LinedanceTrackMerges, LinedanceTrackMergesSchema, type LinedanceTracks, LinedanceTracksSchema, type LocatedDance, MATCH_POINTS, type MatchKind, type MergeDbs, type MusicCatalogTracks, MusicCatalogTracksSchema, type ReferenceCount, SEARCH_PAGE_SIZE, STATABLE, type Scope, type SearchOptions, type SearchQuery, type SearchResult, type SortSpec, type UnpublishedCandidate, type WriteCollectionLike, type WriteCursorLike, type WriteDbLike, byAnyId, catalogueStats, cleanDancePatch, collections, computeCollectionHashes, computeContractHash, countReferences, danceFilter, filledStatable, findDance, findOrCreateChoreographer, findUnpublishedMatch, gapsOf, inScope, keepApart, keyOf, listDanceCandidates, listDances, matchIds, mergeCandidate, mergeDanceRecords, mergeDances, mergedDance, nameKeyOf, nameKeys, nameWordsOf, normalizeName, planCatalogueMerge, planDanceMerge, replaceId, resolveChoreographers, resolveDances, scopeFromPackageJson, searchChoreographers, searchDances, suggestKeep, unmatchedEntries, updateDance, yearFields };
+export { type BldEventTemplates, BldEventTemplatesSchema, type BldEventTypes, BldEventTypesSchema, type BldEvents, BldEventsSchema, type BldFrequencies, BldFrequenciesSchema, type BldLessons, BldLessonsSchema, CATALOGUE_PAGE_SIZE, COLLECTION_HASHES, CONTRACT_HASH, CONTRACT_VERSION, type CatalogueDance, type CatalogueStepsheet, type CollectionLike, type CopperknobAlertProcessedItems, CopperknobAlertProcessedItemsSchema, type CopperknobAlertSyncMetadata, CopperknobAlertSyncMetadataSchema, type CopperknobAlertWatchRules, CopperknobAlertWatchRulesSchema, type CursorLike, DANCE_TYPES, type DanceLocation, type DanceMergePlan, type DanceQuery, type DbLike, type DjfeedAttendeeNotifications, DjfeedAttendeeNotificationsSchema, type DjfeedBeatBalances, DjfeedBeatBalancesSchema, type DjfeedBeatTransactions, DjfeedBeatTransactionsSchema, type DjfeedDancerFavoriteSongs, DjfeedDancerFavoriteSongsSchema, type DjfeedDjDirectMessages, DjfeedDjDirectMessagesSchema, type DjfeedDjMessages, DjfeedDjMessagesSchema, type DjfeedDjNotifications, DjfeedDjNotificationsSchema, type DjfeedDjProfiles, DjfeedDjProfilesSchema, type DjfeedDjRequesterNicknames, DjfeedDjRequesterNicknamesSchema, type DjfeedDjRequests, DjfeedDjRequestsSchema, type DjfeedDjSessions, DjfeedDjSessionsSchema, type DjfeedDjWalletLocks, DjfeedDjWalletLocksSchema, type DjfeedDjWalletTransactions, DjfeedDjWalletTransactionsSchema, type DjfeedFeedLessons, DjfeedFeedLessonsSchema, type DjfeedFreeAccess, DjfeedFreeAccessSchema, type DjfeedHostDancers, DjfeedHostDancersSchema, type DjfeedLessonChecks, DjfeedLessonChecksSchema, type DjfeedRequesterHistory, DjfeedRequesterHistorySchema, type DjfeedSessionAttendance, DjfeedSessionAttendanceSchema, type DjfeedSessionReports, DjfeedSessionReportsSchema, type DjfeedSessionTransactions, DjfeedSessionTransactionsSchema, type DjfeedStripeEvents, DjfeedStripeEventsSchema, GAPS, LEVEL_QUALIFIERS, LISTED_DANCES, type LdcoChoreographers, LdcoChoreographersSchema, type LdcoDanceCollections, LdcoDanceCollectionsSchema, type LdcoDanceTracks, LdcoDanceTracksSchema, type LdcoDances, LdcoDancesSchema, type LdcoEvents, type LdcoEventsEventRegistrations, LdcoEventsEventRegistrationsSchema, type LdcoEventsEvents, LdcoEventsEventsSchema, LdcoEventsSchema, type LdcoFriendRequests, LdcoFriendRequestsSchema, type LdcoInstructorVenues, LdcoInstructorVenuesSchema, type LdcoInstructors, LdcoInstructorsSchema, type LdcoLessons, type LdcoLessonsEventInstructorRequests, LdcoLessonsEventInstructorRequestsSchema, type LdcoLessonsEventInstructors, LdcoLessonsEventInstructorsSchema, type LdcoLessonsEventTemplates, LdcoLessonsEventTemplatesSchema, type LdcoLessonsEventTypes, LdcoLessonsEventTypesSchema, type LdcoLessonsEvents, LdcoLessonsEventsSchema, type LdcoLessonsFrequencies, LdcoLessonsFrequenciesSchema, type LdcoLessonsLessons, LdcoLessonsLessonsSchema, LdcoLessonsSchema, type LdcoLoginEvents, LdcoLoginEventsSchema, type LdcoOauthAuthCodes, LdcoOauthAuthCodesSchema, type LdcoPendingDances, LdcoPendingDancesSchema, type LdcoReviewsChoreographers, LdcoReviewsChoreographersSchema, type LdcoReviewsDances, LdcoReviewsDancesSchema, type LdcoReviewsInstructorVenues, LdcoReviewsInstructorVenuesSchema, type LdcoReviewsInstructors, LdcoReviewsInstructorsSchema, type LdcoReviewsJoinChoreographerAppeals, LdcoReviewsJoinChoreographerAppealsSchema, type LdcoReviewsLessons, LdcoReviewsLessonsSchema, type LdcoReviewsReports, LdcoReviewsReportsSchema, type LdcoReviewsTracks, LdcoReviewsTracksSchema, type LdcoReviewsVenueUsers, LdcoReviewsVenueUsersSchema, type LdcoReviewsVenues, LdcoReviewsVenuesSchema, type LdcoReviewsVerifyUserInstructor, LdcoReviewsVerifyUserInstructorSchema, type LdcoTracks, LdcoTracksSchema, type LdcoUserFavoriteDances, LdcoUserFavoriteDancesSchema, type LdcoUserFlaggedDances, LdcoUserFlaggedDancesSchema, type LdcoUserFollowCollections, LdcoUserFollowCollectionsSchema, type LdcoUserFollows, LdcoUserFollowsSchema, type LdcoUserFriends, LdcoUserFriendsSchema, type LdcoUserKnownDances, LdcoUserKnownDancesSchema, type LdcoUserLessons, LdcoUserLessonsSchema, type LdcoUserRefreshDances, LdcoUserRefreshDancesSchema, type LdcoUserVenues, LdcoUserVenuesSchema, type LdcoUsers, LdcoUsersSchema, type LdcoVenueCheckins, LdcoVenueCheckinsSchema, type LdcoVenueUsers, LdcoVenueUsersSchema, type LdcoVenues, LdcoVenuesSchema, type LinedanceChoreographerPairReviews, LinedanceChoreographerPairReviewsSchema, type LinedanceChoreographers, LinedanceChoreographersSchema, type LinedanceDanceMergeUndos, LinedanceDanceMergeUndosSchema, type LinedanceDanceMerges, LinedanceDanceMergesSchema, type LinedanceDances, LinedanceDancesSchema, type LinedanceLevels, LinedanceLevelsSchema, type LinedanceMergeCandidates, LinedanceMergeCandidatesSchema, type LinedanceRecordings, LinedanceRecordingsSchema, type LinedanceTrackAliases, LinedanceTrackAliasesSchema, type LinedanceTrackLinks, LinedanceTrackLinksSchema, type LinedanceTrackMergeCandidates, LinedanceTrackMergeCandidatesSchema, type LinedanceTrackMergeUndos, LinedanceTrackMergeUndosSchema, type LinedanceTrackMerges, LinedanceTrackMergesSchema, type LinedanceTracks, LinedanceTracksSchema, type LocatedDance, MATCH_POINTS, type MatchKind, type MergeDbs, type MusicCatalogTracks, MusicCatalogTracksSchema, RANK_CAP_QUANTILE, RANK_CORE_FACTS, RANK_LANGUAGES_CAP_MIN, RANK_RECENT_MONTHS, RANK_USAGE_POINTS, RANK_WEIGHTS, type RankCaps, type RankPart, type RankSignals, type RankWeights, type ReferenceCount, SEARCH_PAGE_SIZE, STATABLE, type Scope, type SearchOptions, type SearchQuery, type SearchResult, type SortSpec, type UnpublishedCandidate, type WriteCollectionLike, type WriteCursorLike, type WriteDbLike, byAnyId, capOf, catalogueStats, cleanDancePatch, collections, computeCollectionHashes, computeContractHash, coreGaps, countReferences, danceFilter, filledStatable, findDance, findOrCreateChoreographer, findUnpublishedMatch, gapsOf, inScope, keepApart, keyOf, languagesOf, listDanceCandidates, listDances, logScale, matchIds, mergeCandidate, mergeDanceRecords, mergeDances, mergedDance, monthsOld, nameKeyOf, nameKeys, nameWordsOf, normalizeName, planCatalogueMerge, planDanceMerge, rankCaps, rankExpressions, rankOf, recencyOf, replaceId, resolveChoreographers, resolveDances, scopeFromPackageJson, searchChoreographers, searchDances, suggestKeep, unmatchedEntries, updateDance, yearFields };

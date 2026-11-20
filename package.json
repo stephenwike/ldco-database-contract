@@ -1,6 +1,6 @@
 {
   "name": "@ldco/database",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "private": false,
   "type": "module",
   "description": "Single source of truth for the shared LDCO MongoDB contract, plus the API that publishes the latest version.",
@@ -37,7 +37,7 @@
     "db:migrate:live": "tsx --env-file-if-exists=.env.local scripts/migrate.ts --live",
     "contract:infer": "tsx --env-file-if-exists=.env.local scripts/infer-contract.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --env-file-if-exists=.env.local --experimental-test-module-mocks --test src/contract/declared-fields.test.ts src/catalogue/catalogue.test.ts src/catalogue/edit.test.ts src/catalogue/review.test.ts src/dances/merge.test.ts src/server/catalogue/audit.test.ts src/server/catalogue/choreographerReview.test.ts src/lib/dancePublished.test.ts src/server/dancePatch.test.ts src/server/bodyGuards.test.ts"
+    "test": "tsx --env-file-if-exists=.env.local --experimental-test-module-mocks --test src/contract/declared-fields.test.ts src/catalogue/catalogue.test.ts src/catalogue/rank.test.ts src/catalogue/edit.test.ts src/catalogue/review.test.ts src/dances/merge.test.ts src/server/catalogue/audit.test.ts src/server/catalogue/choreographerReview.test.ts src/lib/dancePublished.test.ts src/server/dancePatch.test.ts src/server/bodyGuards.test.ts"
   },
   "dependencies": {
     "jsdom": "^26.1.0",

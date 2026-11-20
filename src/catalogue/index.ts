@@ -6,3 +6,4 @@ export * from "./resolve";
 export * from "./search";
 export * from "./edit";
 export * from "./review";
+export * from "./rank";

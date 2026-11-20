@@ -106,7 +106,7 @@ var collections = {
 };
 
 // package.json
-var version = "0.26.0";
+var version = "0.27.0";
 
 // src/contract/collections/bld/event_templates.ts
 var import_zod2 = require("zod");
