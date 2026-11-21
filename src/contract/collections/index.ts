@@ -53,6 +53,8 @@ import { LdcoUserRefreshDancesSchema } from "./ldco/user_refresh_dances";
 import { LdcoUserVenuesSchema } from "./ldco/user_venues";
 import { LdcoUsersSchema } from "./ldco/users";
 import { LdcoUserRolesSchema } from "./ldco/user_roles";
+import { LdcoSubscriptionsSchema } from "./ldco/subscriptions";
+import { LdcoStripeEventsSchema } from "./ldco/stripe_events";
 import { LdcoVenueCheckinsSchema } from "./ldco/venue_checkins";
 import { LdcoVenueUsersSchema } from "./ldco/venue_users";
 import { LdcoVenuesSchema } from "./ldco/venues";
@@ -147,6 +149,8 @@ export * from "./ldco/user_refresh_dances";
 export * from "./ldco/user_venues";
 export * from "./ldco/users";
 export * from "./ldco/user_roles";
+export * from "./ldco/subscriptions";
+export * from "./ldco/stripe_events";
 export * from "./ldco/venue_checkins";
 export * from "./ldco/venue_users";
 export * from "./ldco/venues";
@@ -243,6 +247,8 @@ export const collections = {
   "ldco.user_venues": { database: "ldco", name: "user_venues", schema: LdcoUserVenuesSchema },
   "ldco.users": { database: "ldco", name: "users", schema: LdcoUsersSchema },
   "ldco.user_roles": { database: "ldco", name: "user_roles", schema: LdcoUserRolesSchema },
+  "ldco.subscriptions": { database: "ldco", name: "subscriptions", schema: LdcoSubscriptionsSchema },
+  "ldco.stripe_events": { database: "ldco", name: "stripe_events", schema: LdcoStripeEventsSchema },
   "ldco.venue_checkins": { database: "ldco", name: "venue_checkins", schema: LdcoVenueCheckinsSchema },
   "ldco.venue_users": { database: "ldco", name: "venue_users", schema: LdcoVenueUsersSchema },
   "ldco.venues": { database: "ldco", name: "venues", schema: LdcoVenuesSchema },

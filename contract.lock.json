@@ -1,6 +1,6 @@
 {
-  "version": "0.30.0",
-  "hash": "10cf4b6ca86f5fd501e6487d3d8e0383baf02e7d8636cd5ce81ff2ca2ec7a8df",
+  "version": "0.31.0",
+  "hash": "c24f59d56d276136036fa8cd0b8f58f82d7ed487bf5ffa6ab3dde01742276d5b",
   "collections": {
     "bld.event_templates": "1df4e84dea2413051623a8d5118f26507f7dc8767233a154ade9d17b1ca093d9",
     "bld.event_types": "72df6b91d956eccc5eb094833bdd45135f175ac9697e3e878a7da9dd241d0cb2",
@@ -65,6 +65,8 @@
     "ldco.login_events": "0b042cfdb867f5c2d1f7f5a1d4928fddd10cf4feb5f24fcf2c04f51032d7c8b8",
     "ldco.oauth_auth_codes": "3ee5d77ba237bb289c9fc95d36e513cc99dab113e82480928d05cf3d0781124a",
     "ldco.pending_dances": "0c6d91a61fa844c44ba7fd851e0085c102e35296ec0678c79c2b37c406dac7cd",
+    "ldco.stripe_events": "f37bb89cc242bf60062f85858830fcb41c021327cdd717251787df7de1441d6e",
+    "ldco.subscriptions": "e6769304d7d050154d5ed5ff8183e8efafa16f28f58f86d76457760d0add9654",
     "ldco.tracks": "e1a807f16bc37848389a6aa039e1846d002497c87469e4254013536118776a92",
     "ldco.user_favorite_dances": "85df4bbaea0a539ec187752a7d5dd26ff6967027187f7bf9e829829b88928932",
     "ldco.user_flagged_dances": "9b27f011c93f553a283d306e4233bf3153db09e67e133a1fb1ad2ba821563677",

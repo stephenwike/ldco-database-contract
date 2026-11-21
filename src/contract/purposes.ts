@@ -129,6 +129,8 @@ export const purposes: Purpose[] = [
     collections: [
       "ldco.users",
       "ldco.user_roles",
+      "ldco.subscriptions",
+      "ldco.stripe_events",
       "ldco.login_events",
       "ldco.oauth_auth_codes",
       "ldco.friend_requests",

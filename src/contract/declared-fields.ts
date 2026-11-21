@@ -7,7 +7,7 @@
 // A collection listed in declaredCollections is declared in full (every field, `_id` included): while it has
 // no documents, or doesn't exist yet, its schema is built from these declarations alone.
 
-export const declaredCollections = ["ldco-reviews.instructors", "ldco-reviews.instructor_venues", "ldco-reviews.dances", "ldco.user_roles", "ldco-lessons.instructor_settings"];
+export const declaredCollections = ["ldco-reviews.instructors", "ldco-reviews.instructor_venues", "ldco-reviews.dances", "ldco.user_roles", "ldco-lessons.instructor_settings", "ldco.subscriptions", "ldco.stripe_events"];
 
 export const declaredFields: Record<string, Record<string, string>> = {
   // Publish dates at the precision the evidence supports (decision 22, amended). publishedAt is an exact
@@ -112,6 +112,32 @@ export const declaredFields: Record<string, Record<string, string>> = {
     timeZone: "z.string()",
     updatedAt: "bsonDate",
     updatedBy: "z.string()",
+  },
+
+  // Decision 32: what an account pays for the instructor CMS. One per account (keyed by ldco.users id), a copy of
+  // Stripe's subscription as its webhook last reported it, plus free time the owner gives (freeUntil null with a
+  // freeReason means free for good). accessOf reads it as `paid`.
+  "ldco.subscriptions": {
+    _id: "z.string()",
+    stripeCustomerId: "z.string().nullable()",
+    stripeSubscriptionId: "z.string().nullable()",
+    priceId: "z.string().nullable()",
+    status: 'z.enum(["incomplete", "incomplete_expired", "trialing", "active", "past_due", "canceled", "unpaid", "paused"]).nullable()',
+    currentPeriodEnd: "bsonDate.nullable()",
+    cancelAtPeriodEnd: "z.boolean()",
+    freeUntil: "bsonDate.nullable()",
+    freeReason: "z.string().nullable()",
+    freeGrantedBy: "z.string().nullable()",
+    updatedAt: "bsonDate",
+  },
+
+  // Decision 32: Stripe events the admin's webhook has handled, keyed by event id, so a repeated delivery is
+  // acknowledged without acting twice. Its own collection: Stripe sends the same event id to every endpoint, and the
+  // DJ Feed's webhook keeps djfeed.stripe_events.
+  "ldco.stripe_events": {
+    _id: "z.string()",
+    type: "z.string()",
+    receivedAt: "bsonDate",
   },
 
   // Decision 30: what a user may do beyond their own account. One record per user that has any role, keyed by user

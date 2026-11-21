@@ -252,6 +252,15 @@ Decided 2026-11-21. Plan: line-dance-manager-admin `docs/phase-3-instructors.md`
 - **Emails** go from the platform's verified address under the instructor's name, with replies to their contact email: `"Stephen Wike" <events@beyondlinedance.com>`, `Reply-To: stephen@beyondlinedance.com`. Sending from an instructor's own domain needs that domain verified with the email service; later, with the instructor websites.
 - **Contract 0.30.0.** The new collection, declared ahead of data (decision 25); nothing else changed.
 
+## 32. What an instructor pays is in `ldco.subscriptions`, from Stripe
+Decided 2026-11-21. Plan: line-dance-manager-admin `docs/phase-5-paywall.md` (the paywall).
+
+- **What.** One record per account (`_id` its `ldco.users` id; the account pays, not the instructor profile): Stripe's customer, subscription and price ids, the subscription's status, when the period ends and whether it's cancelling, as the admin's Stripe webhook last reported them. Plus free time the owner gives: `freeUntil` (null with a `freeReason` means free for good), `freeReason`, `freeGrantedBy`.
+- **Paid** means the status is `trialing`, `active` or `past_due` (Stripe is still retrying the card), or the free time hasn't run out. `accessOf` returns it as `paid`; `can()` stays about roles, and each app decides what `paid` means for it. In the admin, with payments on, an instructor who isn't paid is read-only; Line Dance Manager doesn't ask, and stays free.
+- **Stripe is the record of billing.** This is a copy for checking access quickly; the webhook keeps it current, and Stripe's dashboard and Customer Portal are where billing is seen and changed.
+- **`ldco.stripe_events`**: the events the admin's webhook has handled, by event id. Not shared with `djfeed.stripe_events`, because Stripe sends the same event id to every endpoint, so a shared record would make the second endpoint skip it.
+- **Contract 0.31.0.** Two new collections, declared ahead of data (decision 25), and `paid` on `accessOf`; nothing else changed, so no app has to update.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?
