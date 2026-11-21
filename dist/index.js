@@ -55,6 +55,7 @@ import {
   LdcoLessonsEventTypesSchema,
   LdcoLessonsEventsSchema,
   LdcoLessonsFrequenciesSchema,
+  LdcoLessonsInstructorSettingsSchema,
   LdcoLessonsLessonsSchema,
   LdcoLessonsSchema,
   LdcoLoginEventsSchema,
@@ -171,7 +172,7 @@ import {
   unmatchedEntries,
   updateDance,
   yearFields
-} from "./chunk-NPL4I54M.js";
+} from "./chunk-Z6NCIWXU.js";
 export {
   APP_DANCE_FIELDS,
   BldEventTemplatesSchema,
@@ -229,6 +230,7 @@ export {
   LdcoLessonsEventTypesSchema,
   LdcoLessonsEventsSchema,
   LdcoLessonsFrequenciesSchema,
+  LdcoLessonsInstructorSettingsSchema,
   LdcoLessonsLessonsSchema,
   LdcoLessonsSchema,
   LdcoLoginEventsSchema,

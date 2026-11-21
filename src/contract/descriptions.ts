@@ -61,6 +61,7 @@ export const descriptions: Record<string, string> = {
     "A recurring event at a venue (ldco.venues): title, level, price, default 24-hour local start time and length, on/off switch. createdBy is the instructor with final say (decisions 15, 18).",
   "ldco-lessons.frequencies": "When an event type repeats: weekly on given days (WEEKLY), or the nth weekday of the month (MONTHLY_NTH_WEEKDAY), at a 24-hour local time in the venue's zone. Optional start/end dates and its own on/off switch.",
   "ldco-lessons.events": "One stored event: of an event type, or a special event with its own venue, title and creator. Start/end as UTC instants plus the venue's zone; cancellation, substitute and special notes; the lessons planned or taught that day. Unstored dates are projected from frequencies.",
+  "ldco-lessons.instructor_settings": "What an instructor's pages and emails say about them: display name, contact email (replies), signature, website and default time zone (decision 31). One per instructor.",
   "ldco-lessons.lessons": "History: one dance taught, with the instructor, venue and event recorded when it was marked taught, and the venue's name at the time. Moved from bld.lessons.",
   "ldco-lessons.event_templates": "A reusable lesson plan for an event type (24-hour local times), used to prefill an event's lessons.",
   "ldco-lessons.event_instructors": "Who teaches what: an instructor linked to an event type, or to a special event. role is creator or co-instructor (decision 18).",

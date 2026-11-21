@@ -65,6 +65,7 @@ import { LdcoLessonsEventTypesSchema } from "./ldco-lessons/event_types";
 import { LdcoLessonsEventsSchema } from "./ldco-lessons/events";
 import { LdcoLessonsFrequenciesSchema } from "./ldco-lessons/frequencies";
 import { LdcoLessonsLessonsSchema } from "./ldco-lessons/lessons";
+import { LdcoLessonsInstructorSettingsSchema } from "./ldco-lessons/instructor_settings";
 import { LdcoReviewsChoreographersSchema } from "./ldco-reviews/choreographers";
 import { LdcoReviewsDancesSchema } from "./ldco-reviews/dances";
 import { LdcoReviewsInstructorVenuesSchema } from "./ldco-reviews/instructor_venues";
@@ -158,6 +159,7 @@ export * from "./ldco-lessons/event_types";
 export * from "./ldco-lessons/events";
 export * from "./ldco-lessons/frequencies";
 export * from "./ldco-lessons/lessons";
+export * from "./ldco-lessons/instructor_settings";
 export * from "./ldco-reviews/choreographers";
 export * from "./ldco-reviews/dances";
 export * from "./ldco-reviews/instructor_venues";
@@ -253,6 +255,7 @@ export const collections = {
   "ldco-lessons.events": { database: "ldco-lessons", name: "events", schema: LdcoLessonsEventsSchema },
   "ldco-lessons.frequencies": { database: "ldco-lessons", name: "frequencies", schema: LdcoLessonsFrequenciesSchema },
   "ldco-lessons.lessons": { database: "ldco-lessons", name: "lessons", schema: LdcoLessonsLessonsSchema },
+  "ldco-lessons.instructor_settings": { database: "ldco-lessons", name: "instructor_settings", schema: LdcoLessonsInstructorSettingsSchema },
   "ldco-reviews.choreographers": { database: "ldco-reviews", name: "choreographers", schema: LdcoReviewsChoreographersSchema },
   "ldco-reviews.dances": { database: "ldco-reviews", name: "dances", schema: LdcoReviewsDancesSchema },
   "ldco-reviews.instructor_venues": { database: "ldco-reviews", name: "instructor_venues", schema: LdcoReviewsInstructorVenuesSchema },

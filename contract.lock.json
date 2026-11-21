@@ -1,6 +1,6 @@
 {
-  "version": "0.29.0",
-  "hash": "c9bfb50385278a878c9163c751af88efbd8fa46a5444518e09d1c400a69a601a",
+  "version": "0.30.0",
+  "hash": "10cf4b6ca86f5fd501e6487d3d8e0383baf02e7d8636cd5ce81ff2ca2ec7a8df",
   "collections": {
     "bld.event_templates": "1df4e84dea2413051623a8d5118f26507f7dc8767233a154ade9d17b1ca093d9",
     "bld.event_types": "72df6b91d956eccc5eb094833bdd45135f175ac9697e3e878a7da9dd241d0cb2",
@@ -40,6 +40,7 @@
     "ldco-lessons.event_types": "e0c586ad595062353e29eaf45837167fc926a884850017be5e0c2943250a0cdb",
     "ldco-lessons.events": "b4d300d20ffa5f4caf2c4f73884018bc3e1adbe38c004fd44cadbbaf8154e142",
     "ldco-lessons.frequencies": "4945f9e6abe0cc3d4dade2eeb796d5dbde2bb1dd5458f07b28f8f18a700f5b30",
+    "ldco-lessons.instructor_settings": "376ae97f9eea776053fa5a35eacb200de8303147f45430eae4a466f2592863d8",
     "ldco-lessons.lessons": "c5ee40a6d65460ef053471f61099865bc733a506d6aa7a8580c067f7838eea40",
     "ldco-reviews.choreographers": "d255092436491018b8d388e6f95c28dbd566cb53f7485b58dc6712be49386a36",
     "ldco-reviews.dances": "07399d77c9700b53707156a69901895f57372384773c4ea40aeff3f515777e0c",

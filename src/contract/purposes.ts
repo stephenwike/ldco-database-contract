@@ -79,6 +79,7 @@ export const purposes: Purpose[] = [
       "ldco-lessons.frequencies",
       "ldco-lessons.events",
       "ldco-lessons.lessons",
+      "ldco-lessons.instructor_settings",
       "ldco-lessons.event_templates",
       "ldco-lessons.event_instructors",
       "ldco-lessons.event_instructor_requests",

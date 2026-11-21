@@ -7,7 +7,7 @@
 // A collection listed in declaredCollections is declared in full (every field, `_id` included): while it has
 // no documents, or doesn't exist yet, its schema is built from these declarations alone.
 
-export const declaredCollections = ["ldco-reviews.instructors", "ldco-reviews.instructor_venues", "ldco-reviews.dances", "ldco.user_roles"];
+export const declaredCollections = ["ldco-reviews.instructors", "ldco-reviews.instructor_venues", "ldco-reviews.dances", "ldco.user_roles", "ldco-lessons.instructor_settings"];
 
 export const declaredFields: Record<string, Record<string, string>> = {
   // Publish dates at the precision the evidence supports (decision 22, amended). publishedAt is an exact
@@ -100,6 +100,20 @@ export const declaredFields: Record<string, Record<string, string>> = {
   // provisional one in ldco-reviews until an admin approves it; approval moves the profile (same _id) and its
   // venue links into ldco. Both review collections are in declaredCollections, so they exist in the contract
   // before they have documents.
+  // Decision 31: what an instructor's pages and emails say about them, set on the admin's Settings page. One per
+  // instructor, keyed by their ldco.instructors id. Emails go from the platform's address under displayName, with
+  // replies to contactEmail; signature ends them; timeZone is what new things default to.
+  "ldco-lessons.instructor_settings": {
+    _id: "z.string()",
+    displayName: "z.string()",
+    contactEmail: "z.string().nullable()",
+    signature: "z.string()",
+    website: "z.string().nullable()",
+    timeZone: "z.string()",
+    updatedAt: "bsonDate",
+    updatedBy: "z.string()",
+  },
+
   // Decision 30: what a user may do beyond their own account. One record per user that has any role, keyed by user
   // id; owner implies admin. Being an instructor isn't a role here: it's an approved ldco.instructors record with
   // the user's id. Granted by the owner on the admin's Users page.

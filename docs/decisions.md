@@ -244,6 +244,14 @@ Decided 2026-11-20. Plan: line-dance-manager-admin `docs/phase-2-sign-in.md` (th
 - **Granted by the owner** on the admin's Users page. The first owner comes from migration `0022-owner-role` (Stephen's account).
 - **Contract 0.29.0.** The new collection (declared ahead of data, decision 25) and the package helpers; nothing else changed, so no app has to update.
 
+## 31. Each instructor's settings are theirs, in `ldco-lessons.instructor_settings`
+Decided 2026-11-21. Plan: line-dance-manager-admin `docs/phase-3-instructors.md` (the instructor pages work for whoever is signed in).
+
+- **What.** What the admin used to hard-code about Stephen: the name shown and signed, the contact email replies go to, an email signature, a website, and the time zone new things default to. One record per instructor, `_id` their `ldco.instructors` id, with `updatedAt` and `updatedBy` (a user id). Set on the admin's Settings page; until an instructor saves, the pages use their profile's name and Mountain Time.
+- **Where.** `ldco-lessons`, where instructor operations live (decision 18). A new collection there doesn't fail any app's build check (one in scope that an app doesn't use yet is only noted).
+- **Emails** go from the platform's verified address under the instructor's name, with replies to their contact email: `"Stephen Wike" <events@beyondlinedance.com>`, `Reply-To: stephen@beyondlinedance.com`. Sending from an instructor's own domain needs that domain verified with the email service; later, with the instructor websites.
+- **Contract 0.30.0.** The new collection, declared ahead of data (decision 25); nothing else changed.
+
 ## Future considerations (not decided)
 
 ### A. Should `ObjectId` come back?
