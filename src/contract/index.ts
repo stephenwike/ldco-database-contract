@@ -10,6 +10,7 @@ export * from "./collections";
 export * from "./scope";
 export * from "../catalogue";
 export * from "../dances";
+export * from "../access";
 
 export const CONTRACT_VERSION: string = version;
 

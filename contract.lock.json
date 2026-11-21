@@ -1,6 +1,6 @@
 {
-  "version": "0.28.0",
-  "hash": "4eb5a5820ba2917541fbdc3243eeffe4fefd320d7188496c8767259508041650",
+  "version": "0.29.0",
+  "hash": "c9bfb50385278a878c9163c751af88efbd8fa46a5444518e09d1c400a69a601a",
   "collections": {
     "bld.event_templates": "1df4e84dea2413051623a8d5118f26507f7dc8767233a154ade9d17b1ca093d9",
     "bld.event_types": "72df6b91d956eccc5eb094833bdd45135f175ac9697e3e878a7da9dd241d0cb2",
@@ -73,6 +73,7 @@
     "ldco.user_known_dances": "387c0d131d0f67b68919cbfa02b24b88545ea03f6ba19157216bbffb241f9ffe",
     "ldco.user_lessons": "cbb72761f781479e3f22a81995d5fa4d7ab4eb9a2a08f93172da9c39c274494f",
     "ldco.user_refresh_dances": "4e88dc0e08f66c43a3f564099e400e92093710ceba239326ea2a688dcdce623f",
+    "ldco.user_roles": "52e2f1701f60eb3a3bb37779395412476d151f6484319e2378945f69e3c5b912",
     "ldco.user_venues": "733f9467d4f439665facaec04e00f411b8ab51ec615b218e448cfb8183872976",
     "ldco.users": "eda148e9c709ba2ec6a407015c66bf44779160e789182071dd91177f6cdb4dae",
     "ldco.venue_checkins": "e01902219a9d81ea071530cdb453c2af739c872e7651460f429415828ff38ecf",

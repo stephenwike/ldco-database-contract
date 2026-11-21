@@ -94,6 +94,7 @@ export const descriptions: Record<string, string> = {
   "djfeed.free_access": "An email given free DJ Feed access (e.g. beta testers), optionally until a date.",
 
   // Identity and social
+  "ldco.user_roles": "What a user may do beyond their own account: owner and admin roles, who granted them and when (decision 30). One record per user with any role.",
   "ldco.users": "One user account (name, email, profile; bcrypt password hash or Google id). Shared by every app through ldco-auth.",
   "ldco.login_events":
     "One sign-in: who, which app (OAuth client), provider, IP, user agent and time. Written by ldco-auth; this is the sign-in audit trail.",

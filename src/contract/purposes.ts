@@ -127,6 +127,7 @@ export const purposes: Purpose[] = [
     description: "Who a user is, how they signed in (login_events is the sign-in audit), and who they know.",
     collections: [
       "ldco.users",
+      "ldco.user_roles",
       "ldco.login_events",
       "ldco.oauth_auth_codes",
       "ldco.friend_requests",
