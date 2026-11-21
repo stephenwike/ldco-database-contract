@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { differentPeople, listChoreographerPairs, samePerson } from "@/server/catalogue/choreographerReview";
-import { EDITOR, getLinedanceDb } from "@/server/write";
+import { editor, getLinedanceDb } from "@/server/write";
 
 /** Choreographer pairs the rules won't decide, a page at a time, optionally of one kind. */
 export async function GET(req: NextRequest) {
@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
   const db = await getLinedanceDb();
   const str = (v: unknown): v is string => typeof v === "string" && v.length > 0;
   let result: { status: number; [k: string]: unknown };
-  if (body?.action === "same" && str(body.keepId) && str(body.loseId)) result = await samePerson(db, body.keepId, body.loseId, EDITOR);
-  else if (body?.action === "different" && str(body.a) && str(body.b)) result = await differentPeople(db, body.a, body.b, EDITOR);
+  if (body?.action === "same" && str(body.keepId) && str(body.loseId)) result = await samePerson(db, body.keepId, body.loseId, await editor());
+  else if (body?.action === "different" && str(body.a) && str(body.b)) result = await differentPeople(db, body.a, body.b, await editor());
   else return NextResponse.json({ error: "Say same (with keepId and loseId) or different (with a and b)." }, { status: 400 });
   const { status, ...rest } = result;
   return NextResponse.json(rest, { status });

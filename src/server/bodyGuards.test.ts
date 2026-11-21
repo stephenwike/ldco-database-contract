@@ -36,7 +36,7 @@ const getMainDb = db("getMainDb");
 const getReviewDb = db("getReviewDb");
 
 mock.module(pathToFileURL(path.join(root, "src/server/write.ts")).href, {
-  namedExports: { getMainDb, getReviewDb, getWriteDb: db("getWriteDb"), getLinedanceDb: db("getLinedanceDb"), EDITOR: "test" },
+  namedExports: { getMainDb, getReviewDb, getWriteDb: db("getWriteDb"), getLinedanceDb: db("getLinedanceDb"), editor: async () => "test" },
 });
 
 type Handler = (req: NextRequest, ctx: { params: Promise<Record<string, string>> }) => Promise<Response>;

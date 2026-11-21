@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { listMerges, undoChoreographerMerge, undoDanceMerge, undoTrackMerge, undoWrongRecording } from "@/server/catalogue/undo";
-import { EDITOR, getLinedanceDb } from "@/server/write";
+import { editor, getLinedanceDb } from "@/server/write";
 
 const KINDS = ["dances", "tracks", "recordings", "choreographers"];
 
@@ -17,6 +17,6 @@ export async function POST(req: NextRequest) {
   if (!body || !KINDS.includes(body.kind) || typeof body.id !== "string" || !body.id) return NextResponse.json({ error: "Say which kind and which merge." }, { status: 400 });
   const db = await getLinedanceDb();
   const undo = { dances: undoDanceMerge, tracks: undoTrackMerge, recordings: undoWrongRecording, choreographers: undoChoreographerMerge }[body.kind as "dances"];
-  const { status, ...result } = await undo(db, body.id, EDITOR);
+  const { status, ...result } = await undo(db, body.id, await editor());
   return NextResponse.json(result, { status });
 }

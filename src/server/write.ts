@@ -1,4 +1,6 @@
 import { MongoClient, type Db } from "mongodb";
+import { getServerSession } from "next-auth";
+import { authOptions, signInConfigured } from "./auth";
 
 declare global {
   var _ldcoWriteClient: Promise<MongoClient> | undefined;
@@ -28,10 +30,17 @@ export async function getWriteDb(name: string): Promise<Db> {
 export const getLinedanceDb = () => getWriteDb("linedance");
 
 /**
- * Who an edit is recorded as. There's one shared password until sign-in through ldco-auth (cms-plan phase 2), so it's
- * a setting: EDITOR_NAME, which should match the admin's username so its audits and reviews carry on.
+ * Who an edit is recorded as: the signed-in user's name (decision 30). While the shared password still applies
+ * (sign-in through ldco-auth not set up yet), the EDITOR_NAME setting, which matches the admin's old username so
+ * audits and reviews made before carry on.
  */
-export const EDITOR = process.env.EDITOR_NAME || "ldco-database";
+export async function editor(): Promise<string> {
+  if (signInConfigured()) {
+    const user = (await getServerSession(authOptions))?.user;
+    if (user?.name || user?.email) return String(user.name || user.email);
+  }
+  return process.env.EDITOR_NAME || "ldco-database";
+}
 
 /** The ldco database (published dances, choreographers, tracks), for the Dances tools. */
 export const getMainDb = () => getWriteDb("ldco");
